@@ -249,6 +249,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         bibliographicEntity1.setLastUpdatedBy("tst");
         bibliographicEntity1.setOwningInstitutionId(1);
         bibliographicEntity1.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
+        bibliographicEntity1.setDeleted(false);
 
         BibliographicEntity bibliographicEntity2 = new BibliographicEntity();
         bibliographicEntity2.setContent("mock Content".getBytes());
@@ -258,6 +259,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         bibliographicEntity2.setLastUpdatedBy("tst");
         bibliographicEntity2.setOwningInstitutionId(1);
         bibliographicEntity2.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
+        bibliographicEntity2.setDeleted(false);
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent("mock holdings".getBytes());
@@ -267,6 +269,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(random.nextInt()));
         holdingsEntity.setDeleted(false);
+        holdingsEntity.setOwningInstitutionId(1);
 
 
         bibliographicEntity1.setHoldingsEntities(Arrays.asList(holdingsEntity));
@@ -281,6 +284,8 @@ public class BibliographicEntityUT extends BaseTestCase {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
+        institutionEntity.setIlsProtocol("REST");
+        institutionEntity.setId(1);
         InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
         assertNotNull(entity);
 
@@ -293,6 +298,8 @@ public class BibliographicEntityUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(entity.getId());
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
+        bibliographicEntity.setDeleted(false);
+
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent("mock holdings".getBytes());
         holdingsEntity.setCreatedDate(new Date());
@@ -315,6 +322,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         itemEntity.setCreatedBy("tst");
         itemEntity.setLastUpdatedBy("tst");
         itemEntity.setItemAvailabilityStatusId(1);
+        itemEntity.setImsLocationId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
@@ -339,6 +347,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedBy("tst");
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
+        bibliographicEntity.setDeleted(false);
 
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
@@ -348,6 +357,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         holdingsEntity.setCreatedBy("tst");
         holdingsEntity.setLastUpdatedBy("tst");
         holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(random.nextInt()));
+        holdingsEntity.setOwningInstitutionId(1);
 
         ItemEntity itemEntity1 = new ItemEntity();
         itemEntity1.setLastUpdatedDate(new Date());
@@ -363,6 +373,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         itemEntity1.setCollectionGroupId(1);
         itemEntity1.setCallNumberType("1");
         itemEntity1.setHoldingsEntities(Arrays.asList(holdingsEntity));
+        itemEntity1.setImsLocationId(1);
 
 
         ItemEntity itemEntity2 = new ItemEntity();
@@ -373,11 +384,12 @@ public class BibliographicEntityUT extends BaseTestCase {
         itemEntity2.setItemAvailabilityStatusId(1);
         itemEntity2.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
         itemEntity2.setOwningInstitutionId(1);
-        itemEntity2.setBarcode("123");
+        itemEntity2.setBarcode("1234");
         itemEntity2.setCallNumber("x.12321");
         itemEntity2.setCollectionGroupId(1);
         itemEntity2.setCallNumberType("1");
         itemEntity2.setCustomerCode("123");
+        itemEntity2.setImsLocationId(1);
         itemEntity2.setHoldingsEntities(Arrays.asList(holdingsEntity));
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

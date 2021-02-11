@@ -57,6 +57,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedBy("etl");
         bibliographicEntity.setLastUpdatedDate(date);
         bibliographicEntity.setOwningInstitutionId(owningInstitutionId);
+        bibliographicEntity.setDeleted(false);
         String owningInstitutionBibId = String.valueOf(random.nextInt());
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
 
@@ -83,6 +84,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         itemEntity.setCollectionGroupId(1);
         itemEntity.setCustomerCode("PA");
         itemEntity.setItemAvailabilityStatusId(1);
+        itemEntity.setImsLocationId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
@@ -190,6 +192,7 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(false);
+        itemEntity.setImsLocationId(1);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

@@ -23,6 +23,8 @@ public class InstitutionDetailsRepositoryUT extends BaseTestCase {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("test");
         institutionEntity.setInstitutionName("test");
+        institutionEntity.setId(1);
+        institutionEntity.setIlsProtocol("Rest");
 
         InstitutionEntity savedInstitutionEntity = institutionDetailsRepository.save(institutionEntity);
         assertNotNull(savedInstitutionEntity);

@@ -110,6 +110,12 @@ public class DiacriticalMarksUT extends BaseTestCase {
         bibliographicEntity.setOwningInstitutionBibId("288877");
         bibliographicEntity.setCreatedDate(new Date());
         bibliographicEntity.setLastUpdatedDate(new Date());
+        bibliographicEntity.setDeleted(false);
+        bibliographicEntity.setCreatedBy("tst");
+        bibliographicEntity.setLastUpdatedBy("tst");
+        bibliographicEntity.setCreatedDate(new Date());
+        bibliographicEntity.setLastUpdatedDate(new Date());
+
         BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.save(bibliographicEntity);
         String content = new String(savedBibliographicEntity.getContent());
         MarcUtil marcUtil = new MarcUtil();

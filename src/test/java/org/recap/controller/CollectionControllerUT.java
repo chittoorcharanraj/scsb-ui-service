@@ -129,7 +129,7 @@ public class CollectionControllerUT extends BaseControllerUT {
         Mockito.doCallRealMethod().when(getCollectionController).collection(request);
         boolean response = getCollectionController.collection(request);
         assertNotNull(response);
-        assertEquals("searchRecords",response);
+        assertEquals(true,response);
     }
 
     @Test

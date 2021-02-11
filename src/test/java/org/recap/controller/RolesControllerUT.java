@@ -191,7 +191,7 @@ public class RolesControllerUT extends BaseTestCase {
         RolesForm rolesForm = new RolesForm();
         rolesForm.setRoleName("Admin");
         rolesForm.setPermissionNames("CreateUser");
-        rolesForm.setPageNumber(0);
+        rolesForm.setPageNumber(2);
         rolesForm.setPageSize(25);
         RolesForm rolesFormResponse = rolesController.searchPrevious(rolesForm);
         assertNotNull(rolesFormResponse);

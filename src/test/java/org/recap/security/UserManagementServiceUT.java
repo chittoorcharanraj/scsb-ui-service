@@ -36,7 +36,7 @@ public class UserManagementServiceUT extends BaseTestCase{
     public void testUnAuthorizedUser(){
         boolean response = userManagementService.unAuthorizedUser(httpSession,"test",logger);
         assertNotNull(response);
-        assertEquals(response,"redirect:/");
+        assertEquals(response,false);
     }
 
 }
