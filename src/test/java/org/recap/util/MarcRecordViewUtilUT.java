@@ -111,6 +111,7 @@ public class MarcRecordViewUtilUT extends BaseTestCase {
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(false);
         itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setImsLocationId(1);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

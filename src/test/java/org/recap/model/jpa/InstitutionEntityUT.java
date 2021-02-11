@@ -16,6 +16,8 @@ public class InstitutionEntityUT extends BaseTestCase {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("UC");
         institutionEntity.setInstitutionName("University of Chicago");
+        institutionEntity.setId(1);
+        institutionEntity.setIlsProtocol("REST");
         InstitutionEntity entity = institutionDetailRepository.save(institutionEntity);
         assertNotNull(entity);
         System.out.println("Institution Id-->"+entity.getId());

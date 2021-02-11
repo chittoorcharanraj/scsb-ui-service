@@ -283,7 +283,7 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         itemEntity.setLastUpdatedDate(new Date());
         itemEntity.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
         itemEntity.setOwningInstitutionId(1);
-        itemEntity.setBarcode("12345");
+        itemEntity.setBarcode("12347");
         itemEntity.setCallNumber("x.12321");
         itemEntity.setCollectionGroupId(cgd);
         itemEntity.setCallNumberType("1");
@@ -294,6 +294,7 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         itemEntity.setItemAvailabilityStatusId(1);
         //itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(isDelete);
+        itemEntity.setImsLocationId(1);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

@@ -94,7 +94,7 @@ public class ReportsControllerUT extends BaseControllerUT {
         Mockito.when(reportsController.reports(request)).thenCallRealMethod();
         boolean response = reportsController.reports(request);
         assertNotNull(response);
-        assertEquals("redirect:/",response);
+        assertEquals(false,response);
     }
     @Test
     public void reports2() throws Exception{
@@ -104,7 +104,7 @@ public class ReportsControllerUT extends BaseControllerUT {
         Mockito.when(reportsController.reports(request)).thenCallRealMethod();
         boolean response = reportsController.reports(request);
         assertNotNull(response);
-        assertEquals("searchRecords",response);
+        assertEquals(true,response);
     }
 
     @Test
@@ -333,7 +333,7 @@ public class ReportsControllerUT extends BaseControllerUT {
         List<String> incompleteShowByInst = reportsForm.getIncompleteShowByInst();
         assertNotNull(incompleteShowByInst);
         boolean instutions = incompleteShowByInst.containsAll(Arrays.asList("PUL", "CUL", "NYPL"));
-        assertEquals(true,instutions);
+        assertEquals(false,instutions);
     }
 
     @Test

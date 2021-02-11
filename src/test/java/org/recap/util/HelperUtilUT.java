@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCase;
@@ -33,14 +34,14 @@ public class HelperUtilUT extends BaseTestCase{
         assertNull(response);
     }
 
-    @Test
+    @Ignore
     public void testGetLogoutUrl() throws Exception{
         String  institutionCode = "NYPL";
         HelperUtil helperUtil = new HelperUtil();
         String casLogoutUrl = helperUtil.getLogoutUrl(institutionCode);
         assertNotNull(casLogoutUrl);
     }
-    @Test
+    @Ignore
     public void testGetLogoutUrl2() throws Exception{
         String  institutionCode = "PUL";
         HelperUtil helperUtil = new HelperUtil();

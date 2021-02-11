@@ -59,7 +59,7 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
         bibliographicEntity.setOwningInstitutionId(owningInstitutionId);
-
+        bibliographicEntity.setDeleted(false);
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent("mock holdings".getBytes());
         holdingsEntity.setCreatedDate(new Date());
@@ -68,6 +68,7 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         holdingsEntity.setLastUpdatedBy("etl");
         holdingsEntity.setOwningInstitutionId(owningInstitutionId);
         holdingsEntity.setOwningInstitutionHoldingsId(String.valueOf(random.nextInt()));
+        holdingsEntity.setOwningInstitutionId(1);
 
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setCallNumberType("0");
@@ -82,6 +83,7 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         itemEntity.setCollectionGroupId(1);
         itemEntity.setCustomerCode("PA");
         itemEntity.setItemAvailabilityStatusId(1);
+        itemEntity.setImsLocationId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
 
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));

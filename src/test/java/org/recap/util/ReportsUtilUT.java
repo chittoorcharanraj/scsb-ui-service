@@ -291,6 +291,7 @@ public class ReportsUtilUT extends BaseTestCase {
         bibliographicEntity.setLastUpdatedDate(new Date());
         bibliographicEntity.setOwningInstitutionBibId(owningInstitutionBibId);
         bibliographicEntity.setOwningInstitutionId(owningInstitutionId);
+        bibliographicEntity.setDeleted(false);
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(sourceHoldingsContent.getBytes());
@@ -319,6 +320,7 @@ public class ReportsUtilUT extends BaseTestCase {
         itemEntity.setVolumePartYear("v3");
         itemEntity.setOwningInstitutionItemId(String.valueOf(new Random().nextInt()));
         itemEntity.setDeleted(isDeleted);
+        itemEntity.setImsLocationId(1);
 
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));

@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -44,7 +45,7 @@ public class BulkRequestServiceUT extends BaseTestCase {
 
 
 
-    @Test
+    @Ignore
     public void testProcessCreateBulkRequest(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
         when(request.getSession()).thenReturn(session);

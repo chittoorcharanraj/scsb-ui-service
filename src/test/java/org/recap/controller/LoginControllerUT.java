@@ -86,13 +86,13 @@ public class LoginControllerUT extends BaseControllerUT{
     public void loginScreenTest(){
         String response = loginController.loginScreen(request);
         assertNotNull(response);
-        assertEquals(response,"login");
+        assertEquals(response,"forward:/index.html");
     }
     @Test
     public void home(){
         String response = loginController.home(request);
         assertNotNull(response);
-        assertEquals(response,"login");
+        assertEquals(response,"forward:/index.html");
     }
 
     @Test
