@@ -165,6 +165,8 @@ public class RecapConstants {
     public static final String USER_AUTH = "user_auth";
     public static final String ROLE_ID = "roleId";
     public static final String USER_TOKEN = "token";
+
+    public static final String RESUBMIT_REQUEST_PRIVILEGE = "isReSubmitRequestAllowed";
     public static final String REQUEST_ALL_PRIVILEGE = "isRequestAllAllowed";
     public static final String REQUEST_ITEM_PRIVILEGE = "isRequestItemAllowed";
     public static final String BARCODE_RESTRICTED_PRIVILEGE = "isBarcodeRestricted";
