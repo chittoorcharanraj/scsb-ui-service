@@ -79,7 +79,6 @@ public class HomeController extends AbstractController {
     @GetMapping(value = "/loginCheck")
     public Map<String, Object> login(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        logger.info("session info :: {}", session.getId());
         Map<String, Object> resultMap = new HashMap<>();
         boolean isAuthenticated = false;
         try {
@@ -97,6 +96,7 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.MONITORING, request.getSession().getAttribute(RecapConstants.MONITORING));
             resultMap.put(RecapConstants.LOGGING, request.getSession().getAttribute(RecapConstants.LOGGING));
             resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
+            resultMap.put(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE, request.getSession().getAttribute(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE));
             resultMap.put(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE));
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
