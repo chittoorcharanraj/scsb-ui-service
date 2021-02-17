@@ -79,7 +79,6 @@ public class ReportsController extends AbstractController {
      * Get the item count for requested, accessioned and deaccessioned report.
      *
      * @param reportsForm the reports form
-     *                    //* @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -121,7 +120,6 @@ public class ReportsController extends AbstractController {
      * Get deaccessioned item results from scsb solr and display them as rows in the deaccession report UI page.
      *
      * @param reportsForm the reports form
-     *                    //* @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -153,7 +151,6 @@ public class ReportsController extends AbstractController {
      * Get previous page deaccessioned or incomplete item results from scsb solr and display them as rows in the deaccession report or incomplete report.
      *
      * @param reportsForm the reports form
-     *                    //* @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -173,7 +170,6 @@ public class ReportsController extends AbstractController {
      * Get next page deaccessioned or incomplete item results from scsb solr and display them as rows in the deaccession report or incomplete report.
      *
      * @param reportsForm the reports form
-     *                    //* @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -193,7 +189,6 @@ public class ReportsController extends AbstractController {
      * Get last page deaccessioned or incomplete item results from scsb solr and display them as rows in the deaccession report or incomplete report.
      *
      * @param reportsForm the reports form
-     *                    // * @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -259,7 +254,6 @@ public class ReportsController extends AbstractController {
         incompleteReportResultsRows.add(incompleteReportResultsRow);
         File csvFile = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows, fileNameWithExtension);
         byte[] fileContent = HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.REPORTS);
-        //byte[] fileContent = IOUtils.toByteArray(new FileInputStream(csvFile));
         downloadReports.setContent(fileContent);
         downloadReports.setFileName(fileNameWithExtension);
         return downloadReports;
@@ -269,7 +263,6 @@ public class ReportsController extends AbstractController {
      * Based on the selected page size search results will display the results in the incomplete report UI page.
      *
      * @param reportsForm the reports form
-     *                    //* @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
@@ -325,14 +318,6 @@ public class ReportsController extends AbstractController {
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         return cal.getTime();
-    }
-
-    private ReportsForm search(ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
-            return getIncompleteRecords(reportsForm);
-        } else {
-            return setReportData(reportsForm);
-        }
     }
 
     private ReportsForm setReportData(ReportsForm reportsForm) throws Exception {
