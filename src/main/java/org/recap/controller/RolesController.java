@@ -108,7 +108,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/createRole")
     public RolesForm newRole(@RequestBody RolesForm rolesForm, HttpServletRequest request) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
-        logger.info("create Role calling with the following payload:", rolesForm);
+        logger.info("create Role calling with the following payload: {}", rolesForm);
         if (!specialCharacterCheck) {
             rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
@@ -165,14 +165,13 @@ public class RolesController extends AbstractController {
                                     @RequestParam("roleName") String roleName,
                                     @RequestParam("roleDescription") String roleDescription,
                                     @RequestParam("editPermissionNames") String[] editPermissionNames, HttpServletRequest request) {
-        logger.info("edit Role calling:", roleName);
+        logger.info("edit Role calling: {}", roleName);
         RolesForm rolesForm = new RolesForm();
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(RecapConstants.USER_NAME);
         rolesForm.setRoleId(roleId);
         rolesForm.setEditRoleName(roleName);
         rolesForm.setEditRoleDescription(roleDescription);
-        //String[] editPermissionNames = request.getParameterValues("permissionNames[]");
         rolesForm.setEditPermissionName(Arrays.asList(editPermissionNames));
         Optional<RoleEntity> roleEntityByRoleId = rolesDetailsRepositorty.findById(roleId);
         if (roleEntityByRoleId.isPresent()) {
@@ -234,7 +233,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/delete")
     public RolesForm delete(@RequestBody RolesForm rolesForm) {
-        logger.info("deleting Role calling :", rolesForm);
+        logger.info("deleting Role calling : {}", rolesForm);
         Optional<RoleEntity> roleEntity = rolesDetailsRepositorty.findById(rolesForm.getRoleId());
         if (roleEntity.isPresent()) {
             try {
@@ -248,10 +247,10 @@ public class RolesController extends AbstractController {
                 setRolesFormSearchResults(rolesForm);
                 rolesForm.setMessage(rolesForm.getRoleNameForDelete() + RecapConstants.DELETED_SUCCESSFULLY);
             } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR, "Role is Null");
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
         } else {
-            logger.error(RecapCommonConstants.LOG_ERROR, "e");
+            logger.error(RecapCommonConstants.LOG_ERROR + "{}", "Role is Null");
         }
         rolesForm.setShowResults(true);
         return rolesForm;
@@ -415,8 +414,7 @@ public class RolesController extends AbstractController {
         } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
             Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
-            List<RoleEntity> rolesEntityList = null;
-            searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
+            searchRolesEntity(rolesForm, rolesSearchResults, rolesEntityListByPagination);
         }
         return rolesForm;
     }
@@ -495,10 +493,9 @@ public class RolesController extends AbstractController {
     public RolesForm findByPagination(RolesForm rolesForm) {
         List<RolesSearchResult> rolesSearchResults = new ArrayList<>();
         Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
-        List<RoleEntity> rolesEntityList = null;
         if (!StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.findByRoleName(pageable, rolesForm.getRoleName());
-            searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
+            searchRolesEntity(rolesForm, rolesSearchResults, rolesEntityListByPagination);
         } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && !StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Pageable pageable1 = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
             PermissionEntity permissionEntity = permissionsRepository.findByPermissionName(rolesForm.getPermissionNames());
@@ -506,7 +503,7 @@ public class RolesController extends AbstractController {
 
         } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
-            searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
+            searchRolesEntity(rolesForm, rolesSearchResults, rolesEntityListByPagination);
         }
         return rolesForm;
     }
@@ -564,7 +561,7 @@ public class RolesController extends AbstractController {
         return rolesForm;
     }
 
-    private void searchRolesEntity(RolesForm rolesForm, List<RoleEntity> rolesEntityList, List<RolesSearchResult> rolesSearchResults, Page<RoleEntity> rolesEntityListByPagination) {
+    private void searchRolesEntity(RolesForm rolesForm, List<RolesSearchResult> rolesSearchResults, Page<RoleEntity> rolesEntityListByPagination) {
         List<RoleEntity> rolesEntity = rolesEntityListByPagination.getContent();
         rolesForm.setTotalRecordCount(NumberFormat.getNumberInstance().format(rolesEntityListByPagination.getTotalElements()));
         rolesForm.setTotalPageCount(rolesEntityListByPagination.getTotalPages());

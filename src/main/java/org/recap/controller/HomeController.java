@@ -29,7 +29,7 @@ import java.util.Map;
 @CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class HomeController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private ReportsUtil reportsUtil;
@@ -100,7 +100,7 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE));
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
-            logger.info("Exception Occured while User Validation :: {}", e.getMessage());
+            logger.info("Exception Occurred while User Validation :: {}", e.getMessage());
             isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
