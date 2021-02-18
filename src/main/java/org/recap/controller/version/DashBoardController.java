@@ -1,5 +1,6 @@
 package org.recap.controller.version;
 
+import org.json.JSONObject;
 import org.recap.controller.RecapController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,9 @@ public class DashBoardController extends RecapController {
      */
     @GetMapping("/getVersionNumberService")
     public String getVersionNumberService() {
-        return versionNumberService;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("versionNumber", versionNumberService);
+        return jsonObject.toString();
     }
 
     /**

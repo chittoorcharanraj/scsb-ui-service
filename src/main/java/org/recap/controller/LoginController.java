@@ -52,10 +52,10 @@ public class LoginController extends AbstractController {
     public String loginScreen(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
-            return RecapConstants.redirectSearch;
+            return RecapConstants.REDIRECT_SEARCH;
         }
         logger.info("Login Screen Called");
-        return RecapConstants.forwardIndex;
+        return RecapConstants.FORWARD_INDEX;
     }
 
     /**
@@ -66,7 +66,7 @@ public class LoginController extends AbstractController {
      */
     @GetMapping(value = "/home")
     public String home(HttpServletRequest request) {
-        return RecapConstants.forwardIndex;
+        return RecapConstants.FORWARD_INDEX;
     }
 
     /**
@@ -99,16 +99,16 @@ public class LoginController extends AbstractController {
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
                 String errorMessage = (String) resultMap.get(RecapConstants.USER_AUTH_ERRORMSG);
                 logger.error("User: {}, {} {}", token.getUsername(), RecapCommonConstants.LOG_ERROR, errorMessage);
-                return RecapConstants.redirectHome;
+                return RecapConstants.REDIRECT_HOME;
             }
             setSessionValues(session, resultMap, token);
 
         } catch (Exception exception) {
             logger.error(RecapCommonConstants.LOG_ERROR, exception);
             logger.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
-            return RecapConstants.redirectHome;
+            return RecapConstants.REDIRECT_HOME;
         }
-        return RecapConstants.redirectSearch;
+        return RecapConstants.REDIRECT_SEARCH;
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
@@ -130,7 +130,7 @@ public class LoginController extends AbstractController {
 
     /**
      *
-     * @param request
+     * @param request HttpServletRequest
      * @return return redirect URL
      */
     @GetMapping("/logout")
@@ -144,8 +144,8 @@ public class LoginController extends AbstractController {
             if (session != null) {
                 session.invalidate();
             }
-            return "redirect:/";
         }
+        return "redirect:/";
     }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {

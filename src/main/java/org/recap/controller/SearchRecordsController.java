@@ -95,8 +95,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/searchResults")
     public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("search records Called");
-        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        return searchRecordsResponse;
+        return searchRecordsPage(searchRecordsRequest);
     }
 
     /**
@@ -108,15 +107,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchPrevious called");
-        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        return searchRecordsResponse;
-    }
-
-    private Integer setPageNumber(SearchRecordsRequest searchRecordsRequest) {
-        if (searchRecordsRequest.getPageNumber() > 0)
-            return searchRecordsRequest.getPageNumber() - 1;
-        else
-            return 0;
+        return searchRecordsPage(searchRecordsRequest);
     }
 
     /**
@@ -128,8 +119,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchNext  Called");
-        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        return searchRecordsResponse;
+        return searchRecordsPage(searchRecordsRequest);
     }
 
     /**
@@ -154,8 +144,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchLast  Called");
-        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        return searchRecordsResponse;
+        return searchRecordsPage(searchRecordsRequest);
     }
 
     /**
@@ -182,7 +171,7 @@ public class SearchRecordsController extends RecapController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("showEntries size changed calling with size:", searchRecordsRequest.getPageSize());
+        logger.info("showEntries size changed calling with size: {}", searchRecordsRequest.getPageSize());
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);

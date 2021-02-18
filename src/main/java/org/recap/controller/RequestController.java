@@ -551,10 +551,6 @@ public class RequestController extends RecapController {
         searchResultRows.add(searchResultRow);
     }
 
-    private RequestForm setRequestAttribute(RequestForm requestForm) {
-        return requestForm;
-    }
-
     private RequestForm setFormValues(RequestForm requestForm, UserDetailsForm userDetails) {
         List<String> requestStatuses = new ArrayList<>();
         List<String> institutionList = new ArrayList<>();

@@ -47,6 +47,7 @@ public class ScheduleJobsController extends AbstractController {
      *
      * @return the rest template
      */
+    @Override
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
@@ -64,7 +65,6 @@ public class ScheduleJobsController extends AbstractController {
     @GetMapping("/jobs")
     public ScheduleJobsForm displayJobs(HttpServletRequest request) {
         String errorMessage = null;
-        boolean isAuthenticated = false;
         HttpSession session = request.getSession(false);
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();
         UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
@@ -72,7 +72,6 @@ public class ScheduleJobsController extends AbstractController {
             List<JobEntity> jobEntities = getJobDetailsRepository().findAll();
             scheduleJobsForm.setJobEntities(jobEntities);
         } else {
-            isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapCommonConstants.SEARCH, logger);
             scheduleJobsForm.setErrorMessage(errorMessage);
         }
         return scheduleJobsForm;
