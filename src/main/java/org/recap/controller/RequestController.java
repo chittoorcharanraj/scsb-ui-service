@@ -243,7 +243,7 @@ public class RequestController extends RecapController {
         try {
             return requestService.populateItemForRequest(requestForm, request);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
             return jsonObject.put(RecapConstants.ERROR_MESSAGE, e.getMessage()).toString();
         }
     }
