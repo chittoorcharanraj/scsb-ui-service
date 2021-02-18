@@ -96,7 +96,7 @@ public class BulkRequestController extends AbstractController {
             else
                 resStatus.put(RecapConstants.STATUS, res.getErrorMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
             resStatus.put(RecapConstants.STATUS, e.getMessage());
         }
         JSONObject recvObj = new JSONObject(resStatus);
