@@ -8,8 +8,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class BulkRequestFormUT extends BaseTestCaseUT {
@@ -84,7 +83,7 @@ public class BulkRequestFormUT extends BaseTestCaseUT {
         assertNotNull(bulkRequestForm.getRequestingInstituionHidden());
         assertTrue(bulkRequestForm.isShowRequestErrorMsg());
         assertNotNull(bulkRequestForm.getInstitutionList());
-        assertTrue(bulkRequestForm.isDisableRequestingInstitution());
+        assertFalse(bulkRequestForm.isDisableRequestingInstitution());
         assertNotNull(bulkRequestForm.getOnChange());
         assertNotNull(bulkRequestForm.getRequestStatuses());
         assertNotNull(bulkRequestForm.getDeliveryLocations());
