@@ -1,111 +1,130 @@
 package org.recap.service;
 
-import org.junit.Ignore;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.powermock.api.mockito.PowerMockito;
+import org.recap.model.jpa.BulkRequestItemEntity;
+import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.search.BulkRequestForm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.recap.repository.jpa.BulkRequestDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.util.SecurityUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.mockito.Mockito.when;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-public class BulkRequestServiceUT extends BaseTestCase {
+import static junit.framework.Assert.assertNotNull;
 
-    @Mock
-    HttpServletRequest request;
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource("classpath:application.properties")
+public class BulkRequestServiceUT {
 
-    @Mock
-    HttpSession session;
-
-    @Autowired
-    RestHeaderService restHeaderService;
-
-    @Autowired
+    @InjectMocks
     BulkRequestService bulkRequestService;
 
     @Mock
-    BulkRequestService mockedBulkRequestService;
+    BulkRequestForm bulkRequestForm;
 
     @Mock
-    RestTemplate restTemplate;
+    BulkSearchRequestService bulkSearchRequestService;
 
-    @Value("${scsb.gateway.url}")
-    String scsbUrl;
+    @Mock
+    BulkRequestItemEntity bulkRequestItemEntity;
 
-    @Value("${scsb.auth.url}")
-    String scsbShiro;
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Mock
+    SecurityUtil securityUtil;
 
+    @Mock
+    BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
+    @Mock
+    RequestItemEntity requestItemEntity;
 
-    @Ignore
-    public void testProcessCreateBulkRequest(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        when(request.getSession()).thenReturn(session);
-        bulkRequestService.processCreateBulkRequest(bulkRequestForm,request);
-    }
+    @Mock
+    RequestStatusEntity requestStatusEntity;
 
     @Test
-    public void testProcessSearchRequest(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestService.processSearchRequest(bulkRequestForm);
+    public void testSaveUpdatedRequestStatus() throws Exception {
+        List<RequestItemEntity> requestItemEntities=new ArrayList<>();
+        requestItemEntities.add(requestItemEntity);
+        Mockito.when(bulkRequestItemEntity.getRequestItemEntities()).thenReturn(requestItemEntities);
+        Mockito.when(requestItemEntity.getRequestStatusEntity()).thenReturn(requestStatusEntity);
+        Mockito.when(bulkRequestItemEntity.getBulkRequestStatus()).thenReturn("PROCESSED");
+        Mockito.when(requestStatusEntity.getRequestStatusCode()).thenReturn("EXCEPTION");
+        Mockito.when(bulkRequestDetailsRepository.findById(1)).thenReturn(Optional.of(bulkRequestItemEntity));
+        File bibContentFile = getBibContentFile();
+        String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        Mockito.when(bulkRequestItemEntity.getBulkRequestFileData()).thenReturn(sourceBibContent.getBytes(StandardCharsets.UTF_8));
+        BulkRequestItemEntity request=bulkRequestService.saveUpadatedRequestStatus(1);
+        assertNotNull(request);
+    }
+
+    private File getBibContentFile() throws URISyntaxException {
+        URL resource = null;
+        resource = getClass().getResource("BulkRequest.csv");
+        return new File(resource.toURI());
     }
 
     @Test
     public void testProcessOnPageSizeChange(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestService.processOnPageSizeChange(bulkRequestForm);
+        Page<BulkRequestItemEntity> bulkRequestItemEntities= PowerMockito.mock(Page.class);
+        Mockito.when(bulkSearchRequestService.processSearchRequest(Mockito.any())).thenReturn(bulkRequestItemEntities);
+        Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(2l);
+        List<BulkRequestItemEntity> bulkRequestItemEntityList=new ArrayList<>();
+        bulkRequestItemEntityList.add(bulkRequestItemEntity);
+        Mockito.when(bulkRequestItemEntities.getContent()).thenReturn(bulkRequestItemEntityList);
+        Mockito.when(bulkRequestForm.getPageNumber()).thenReturn(2);
+        Mockito.when(bulkRequestForm.getPageSize()).thenReturn(2);
+        Mockito.when(bulkRequestForm.getTotalRecordsCount()).thenReturn("2");
+        BulkRequestForm bulkRequestFormResult=bulkRequestService.processOnPageSizeChange(bulkRequestForm);
+        assertNotNull(bulkRequestFormResult);
     }
 
     @Test
-    public void testGetPaginatedSearchResults(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestService.getPaginatedSearchResults(bulkRequestForm);
+    public void testProcessOnPageSizeChangeResultsNotFound(){
+        Page<BulkRequestItemEntity> bulkRequestItemEntities= PowerMockito.mock(Page.class);
+        Mockito.when(bulkSearchRequestService.processSearchRequest(Mockito.any())).thenReturn(bulkRequestItemEntities);
+        Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(0l);
+        List<BulkRequestItemEntity> bulkRequestItemEntityList=new ArrayList<>();
+        bulkRequestItemEntityList.add(bulkRequestItemEntity);
+        Mockito.when(bulkRequestItemEntities.getContent()).thenReturn(bulkRequestItemEntityList);
+        Mockito.when(bulkRequestForm.getPageNumber()).thenReturn(2);
+        Mockito.when(bulkRequestForm.getPageSize()).thenReturn(2);
+        Mockito.when(bulkRequestForm.getTotalRecordsCount()).thenReturn("2");
+        BulkRequestForm bulkRequestFormResult=bulkRequestService.processOnPageSizeChange(bulkRequestForm);
+        assertNotNull(bulkRequestFormResult);
     }
 
     @Test
-    public void testProcessDeliveryLocations(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestService.processDeliveryLocations(bulkRequestForm);
-    }
-
-    @Test
-    public void testSaveUpadatedRequestStatus() throws Exception{
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestService.saveUpadatedRequestStatus(bulkRequestForm.getRequestId());
-    }
-
-
-    private BulkRequestForm getBulkRequestForm(){
-        BulkRequestForm bulkRequestForm = new BulkRequestForm();
-        bulkRequestForm.setBulkRequestName("Test");
-        bulkRequestForm.setDeliveryLocation("test");
-        bulkRequestForm.setDeliveryLocationInRequest("test");
-        bulkRequestForm.setDisableRequestingInstitution(false);
-        bulkRequestForm.setDisableSearchInstitution(true);
-        bulkRequestForm.setErrorMessage("ERROR");
-        bulkRequestForm.setFileName("test");
-        bulkRequestForm.setInstitution("PUL");
-        bulkRequestForm.setItemBarcode("123");
-        bulkRequestForm.setItemOwningInstitution("PUL");
-        bulkRequestForm.setItemTitle("test");
-        bulkRequestForm.setMessage("test");
-        bulkRequestForm.setPageNumber(1);
-        bulkRequestForm.setPageSize(20);
-        bulkRequestForm.setTotalRecordsCount("40");
-        bulkRequestForm.setTotalPageCount(20);
-        bulkRequestForm.setStatus("SUCCESS");
-        bulkRequestForm.setSubmitted(true);
-        bulkRequestForm.setRequestingInstitution("PUL");
-        bulkRequestForm.setRequestId(1);
-        bulkRequestForm.setRequestIdSearch("1");
-        return bulkRequestForm;
+    public void testProcessOnPageSizeChangeException(){
+        Page<BulkRequestItemEntity> bulkRequestItemEntities= PowerMockito.mock(Page.class);
+        Mockito.when(bulkSearchRequestService.processSearchRequest(Mockito.any())).thenReturn(bulkRequestItemEntities);
+        Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(2l);
+        List<BulkRequestItemEntity> bulkRequestItemEntityList=new ArrayList<>();
+        bulkRequestItemEntityList.add(bulkRequestItemEntity);
+        Mockito.when(bulkRequestItemEntities.getContent()).thenReturn(bulkRequestItemEntityList);
+        Mockito.when(bulkRequestForm.getPageNumber()).thenReturn(2);
+        Mockito.when(bulkRequestForm.getPageSize()).thenReturn(2);
+        Mockito.when(bulkRequestItemEntity.getEmailId()).thenReturn("test@gmail.com");
+        Mockito.when(securityUtil.getDecryptedValue(Mockito.any())).thenThrow(NullPointerException.class);
+        Mockito.when(bulkRequestForm.getTotalRecordsCount()).thenReturn("2");
+        BulkRequestForm bulkRequestFormResult=bulkRequestService.processOnPageSizeChange(bulkRequestForm);
+        assertNotNull(bulkRequestFormResult);
     }
 }
