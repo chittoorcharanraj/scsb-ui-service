@@ -243,7 +243,7 @@ public class RequestController extends RecapController {
         try {
             return requestService.populateItemForRequest(requestForm, request);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
             return jsonObject.put(RecapConstants.ERROR_MESSAGE, e.getMessage()).toString();
         }
     }
@@ -549,10 +549,6 @@ public class RequestController extends RecapController {
             searchResultRow.setBibId(itemEntity.getBibliographicEntities().get(0).getId());
         }
         searchResultRows.add(searchResultRow);
-    }
-
-    private RequestForm setRequestAttribute(RequestForm requestForm) {
-        return requestForm;
     }
 
     private RequestForm setFormValues(RequestForm requestForm, UserDetailsForm userDetails) {

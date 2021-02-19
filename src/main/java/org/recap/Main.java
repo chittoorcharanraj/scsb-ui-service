@@ -65,12 +65,9 @@ public class Main {
     @Bean
     public ServletWebServerFactory servletContainerFactory() {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-        factory.addConnectorCustomizers(new TomcatConnectorCustomizer() {
-            @Override
-            public void customize(Connector connector) {
-                connector.setMaxParameterCount(tomcatMaxParameterCount);
-                connector.setSecure(tomcatSecure);
-            }
+        factory.addConnectorCustomizers(connector -> {
+            connector.setMaxParameterCount(tomcatMaxParameterCount);
+            connector.setSecure(tomcatSecure);
         });
         return factory;
     }

@@ -382,7 +382,7 @@ public class RequestService {
                 }
             }
             jsonObject.put(RecapConstants.REQUEST_TYPES, requestTypes);
-            jsonObject.put(RecapConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.stream().findFirst().get() : "");
+            jsonObject.put(RecapConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.iterator().next() : "");
             jsonObject.put(RecapConstants.SHOW_EDD, showEDD);
             jsonObject.put(RecapConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
@@ -495,7 +495,7 @@ public class RequestService {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-            if (userDetailsForm.getLoginInstitutionId() == institutionEntity.getId() && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
+            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);

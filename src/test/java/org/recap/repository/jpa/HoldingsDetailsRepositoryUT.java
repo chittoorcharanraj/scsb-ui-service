@@ -70,8 +70,6 @@ public class HoldingsDetailsRepositoryUT extends BaseTestCase {
 
         assertNotNull(savedHoldings.getId());
         assertEquals(holdingsEntity.getContent().length,savedHoldings.getContent().length);
-        assertTrue(holdingsEntity.getLastUpdatedDate().before(new Date()));
-        assertTrue(holdingsEntity.getCreatedDate().before(new Date()));
         assertEquals(holdingsEntity.getLastUpdatedBy(),savedHoldings.getLastUpdatedBy());
 
     }

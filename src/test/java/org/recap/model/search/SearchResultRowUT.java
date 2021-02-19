@@ -24,6 +24,7 @@ public class SearchResultRowUT {
         assertNotNull(searchResultRow.getBibId());
         assertNotNull(searchResultRow.getPublisher());
         assertNotNull(searchResultRow.getPublisherDate());
+        assertNotNull(searchResultRow.getLastUpdatedDate());
         assertNotNull(searchResultRow.getCustomerCode());
         assertNotNull(searchResultRow.getCollectionGroupDesignation());
         assertNotNull(searchResultRow.getUseRestriction());
@@ -57,6 +58,7 @@ public class SearchResultRowUT {
         searchResultRow.setBibId(1);
         searchResultRow.setPublisher("test");
         searchResultRow.setPublisherDate(new Date().toString());
+        searchResultRow.setLastUpdatedDate(new Date());
         searchResultRow.setCustomerCode("PB");
         searchResultRow.setCollectionGroupDesignation("Open");
         searchResultRow.setUseRestriction("others");

@@ -1,8 +1,9 @@
 package org.recap.controller;
 
+import org.recap.RecapCommonConstants;
+import org.recap.RecapConstants;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
 import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.DeliveryRestrictionEntity;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.LocationEntity;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by dinakar on 24/11/20.
@@ -65,9 +67,8 @@ public class AdminController {
         fileuploadResponse = new LinkedHashMap<>();
         try {
             fileuploadResponse = loadInitialData(file);
-            String content = new String(file.getBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -78,7 +79,7 @@ public class AdminController {
         try {
             fileuploadResponse = loadIMSData(file);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -103,24 +104,20 @@ public class AdminController {
             }
             institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionEntity.getInstitutionCode());
             NodeList locationNodeList = document.getElementsByTagName("IMS-Location");
-            loadLocationData(document, institutionEntity, locationNodeList);
+            loadLocationData(institutionEntity, locationNodeList);
 
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
+        File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+        try (FileOutputStream fos = new FileOutputStream(convFile)) {
+            fos.write(file.getBytes());
+            return convFile;
+        }
     }
 
     private Map<String, String> loadInitialData(MultipartFile multipartFile) {
@@ -128,7 +125,6 @@ public class AdminController {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         logger.info("loadInitialData -->");
         try {
-            //URL resource = LoginController.class.getClassLoader().getResource("onboard-xmlscript.xml");
             File file = convertMultiPartToFile(multipartFile);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -147,53 +143,33 @@ public class AdminController {
             fileUpload.setUpdatedDate(new Date());
             try {
                 fileUploadService.uploadFile(fileUpload);
-                fileuploadResponse.put("Upload XML File Status", "Successed");
+                fileuploadResponse.put("Upload XML File Status", RecapConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put("Upload XML File Status", "Failed");
-                e.printStackTrace();
+                fileuploadResponse.put("Upload XML File Status", RecapConstants.FAILED);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
-            /*try {
-                FileUploadEntity fileUploadEntity= fileUploadService.getFileUploadEntity(institutionEntity.getInstitutionName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
-            /*NodeList locationNodeList = document.getElementsByTagName("IMS-Location");
-            loadLocationData(document, institutionEntity, locationNodeList);*/
-
-           /* NodeList crosspartnerNodeList = document.getElementsByTagName("crosspartner");
-            System.out.println("crosspartnerList size now  >>> " + crosspartnerNodeList.getLength());
-            loadCrossPartnerData(document, institutionEntity, crosspartnerNodeList);*/
-
             NodeList configNodeList = document.getElementsByTagName("entry");
-            loadConfigData(document, institutionEntity, configNodeList);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            loadConfigData(institutionEntity, configNodeList);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
-       /* fileuploadResponse.forEach((k,v) ->{
-            if(v.equalsIgnoreCase("Failed")){
-                status.set(false);
-            }
-        });*/
+
         for (Map.Entry<String, String> entry : fileuploadResponse.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase("Failed")) {
+            if (entry.getValue().equalsIgnoreCase(RecapConstants.FAILED)) {
                 status = false;
+                break;
             }
         }
-        if (status == true) {
+        if (status) {
             try {
                 fileUploadService.updateFileUploadEntity(institutionEntity.getInstitutionName(), "Test", "COMPLETED", new Date(), "Testing comments");
-                fileuploadResponse.put("On-Board Institution Status", "Successed");
+                fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put("On-Board Institution Status", "Failed");
-                e.printStackTrace();
+                fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.FAILED);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
         } else {
-            fileuploadResponse.put("On-Board Institution Status", "Failed");
+            fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.FAILED);
         }
         return fileuploadResponse;
     }
@@ -210,10 +186,10 @@ public class AdminController {
                 institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
                 try {
                     institutionDetailsRepository.save(institutionEntity);
-                    fileuploadResponse.put("Institution Added Status", "Successed");
+                    fileuploadResponse.put("Institution Added Status", RecapConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("Institution Added Status", "Failed");
-                    e.printStackTrace();
+                    fileuploadResponse.put("Institution Added Status", RecapConstants.FAILED);
+                    logger.error(RecapCommonConstants.LOG_ERROR, e);
                 }
 
             }
@@ -221,7 +197,7 @@ public class AdminController {
         return institutionEntity;
     }
 
-    private void loadConfigData(Document document, InstitutionEntity institutionEntity, NodeList configNodeList) {
+    private void loadConfigData(InstitutionEntity institutionEntity, NodeList configNodeList) {
         for (int temp = 0; temp < configNodeList.getLength(); temp++) {
             Node configNode = configNodeList.item(temp);
             if (configNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -236,22 +212,20 @@ public class AdminController {
                 scsbProprtiesEntity.setActive("Y");
                 scsbProprtiesEntity.setCreatedDate(new Date());
                 scsbProprtiesEntity.setLastUpdatedDate(new Date());
-                scsbProprtiesEntity.setCreatedBy("Admin");
-                scsbProprtiesEntity.setLastUpdatedBy("Admin");
+                scsbProprtiesEntity.setCreatedBy(RecapConstants.ADMIN_TEXT);
+                scsbProprtiesEntity.setLastUpdatedBy(RecapConstants.ADMIN_TEXT);
                 try {
                     scsbPropertiesDetailRepository.saveAndFlush(scsbProprtiesEntity);
-                    fileuploadResponse.put("SCSB Properties Added Status", "Successed");
+                    fileuploadResponse.put("SCSB Properties Added Status", RecapConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("SCSB Properties Added Status", "Failed");
-                    e.printStackTrace();
+                    fileuploadResponse.put("SCSB Properties Added Status", RecapConstants.FAILED);
+                    logger.error(RecapCommonConstants.LOG_ERROR, e);
                 }
             }
-
         }
-
     }
 
-    private void loadLocationData(Document document, InstitutionEntity institutionEntity, NodeList locationNodeList) {
+    private void loadLocationData(InstitutionEntity institutionEntity, NodeList locationNodeList) {
         for (int temp = 0; temp < locationNodeList.getLength(); temp++) {
             LocationEntity locationEntity = new LocationEntity();
             Node locationNode = locationNodeList.item(temp);
@@ -260,18 +234,18 @@ public class AdminController {
 
                 locationEntity.setLocationCode(eElement.getElementsByTagName("IMS-LocationCode").item(0).getTextContent());
                 locationEntity.setLocationName(eElement.getElementsByTagName("IMS-LocationName").item(0).getTextContent());
-                locationEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
+                locationEntity.setDescription(eElement.getElementsByTagName(RecapConstants.DESCRIPTION).item(0).getTextContent());
                 locationEntity.setActive("Y");
-                locationEntity.setCreatedBy("Admin");
+                locationEntity.setCreatedBy(RecapConstants.ADMIN_TEXT);
                 locationEntity.setCreatedDate(new Date());
-                locationEntity.setLastUpdatedBy("Admin");
+                locationEntity.setLastUpdatedBy(RecapConstants.ADMIN_TEXT);
                 locationEntity.setLastUpdatedDate(new Date());
                 try {
                     locationDetailsRepository.saveAndFlush(locationEntity);
-                    fileuploadResponse.put("Locations Added Status", "Successed");
+                    fileuploadResponse.put("Locations Added Status", RecapConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("Locations Added Status", "Failed");
-                    e.printStackTrace();
+                    fileuploadResponse.put("Locations Added Status", RecapConstants.FAILED);
+                    logger.error(RecapCommonConstants.LOG_ERROR, e);
                 }
                 if (locationNode.hasChildNodes()) {
                     NodeList nodeList = locationNode.getChildNodes();
@@ -283,7 +257,7 @@ public class AdminController {
                                 for (int custnode = 0; custnode < customerNodeList.getLength(); custnode++) {
                                     Node customerNode = customerNodeList.item(custnode);
                                     if (customerNode.getNodeName().equals("CustomerCode")) {
-                                        loadCustomerData(document, institutionEntity, locationNode, locationEntity, customerNode);
+                                        loadCustomerData(institutionEntity, customerNode);
                                     }
                                 }
                             }
@@ -294,7 +268,7 @@ public class AdminController {
                                 for (int bulkCustNode = 0; bulkCustNode < bulkCustomerNodeList.getLength(); bulkCustNode++) {
                                     Node bulkCustomerNode = bulkCustomerNodeList.item(bulkCustNode);
                                     if (bulkCustomerNode.getNodeName().equals("BulkCustomerCode")) {
-                                        loadBulkCustomerData(document, institutionEntity, locationNode, locationEntity, bulkCustomerNode);
+                                        loadBulkCustomerData(institutionEntity, bulkCustomerNode);
                                     }
                                 }
                             }
@@ -306,8 +280,7 @@ public class AdminController {
         }
     }
 
-
-    private void loadCustomerData(Document document, InstitutionEntity institutionEntity, Node locationNode, LocationEntity locationEntity, Node customerNode) {
+    private void loadCustomerData(InstitutionEntity institutionEntity, Node customerNode) {
         if (customerNode.getNodeType() == Node.ELEMENT_NODE) {
             Element eElement = (Element) customerNode;
 
@@ -321,15 +294,15 @@ public class AdminController {
             customerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
             try {
                 customerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
-                fileuploadResponse.put("Customer Code Added Status", "Successed");
+                fileuploadResponse.put("Customer Code Added Status", RecapConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put("Customer Code Added Status", "Failed");
-                e.printStackTrace();
+                fileuploadResponse.put("Customer Code Added Status", RecapConstants.FAILED);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
         }
     }
 
-    private void loadBulkCustomerData(Document document, InstitutionEntity institutionEntity, Node locationNode, LocationEntity locationEntity, Node customerNode) {
+    private void loadBulkCustomerData(InstitutionEntity institutionEntity, Node customerNode) {
         if (customerNode.getNodeType() == Node.ELEMENT_NODE) {
             Element eElement = (Element) customerNode;
 
@@ -339,25 +312,10 @@ public class AdminController {
             bulkCustomerCodeEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
             try {
                 bulkCustomerCodeDetailsRepository.saveAndFlush(bulkCustomerCodeEntity);
-                fileuploadResponse.put(" Bulk Customer Code Added Status", "Successed");
+                fileuploadResponse.put(" Bulk Customer Code Added Status", RecapConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put(" Bulk Customer Code Added Status", "Failed");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void loadCrossPartnerData(Document document, InstitutionEntity institutionEntity, NodeList crosspartnerNodeList) {
-        for (int temp = 0; temp < crosspartnerNodeList.getLength(); temp++) {
-            DeliveryRestrictionEntity deliveryRestrictionEntity = new DeliveryRestrictionEntity();
-            Node crossPartnerNode = crosspartnerNodeList.item(temp);
-            if (crossPartnerNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element eElement = (Element) crossPartnerNode;
-                deliveryRestrictionEntity.setInstitutionEntity(institutionEntity);
-                deliveryRestrictionEntity.setDeliveryRestriction(eElement.getElementsByTagName("deliveryrestrictions").item(0).getTextContent());
-                //      deliveryRestrictionDetailsRepository.saveAndFlush(deliveryRestrictionEntity);
-                //        bulkCustomerCodeEntity.setCustomerCode(eElement.getElementsByTagName("Code").item(0).getTextContent());
-
+                fileuploadResponse.put(" Bulk Customer Code Added Status", RecapConstants.FAILED);
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
             }
         }
     }

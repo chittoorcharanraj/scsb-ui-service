@@ -9,9 +9,9 @@ public class RecapConstants {
     public static final String MATCHING_TYPE = "Matching";
     //SEARCH
     public static final String SEARCH = "Search";
-    public static final String redirectSearch = "redirect:search";
-    public static final String redirectHome = "redirect:home";
-    public static final String forwardIndex = "forward:/index.html";
+    public static final String REDIRECT_SEARCH = "redirect:search";
+    public static final String REDIRECT_HOME = "redirect:home";
+    public static final String FORWARD_INDEX = "forward:/index.html";
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or Bib table does not contains this record";
     //Collection
@@ -210,6 +210,12 @@ public class RecapConstants {
     public static final boolean TRUE = true;
     public static final boolean FALSE = false;
     public static final String IS_AUTHENTICATED = "isAuthenticated";
+
+    public static final String ON_BOARD_INSTITUTION_STATUS = "On-Board Institution Status";
+    public static final String ADMIN_TEXT = "Admin";
+    public static final String DESCRIPTION = "Description";
+    public static final String SUCCESSED = "Successed";
+    public static final String FAILED = "Failed";
 
     private RecapConstants() {
         //Do nothing

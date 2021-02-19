@@ -2,13 +2,20 @@ package org.recap.util;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 
+import org.recap.BaseTestCaseUT;
+import org.recap.RecapConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -16,16 +23,22 @@ import static org.junit.Assert.assertNull;
 /**
  * Created by hemalathas on 31/3/17.
  */
-public class HelperUtilUT extends BaseTestCase{
+public class HelperUtilUT extends BaseTestCaseUT {
 
-    @Autowired
+    @InjectMocks
+    HelperUtil mockedHelperUtil;
+
+    @Mock
     HttpServletRequest httpServletRequest;
 
     @Mock
     HttpServletRequest request;
 
     @Mock
-    HelperUtil mockedHelperUtil;
+    Authentication auth;
+
+    @Mock
+    Collection<GrantedAuthority> authorities;
 
     @Test
     public void testGetAttributeValueFromRequest(){
@@ -56,13 +69,11 @@ public class HelperUtilUT extends BaseTestCase{
         helperUtil.logoutFromShiro(attribute);
 
     }
-   /* @Test
+    @Test
     public void testIsAnonymousUser() throws Exception{
-        Authentication auth ;
-        auth.setAuthenticated(true);
-        HelperUtil helperUtil = new HelperUtil();
-        boolean result=helperUtil.isAnonymousUser(auth);
+        Mockito.when(auth.getName()).thenReturn(RecapConstants.ANONYMOUS_USER);
+        boolean result=mockedHelperUtil.isAnonymousUser(auth);
         assertNotNull(result);
     }
-*/
+
 }

@@ -412,22 +412,9 @@ public class MarcUtil {
         marcWriter.write(record);
         marcWriter.close();
         String content = new String(byteArrayOutputStream.toByteArray());
-        content = content.replaceAll("marcxml:", "");
+        content = content.replace("marcxml:", "");
         return content;
     }
-
-/*
-    private Record getRecordFromContent(byte[] content) {
-        MarcReader reader;
-        Record record = null;
-        InputStream inputStream = new ByteArrayInputStream(content);
-        reader = new MarcXmlReader(inputStream);
-        while (reader.hasNext()) {
-            record = reader.next();
-        }
-        return record;
-    }
-*/
 
     private void setVariableFields(List<VariableField> variableFields, Record bibRecord) {
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(variableFields)) {

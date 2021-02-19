@@ -22,11 +22,7 @@ import org.recap.util.SearchUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -87,7 +83,7 @@ public class CollectionController extends AbstractController {
         return requestItemDetailsRepository;
     }
 
-    @RequestMapping("/checkPermission")
+    @RequestMapping(value = "/checkPermission", method = RequestMethod.GET)
     public boolean collection(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL);
@@ -296,7 +292,6 @@ public class CollectionController extends AbstractController {
         collectionForm.setCustomerCode(bibliographicMarcForm.getCustomerCode());
         collectionForm.setDeaccessionType(bibliographicMarcForm.getDeaccessionType());
         collectionForm.setDeaccessionNotes(bibliographicMarcForm.getDeaccessionNotes());
-        //collectionForm.setDeliveryLocations(bibliographicMarcForm.getDeliveryLocations());
         collectionForm.setDeliveryLocation(bibliographicMarcForm.getDeliveryLocation());
         collectionForm.setShared(bibliographicMarcForm.isShared());
         collectionForm.setSubmitted(bibliographicMarcForm.isSubmitted());
