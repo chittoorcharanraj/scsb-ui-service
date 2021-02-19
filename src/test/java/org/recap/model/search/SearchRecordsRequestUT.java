@@ -3,6 +3,7 @@ package org.recap.model.search;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
@@ -26,8 +27,8 @@ public class SearchRecordsRequestUT {
         assertEquals("Shared",searchRecordsRequest.getCollectionGroupDesignations().get(0));
         assertEquals("Monograph",searchRecordsRequest.getMaterialTypes().get(0));
         assertEquals(new Integer(1),searchRecordsRequest.getTotalPageCount());
-        assertEquals("1",searchRecordsRequest.getTotalBibRecordsCount());
-        assertEquals("1",searchRecordsRequest.getTotalItemRecordsCount());
+        assertEquals("0",searchRecordsRequest.getTotalBibRecordsCount());
+        assertEquals("0",searchRecordsRequest.getTotalItemRecordsCount());
         assertEquals(new Integer(1),searchRecordsRequest.getIndex());
 
     }
@@ -59,5 +60,9 @@ public class SearchRecordsRequestUT {
         searchRecordsRequest.setTotalItemRecordsCount("1");
         searchRecordsRequest.setSelectAll(false);
         searchRecordsRequest.setIndex(1);
+        searchRecordsRequest.setUseRestrictions(Arrays.asList("HD"));
+        searchRecordsRequest.setShowTotalCount(Boolean.TRUE);
+        searchRecordsRequest.resetPageNumber();
+        searchRecordsRequest.reset();
     }
 }

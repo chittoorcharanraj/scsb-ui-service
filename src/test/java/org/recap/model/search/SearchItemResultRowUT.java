@@ -19,6 +19,7 @@ public class SearchItemResultRowUT {
         SearchItemResultRow searchItemResultRow = new SearchItemResultRow();
         setSearchItemResultRow(searchItemResultRow);
         assertNotNull(searchItemResultRow);
+        assertEquals("1",searchItemResultRow.getItemId().toString());
         assertEquals("Available",searchItemResultRow.getAvailability());
         assertEquals("BC123",searchItemResultRow.getBarcode());
         assertEquals("CL425",searchItemResultRow.getCallNumber());
@@ -29,6 +30,7 @@ public class SearchItemResultRowUT {
     }
 
     private void setSearchItemResultRow(SearchItemResultRow searchItemResultRow){
+        searchItemResultRow.setItemId(1);
         searchItemResultRow.setAvailability("Available");
         searchItemResultRow.setBarcode("BC123");
         searchItemResultRow.setCallNumber("CL425");
@@ -51,6 +53,11 @@ public class SearchItemResultRowUT {
         searchItemResultRows.add(searchItemResultRow3);
         searchItemResultRows.add(searchItemResultRow4);
         searchItemResultRows.add(searchItemResultRow5);
+        searchItemResultRow1.equals(searchItemResultRow2);
+        searchItemResultRow1.equals(searchItemResultRow1);
+        searchItemResultRow1.equals(null);
+        searchItemResultRow1.hashCode();
+        searchItemResultRow1.compareTo(null);
 
         Collections.sort(searchItemResultRows);
         assertEquals("v. 100", searchItemResultRows.get(0).getChronologyAndEnum());
