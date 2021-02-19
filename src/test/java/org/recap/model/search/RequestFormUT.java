@@ -2,17 +2,18 @@ package org.recap.model.search;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.CustomerCodeEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by hemalathas on 29/3/17.
  */
-public class RequestFormUT extends BaseTestCase{
+public class RequestFormUT extends BaseTestCaseUT {
 
     @Test
     public void testRequestForm(){
@@ -46,9 +47,14 @@ public class RequestFormUT extends BaseTestCase{
         requestForm.setArticleAuthor("john");
         requestForm.setArticleTitle("test");
         requestForm.setDeliveryLocationInRequest("PB");
+        requestForm.setRequestStatuses(Arrays.asList("Complete"));
+        requestForm.setShowRequestErrorMsg(Boolean.TRUE);
+        requestForm.setItemBarcodeHidden("234522");
+        requestForm.setSearchInstitutionHdn("1");
         requestForm.setDeliveryLocations(new ArrayList<CustomerCodeEntity>());
         requestForm.setSearchResultRows(new ArrayList<>());
         requestForm.setShowResults(true);
+        requestForm.resetPageNumber();
 
         assertNotNull(requestForm.getRequestId());
         assertNotNull(requestForm.getPatronBarcode());
@@ -83,6 +89,11 @@ public class RequestFormUT extends BaseTestCase{
         assertNotNull(requestForm.getDeliveryLocations());
         assertNotNull(requestForm.getSearchResultRows());
         assertNotNull(requestForm.getRequestStatuses());
+        assertFalse(requestForm.getDisableSearchInstitution());
+        assertNull(requestForm.getRequestingInstituionHidden());
+        assertTrue(requestForm.isShowRequestErrorMsg());
+        assertFalse(requestForm.isDisableRequestingInstitution());
+        assertNull(requestForm.getOnChange());
     }
 
 

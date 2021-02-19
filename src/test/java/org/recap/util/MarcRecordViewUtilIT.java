@@ -2,17 +2,17 @@ package org.recap.util;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.recap.BaseTestCaseUT;
+import org.recap.BaseTestCase;
 import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.model.search.BibliographicMarcForm;
+import org.recap.model.usermanagement.UserDetailsForm;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,35 +20,49 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by rajeshbabuk on 17/10/16.
- */
-public class MarcRecordViewUtilUT extends BaseTestCaseUT {
+public class MarcRecordViewUtilIT extends BaseTestCase {
 
-    @InjectMocks
-    MarcRecordViewUtil mockMarcRecordViewUtil;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    @Autowired
+    MarcRecordViewUtil marcRecordViewUtil;
 
     @Test
-    public void getDeliveryLocationsList() {
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(getCustomerCodeEntity());
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
-        mockMarcRecordViewUtil.getDeliveryLocationsList("PA");
+    public void buildBibliographicMarcForm() throws Exception {
+        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
+        BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
+        entityManager.refresh(savedBibliographicEntity);
+        assertNotNull(savedBibliographicEntity);
+        assertNotNull(savedBibliographicEntity.getHoldingsEntities());
+        assertNotNull(savedBibliographicEntity.getItemEntities());
+
+        Integer bibId = savedBibliographicEntity.getId();
+        Integer itemId = savedBibliographicEntity.getItemEntities().get(0).getId();
+
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
+        userDetailsForm.setSuperAdmin(false);
+        userDetailsForm.setLoginInstitutionId(2);
+        userDetailsForm.setRecapUser(false);
+
+        BibliographicMarcForm bibliographicMarcForm = marcRecordViewUtil.buildBibliographicMarcForm(bibId, itemId, userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+        assertNotNull(bibliographicMarcForm.getBibId());
+        assertNotNull(bibliographicMarcForm.getItemId());
+        assertEquals(bibId, bibliographicMarcForm.getBibId());
+        assertEquals(itemId, bibliographicMarcForm.getItemId());
+        assertEquals("al-Ḥuṭayʼah : fī sīratihi wa-nafsīyatihi wa-shiʻrihi / bi-qalam Īlīyā Ḥāwī.", bibliographicMarcForm.getTitle());
+        assertEquals("Ḥāwī, Īlīyā Salīm.   ", bibliographicMarcForm.getAuthor());
+        assertEquals("Dār al-Thaqāfah,", bibliographicMarcForm.getPublisher());
+        assertEquals("1970.", bibliographicMarcForm.getPublishedDate());
+        assertEquals("PUL", bibliographicMarcForm.getOwningInstitution());
+        assertEquals("010203", bibliographicMarcForm.getBarcode());
+
     }
 
-    private CustomerCodeEntity getCustomerCodeEntity() {
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PA");
-        customerCodeEntity.setDescription("test");
-        customerCodeEntity.setOwningInstitutionId(1);
-        customerCodeEntity.setDeliveryRestrictions("PA");
-        customerCodeEntity.setPwdDeliveryRestrictions("test");
-        return customerCodeEntity;
-    }
 
     public BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {
         Random random = new Random();
@@ -112,4 +126,5 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         URL resource = getClass().getResource("HoldingsContent.xml");
         return new File(resource.toURI());
     }
+
 }

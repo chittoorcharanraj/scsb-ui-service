@@ -1,30 +1,28 @@
 package org.recap.util;
 
 
+import info.freelibrary.marc4j.impl.LeaderImpl;
+import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.HoldingsDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
  * Created by premkb on 1/8/16.
  */
-public class BibJSONUtilUT extends BaseTestCase{
+public class BibJSONUtilUT extends BaseTestCaseUT {
 
-    @Autowired
-    BibliographicDetailsRepository bibliographicDetailsRepository;
-
-    @Autowired
-    HoldingsDetailsRepository holdingsDetailsRepository;
 
     private String holdingContent = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n" +
             "            <record>\n" +
@@ -218,6 +216,14 @@ public class BibJSONUtilUT extends BaseTestCase{
         assertNotNull(titleSort);
         assertEquals(titleSort,"Baḥrayn : mushkilāt al-taghyīr al-siyāsī wa-al-ijtimāʻī / Muḥammad al-Rumayḥī.");
     }
+    @Test
+    public void testTitleSortWithoutTitle() throws Exception {
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        Record marcRecord = new RecordImpl();
+        String titleSort = bibJSONUtil.getTitleSort(marcRecord, bibJSONUtil.getTitleDisplay(marcRecord));
+        assertNotNull(titleSort);
+        assertEquals(titleSort,"");
+    }
 
     @Test
     public void testStripStart() throws Exception {
@@ -226,5 +232,29 @@ public class BibJSONUtilUT extends BaseTestCase{
         assertEquals("23450", number);
     }
 
+    @Test
+    public void getPublisherValue(){
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
+        Record marcRecord = records.get(0);
+        String result = bibJSONUtil.getPublisherValue(marcRecord);
+        assertNotNull(result);
+    }
+    @Test
+    public void getPublisherValueNull(){
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        Record marcRecord = new RecordImpl();
+        String result = bibJSONUtil.getPublisherValue(marcRecord);
+        assertNull(result);
+    }
+
+    @Test
+    public void getLeader(){
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
+        Record marcRecord = records.get(0);
+        String result = bibJSONUtil.getLeader(marcRecord);
+        assertNotNull(result);
+    }
 
 }

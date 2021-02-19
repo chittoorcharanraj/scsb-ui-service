@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
@@ -26,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Created by rajeshbabuk on 3/1/17.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class SearchUtilUT {
+public class SearchUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     private SearchUtil searchUtil;
@@ -37,7 +37,6 @@ public class SearchUtilUT {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(searchUtil, "scsbUrl", "http://localhost:9090");
         ApplicationContextProvider.getInstance().setApplicationContext(applicationContext);
     }
@@ -58,13 +57,12 @@ public class SearchUtilUT {
     }
 
     @Test
-    public void test_method_searchRecord_should_return_ModelAndView() throws Exception {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+    public void testMethodSearchRecord() throws Exception {
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         SearchRecordsResponse searchRecordsResponses = new SearchRecordsResponse();
         searchRecordsResponses.setSearchResultRows(buildSearchResultRow(5));
-//        ModelAndView modelAndView = searchUtil.searchRecord(searchRecordsRequest,model);
- //       Assert.assertNotNull(modelAndView);
+        SearchRecordsResponse response = searchUtil.searchRecord(searchRecordsRequest);
+        Assert.assertNotNull(response);
     }
 
     public List<SearchResultRow> buildSearchResultRow(int count) {
