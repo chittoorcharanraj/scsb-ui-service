@@ -14,13 +14,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.util.HashMap;
@@ -47,7 +48,10 @@ public class LoginControllerUT extends BaseControllerUT{
     HttpSession session;
 
     @Mock
-    javax.servlet.http.HttpServletRequest request;
+    HttpServletRequest request;
+
+    @Mock
+    HttpServletResponse response;
 
     @Mock
     private UserAuthUtil userAuthUtil;
@@ -150,8 +154,8 @@ public class LoginControllerUT extends BaseControllerUT{
         UserForm userForm = new UserForm();
         userForm.setInstitution("CUL");
         userForm.setUsername("john");
-        String response = loginController.login(request);
-        assertNotNull(response);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
     }
     @Test
     public void testLoginException(){
@@ -163,8 +167,8 @@ public class LoginControllerUT extends BaseControllerUT{
         UserForm userForm = new UserForm();
         userForm.setInstitution("PUL");
         userForm.setUsername("john");
-        String response = loginController.login(request);
-        assertNotNull(response);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
     }
 
     private void usersSessionAttributes() throws Exception {
