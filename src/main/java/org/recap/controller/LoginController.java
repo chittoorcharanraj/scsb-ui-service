@@ -19,7 +19,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -76,7 +78,7 @@ public class LoginController extends AbstractController {
      * @return the view name
      */
     @GetMapping(value = "/login-scsb")
-    public String login(HttpServletRequest request) {
+    public String login(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = processSessionFixation(request);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -91,6 +93,9 @@ public class LoginController extends AbstractController {
                 Map<String, Object> additionalInformation = accessToken.getAdditionalInformation();
                 if (null != additionalInformation) {
                     username = (String) additionalInformation.get("sub");
+                    Cookie cookieUserName = new Cookie(RecapConstants.USER_NAME, username);
+                    HelperUtil.setCookieProperties(cookieUserName);
+                    response.addCookie(cookieUserName);
                 }
             }
             logger.info("passing in login-scsb");
