@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.*;
 import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-public class RecapControllerUT extends BaseTestCase {
+public class RecapControllerUT extends BaseTestCaseUT {
     @Mock
     RecapController recapController;
     @Test

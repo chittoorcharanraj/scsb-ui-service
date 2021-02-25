@@ -2,47 +2,44 @@ package org.recap.filter;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.recap.BaseTestCaseUT;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-public class XSSRequestWrapperUT extends BaseTestCase {
-
-    @Mock
-    XSSRequestWrapper xssRequestWrapper;
+public class XSSRequestWrapperUT extends BaseTestCaseUT {
 
     @Mock
     HttpSession httpSession;
+
+    @Mock
+    HttpServletRequest servletRequest;
 
     @Test
     public void testGetParameterValues() throws Exception{
         String[] values;
         String parameter = "+-0123456789#";
-        Mockito.doCallRealMethod().when(xssRequestWrapper).getParameterValues(parameter);
-        /*values = xssRequestWrapper.getParameterValues(parameter);
-        assertNotNull(values);*/
+        XSSRequestWrapper xssRequestWrapper=new XSSRequestWrapper(servletRequest);
+        values = xssRequestWrapper.getParameterValues(parameter);
+        assertNull(values);
     }
 
     @Test
     public void testGetHeaders() throws Exception{
         String name = "test";
-        Mockito.doCallRealMethod().when(xssRequestWrapper).getHeader(name);
-        /*String value = xssRequestWrapper.getHeader(name);
-        assertNotNull(value);*/
+        XSSRequestWrapper xssRequestWrapper=new XSSRequestWrapper(servletRequest);
+        String value = xssRequestWrapper.getHeader(name);
+        assertNull(value);
     }
 
     @Test
     public void testGetParameter() throws Exception{
         String parameter = "test";
-        Mockito.doCallRealMethod().when(xssRequestWrapper).getParameter(parameter);
-        /*String value = xssRequestWrapper.getParameter(parameter);
-        assertNotNull(value);*/
+        XSSRequestWrapper xssRequestWrapper=new XSSRequestWrapper(servletRequest);
+        String value = xssRequestWrapper.getParameter(parameter);
+        assertNull(value);
     }
 
 }
