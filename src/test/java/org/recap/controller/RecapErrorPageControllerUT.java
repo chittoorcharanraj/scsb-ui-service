@@ -1,18 +1,15 @@
 package org.recap.controller;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by hemalathas on 22/2/17.
- */
-public class RecapErrorPageControllerUT extends BaseTestCase{
+public class RecapErrorPageControllerUT extends BaseTestCaseUT {
 
-    @Autowired
+    @InjectMocks
     RecapErrorPageController recapErrorPageController;
 
     @Test
@@ -26,6 +23,5 @@ public class RecapErrorPageControllerUT extends BaseTestCase{
     public void getErrorPath(){
         recapErrorPageController.getErrorPath();
     }
-
 
 }

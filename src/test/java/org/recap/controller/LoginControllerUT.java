@@ -1,90 +1,87 @@
 package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
 import org.recap.model.usermanagement.UserForm;
+import org.recap.security.UserInstitutionCache;
+import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by hemalathas on 1/2/17.
- */
-public class LoginControllerUT extends BaseControllerUT{
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SecurityContextHolder.class)
+public class LoginControllerUT extends BaseTestCaseUT{
 
-    @Autowired
+    @InjectMocks
     LoginController loginController;
-    @Mock
-    LoginController loginControllerMocked;
 
     @Mock
-    HttpSession session;
+    UserAuthUtil userAuthUtil;
+
+    @Mock
+    UserInstitutionCache userInstitutionCache;
+
+    @Mock
+    PropertyUtil propertyUtil;
+
+    @Mock
+    TokenStore tokenStore;
+
+    @Mock
+    OAuth2AccessToken oAuth2AccessToken;
+
+    @Mock
+    OAuth2AuthenticationDetails oAuth2AuthenticationDetails;
+
+    @Mock
+    OAuth2Request oAuth2Request;
 
     @Mock
     HttpServletRequest request;
 
     @Mock
+    HttpSession session;
+
+    @Mock
     HttpServletResponse response;
-
-    @Mock
-    private UserAuthUtil userAuthUtil;
-
-    @Mock
-    Model model;
-
-    @Mock
-    BindingResult error;
-
-    @Mock
-    private Authentication auth;
-
-    @Mock
-    private UsernamePasswordToken token;
-
 
     @Mock
     SecurityContext securityContext;
 
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Value("${scsb.auth.url}")
-    private String scsbShiro;
-
-    @Mock
-    private HttpEntity requestEntity;
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(loginController).build();
-    }
+    @Test
+    public void setup(){}
 
     @Test
     public void loginScreenTest(){
@@ -98,112 +95,170 @@ public class LoginControllerUT extends BaseControllerUT{
         assertNotNull(response);
         assertEquals(response,"forward:/index.html");
     }
-
     @Test
     public void logOutTest() throws Exception {
-        when(request.getSession(false)).thenReturn(session);
-        usersSessionAttributes();
-        String response = loginController.logoutUser(request);
-        assertNotNull(response);
-    }
-
-    @Test
-    public void createSessionTest() throws Exception{
-        UserForm userForm = getUserForm();
-        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        when(userAuthUtil.doAuthentication(token)).thenCallRealMethod();
-        when(restTemplate.postForObject(scsbShiro + RecapConstants.SCSB_SHIRO_AUTHENTICATE_URL, requestEntity, HashMap.class)).thenThrow(new RestClientException("Exception occured"));
-        //String response = loginController.createSession(userForm,request,model,error);
-        //assertNotNull(response);
-        //assertEquals(response,"login");
-    }
-    @Test
-    public void createSessionTestEmptyUserForm() throws Exception{
-        UserForm userForm = new UserForm();
-//        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        //when(userAuthUtil.doAuthentication(token)).thenCallRealMethod();
-       // when(restTemplate.postForObject(scsbShiro + RecapConstants.SCSB_SHIRO_AUTHENTICATE_URL, requestEntity, HashMap.class)).thenThrow(new RestClientException("Exception occured"));
-        //String response = loginController.createSession(userForm,request,model,error);
-        //assertNotNull(response);
-        //assertEquals(response,"login");
-    }
-
-    @Test
-    public void createSessionAuthenticationException() throws Exception{
-        UserForm userForm = getUserForm();
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("isAuthenticated",true);
-        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        when(loginControllerMocked.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.when(loginControllerMocked.getUserAuthUtil().doAuthentication(token)).thenThrow(new Exception());
-        //when(restTemplate.postForObject(scsbShiro + RecapConstants.SCSB_SHIRO_AUTHENTICATE_URL, requestEntity, HashMap.class)).thenThrow(new RestClientException("Exception occured"));
-        //Mockito.doCallRealMethod().when(loginControllerMocked).createSession(userForm,request,model,error);
-        //String response = loginControllerMocked.createSession(request);
-       //assertNotNull(response);
-       //assertEquals(response,"login");
-    }
-    @Test
-    public void testLogin(){
-        when(request.getSession()).thenReturn(session);
-        when(request.getSession(false)).thenReturn(session);
-        when(request.getSession(true)).thenReturn(session);
-        Mockito.when(request.getSession().getId()).thenReturn("66");
-//        when(securityContextHolder.getContext()).thenReturn(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        when(auth.getName()).thenReturn("john");
-        UserForm userForm = new UserForm();
-        userForm.setInstitution("CUL");
-        userForm.setUsername("john");
-        String responseStr = loginController.login(request,response);
-        assertNotNull(responseStr);
-    }
-    @Test
-    public void testLoginException(){
-        when(request.getSession()).thenReturn(session);
-        when(request.getSession(false)).thenReturn(session);
-        when(request.getSession(true)).thenReturn(session);
-        Mockito.when(request.getSession().getId()).thenReturn("23");
-        Mockito.when(auth.getName()).thenReturn("john");
-        UserForm userForm = new UserForm();
-        userForm.setInstitution("PUL");
-        userForm.setUsername("john");
-        String responseStr = loginController.login(request,response);
-        assertNotNull(responseStr);
-    }
-
-    private void usersSessionAttributes() throws Exception {
-        when(request.getSession()).thenReturn(session);
         UserForm userForm = new UserForm();
         userForm.setUsername("SuperAdmin");
         userForm.setInstitution("1");
         userForm.setPassword("12345");
         UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        userAuthUtil.doAuthentication(token);
-        when(session.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(token);
-        when(session.getAttribute(RecapConstants.USER_ID)).thenReturn(3);
-        when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(false);
-        when(session.getAttribute(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(false);
-        when(session.getAttribute(RecapConstants.REQUEST_ITEM_PRIVILEGE)).thenReturn(false);
-        when(session.getAttribute(RecapConstants.USER_INSTITUTION)).thenReturn(1);
-        when(session.getAttribute(RecapConstants.REQUEST_ALL_PRIVILEGE)).thenReturn(false);
-        userAuthUtil.getUserDetails(session,RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when(session.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(token);
+        Mockito.when( userAuthUtil.authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN))).thenReturn(Boolean.TRUE);
+        String response = loginController.logoutUser(request);
+        assertNotNull(response);
     }
+    @Test
+    public void testLogin(){
 
-    private UserForm getUserForm(){
-        Set<String> permissions = new HashSet<>();
-        permissions.add("admin");
-        UserForm userForm = new UserForm();
-        userForm.setUserId(1);
-        userForm.setUsername("john");
-        userForm.setPassword("john");
-        userForm.setRememberMe(true);
-        userForm.setWrongCredentials("test");
-        userForm.setPasswordMatcher(true);
-        userForm.setInstitution("PUL");
-        userForm.setErrorMessage("test");
-        userForm.setPermissions(permissions);
-        userForm.setPasswordMatcher(true);
-        return userForm;
+        Authentication auth = getAuthentication();
+        Map<String, Object> additionalInformation = new HashMap<>();
+        additionalInformation.put("sub","testName");
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when(request.getSession(true)).thenReturn(session);
+        Mockito.when(session.getId()).thenReturn("66");
+        Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
+        Mockito.when(request.getParameter("institution")).thenReturn("PUL");
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
+        Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(RecapConstants.AUTH_TYPE_OAUTH);
+        Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
+        Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
     }
+    @Test
+    public void testLoginWithDiffAuthType() throws Exception {
 
+        Authentication auth = getAuthentication();
+        Map<String, Object> additionalInformation = new HashMap<>();
+        additionalInformation.put("sub","testName");
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(RecapConstants.IS_USER_AUTHENTICATED,Boolean.FALSE);
+        resultMap.put(RecapConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when(request.getSession(true)).thenReturn(session);
+        Mockito.when(session.getId()).thenReturn("66");
+        Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
+        Mockito.when(request.getParameter("institution")).thenReturn("PUL");
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
+        Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(RecapConstants.AUTH);
+        Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
+        Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
+        Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
+    }
+    @Test
+    public void testLoginWithDiffAuthTypeAndWithSuperAdmin() throws Exception {
+
+        Authentication auth = getAuthentication();
+        Map<String, Object> additionalInformation = new HashMap<>();
+        additionalInformation.put("sub","testName");
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(RecapConstants.IS_USER_AUTHENTICATED,Boolean.TRUE);
+        resultMap.put(RecapConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when(request.getSession(true)).thenReturn(session);
+        Mockito.when(session.getId()).thenReturn("66");
+        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(Boolean.TRUE);
+        Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
+        Mockito.when(request.getParameter("institution")).thenReturn("PUL");
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
+        Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(RecapConstants.AUTH);
+        Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
+        Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
+        Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
+    }
+    @Test
+    public void testLoginWithDiffAuthTypeAndWithoutSuperAdmin() throws Exception {
+
+        Authentication auth = getAuthentication();
+        Map<String, Object> additionalInformation = new HashMap<>();
+        additionalInformation.put("sub","testName");
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put(RecapConstants.IS_USER_AUTHENTICATED,Boolean.TRUE);
+        resultMap.put(RecapConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when(request.getSession(true)).thenReturn(session);
+        Mockito.when(session.getId()).thenReturn("66");
+        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(Boolean.FALSE);
+        Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
+        Mockito.when(request.getParameter("institution")).thenReturn("PUL");
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
+        Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(RecapConstants.AUTH);
+        Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
+        Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
+        Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
+        String responseStr = loginController.login(request,response);
+        assertNotNull(responseStr);
+    }
+    private Authentication getAuthentication(){
+
+        Authentication auth = new Authentication() {
+
+
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                return null;
+            }
+
+            @Override
+            public Object getCredentials() {
+                return null;
+            }
+
+            @Override
+            public Object getDetails() {
+                return oAuth2AuthenticationDetails;
+            }
+
+            @Override
+            public Object getPrincipal() {
+                return null;
+            }
+
+            @Override
+            public boolean isAuthenticated() {
+                return false;
+            }
+
+            @Override
+            public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
+            }
+
+            @Override
+            public String getName() {
+                return "test";
+            }
+        };
+        OAuth2Authentication oauth = new OAuth2Authentication(oAuth2Request,auth);
+        return oauth;
+    }
 }
