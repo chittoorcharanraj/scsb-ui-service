@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -8,6 +9,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
@@ -19,6 +21,9 @@ import org.recap.util.UserAuthUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -201,6 +206,29 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     public void getInstitutionForIncompleteReport(){
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin()).thenReturn(Arrays.asList(getInstitutionEntity()));
         reportsController.getInstitutionForIncompleteReport();
+    }
+
+    @Test
+    public void incompleteRecordsReport() throws Exception {
+        ReportsForm reportsForm = new ReportsForm();
+        Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
+        ReportsForm form = reportsController.incompleteRecordsReport(reportsForm);
+        assertNotNull(form);
+    }
+    @Test
+    public void exportIncompleteRecords() throws Exception{
+        ReportsForm reportsForm = new ReportsForm();
+        reportsForm.setIncompleteRequestingInstitution("PUL");
+        File csvFile = getBibContentFile();
+        Mockito.when(reportsUtil.exportIncompleteRecords(any(), any())).thenReturn(csvFile);
+        DownloadReports fileContent= reportsController.exportIncompleteRecords(reportsForm);
+        assertNotNull(fileContent);
+    }
+
+    private File getBibContentFile() throws URISyntaxException {
+        URL resource = null;
+        resource = getClass().getResource("test.csv");
+        return new File(resource.toURI());
     }
     private InstitutionEntity getInstitutionEntity() {
         InstitutionEntity institutionEntity = new InstitutionEntity();
