@@ -66,13 +66,14 @@ public class DataExportsRecentInfoController {
                                              @RequestParam(value = "date", required = false) String date,
                                              @RequestParam(value = "collectionGroupIds", required = false) String collectionGroupIds,
                                              @RequestParam(value = "transmissionType", required = false) String transmissionType,
-                                             @RequestParam(value = "emailToAddress", required = false) String emailToAddress) {
+                                             @RequestParam(value = "emailToAddress", required = false) String emailToAddress,
+                                             @RequestParam(value = "userName", required = false) String userName) {
         DataExportResponse dataExportResponse = new DataExportResponse();
         Map<String, String> inputMap = new HashMap<>();
-        setInputMapValues(inputMap, institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes);
+        setInputMapValues(inputMap, institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes,userName);
         try {
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(HelperUtil.getSwaggerHeaders());
-            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + RecapConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}", HttpMethod.GET, httpEntity, String.class, inputMap);
+            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + RecapConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}&userName={userName}", HttpMethod.GET, httpEntity, String.class, inputMap);
             if (responseEntity.getBody() != null && responseEntity.getStatusCode().is2xxSuccessful()) {
                 dataExportResponse.setMessage(responseEntity.getBody());
             } else {
@@ -86,7 +87,7 @@ public class DataExportsRecentInfoController {
     }
 
     private void setInputMapValues(Map<String, String> inputMap, String institutionCodes, String requestingInstitutionCode, String fetchType,
-                                   String outputFormat, String date, String collectionGroupIds, String transmissionType, String emailToAddress, String imsDepositoryCodes) {
+                                   String outputFormat, String date, String collectionGroupIds, String transmissionType, String emailToAddress, String imsDepositoryCodes, String userName) {
         inputMap.put("institutionCodes", institutionCodes);
         inputMap.put("requestingInstitutionCode", requestingInstitutionCode);
         inputMap.put("fetchType", fetchType);
@@ -96,6 +97,7 @@ public class DataExportsRecentInfoController {
         inputMap.put("transmissionType", transmissionType);
         inputMap.put("emailToAddress", emailToAddress);
         inputMap.put("imsDepositoryCodes", imsDepositoryCodes);
+        inputMap.put("userName", userName);
     }
 
     /**
