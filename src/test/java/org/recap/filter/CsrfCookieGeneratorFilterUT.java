@@ -1,9 +1,10 @@
 package org.recap.filter;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.springframework.security.web.csrf.CsrfToken;
 
 import javax.servlet.FilterChain;
@@ -12,11 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.junit.Assert.assertTrue;
+
 
 /**
  * Created by hemalathas on 30/3/17.
  */
-public class CsrfCookieGeneratorFilterUT extends BaseTestCase{
+public class CsrfCookieGeneratorFilterUT extends BaseTestCaseUT {
 
     @Mock
     HttpServletRequest request;
@@ -27,7 +30,7 @@ public class CsrfCookieGeneratorFilterUT extends BaseTestCase{
     @Mock
     FilterChain filterChain;
 
-    @Mock
+    @InjectMocks
     CsrfCookieGeneratorFilter csrfCookieGeneratorFilter;
 
     @Mock
@@ -36,8 +39,8 @@ public class CsrfCookieGeneratorFilterUT extends BaseTestCase{
     @Test
     public void testDoFilterInternal() throws ServletException, IOException {
         Mockito.when((CsrfToken) request.getAttribute("_csrf")).thenReturn(csrfToken);
-        Mockito.doCallRealMethod().when(csrfCookieGeneratorFilter).doFilterInternal(request,httpServletResponse,filterChain);
         csrfCookieGeneratorFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        assertTrue(true);
     }
 
 
