@@ -84,7 +84,6 @@ public class LoginController extends AbstractController {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = auth.getName();
-            logger.info("Username before: {}", username);
             String institutionFromRequest = request.getParameter("institution");
             String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest, "auth.type");
             if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
@@ -99,9 +98,6 @@ public class LoginController extends AbstractController {
                     HelperUtil.setCookieProperties(cookieUserName);
                     response.addCookie(cookieUserName);
                 }
-            } else {
-                username = ((CasAuthenticationToken) auth).getUserDetails().getUsername();
-                logger.info("Username after: {}", username);
             }
             logger.info("passing in login-scsb");
             UsernamePasswordToken token = new UsernamePasswordToken(username + RecapConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
