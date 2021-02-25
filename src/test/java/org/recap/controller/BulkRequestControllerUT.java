@@ -1,30 +1,20 @@
 package org.recap.controller;
 
+import org.recap.model.jpa.BulkRequestItemEntity;
+import org.springframework.ui.Model;
+import net.minidev.json.JSONObject;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
+import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.request.ItemRequestInformation;
-import org.recap.model.search.*;
-import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.model.search.BulkRequestForm;
+import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.service.BulkRequestService;
-import org.recap.service.RestHeaderService;
-import org.recap.util.SearchUtil;
 import org.recap.util.UserAuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.support.BindingAwareModelMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,85 +22,180 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class BulkRequestControllerUT extends BaseTestCase {
+public class BulkRequestControllerUT extends BaseTestCaseUT {
 
-    @Mock
-    Model model;
-
-    @Autowired
-    RestHeaderService restHeaderService;
+    @InjectMocks
+    BulkRequestController bulkRequestController;
 
     @Mock
     HttpServletRequest request;
 
     @Mock
+    HttpSession session;
+
+    @Mock
+    UserAuthUtil userAuthUtil;
+
+    @Mock
+    BulkRequestService bulkRequestService;
+
+    @Mock
     HttpServletResponse response;
 
     @Mock
-    HttpSession session;
-
-    @Value("${scsb.gateway.url}")
-    private String scsbUrl;
-
-    @Autowired
-    BulkRequestController bulkRequestController;
-
-    @Mock
-    BulkRequestController mockedBulkRequest;
+    Model model;
 
     @Mock
     MultipartFile file;
+
+    @Mock
+    InstitutionDetailsRepository institutionDetailsRepository;
 
     @Test
     public void testBulkRequest() throws Exception{
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
-        when(session.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(usernamePasswordToken);
+        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.TRUE);
         boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
     }
+    @Test
+    public void testBulkRequestFailure() throws Exception{
+        when(request.getSession(false)).thenReturn(session);
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
+        usernamePasswordToken.setUsername("token");
+        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.FALSE);
+        boolean response = bulkRequestController.bulkRequest(request);
+        assertNotNull(response);
+    }
+    @Test
+    public void loadCreateRequest(){
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        BulkRequestForm bulkRequestFormResponse = bulkRequestController.loadCreateRequest(bulkRequestForm);
+        assertNotNull(bulkRequestFormResponse);
+    }
+    @Test
+    public void createRequest() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenReturn(bulkRequestForm);
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        assertNotNull(jsonObject);
+    }
+    @Test
+    public void createRequestWithoutErrorMessage() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        bulkRequestForm.setErrorMessage(null);
+        Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenReturn(bulkRequestForm);
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        assertNotNull(jsonObject);
+    }
+    @Test
+    public void createRequestException() throws Exception{
+        Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenThrow(new NullPointerException());
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        assertNotNull(jsonObject);
+    }
+    @Test
+    public void searchRequest(){
+        BulkSearchResultRow bulkSearchResultRow = getBulkSearchResultRow();
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        bulkRequestForm.setBulkSearchResultRows(Arrays.asList(bulkSearchResultRow));
+        Mockito.when(bulkRequestService.processSearchRequest(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchRequest(bulkRequestForm);
+        assertNotNull(form);
+    }
 
-    /*@Test
+    @Test
+    public void onPageSizeChange() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.processOnPageSizeChange(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.onPageSizeChange(bulkRequestForm);
+        assertNotNull(form);
+    }
+    @Test
     public void searchFirst() throws Exception{
-        BulkRequestForm bulkRequestForm = new BulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.searchFirst(bulkRequestForm,model);
-        assertNotNull(modelAndView);
-    }*/
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.getPaginatedSearchResults(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchFirst(bulkRequestForm);
+        assertNotNull(form);
+    }
+    @Test
+    public void searchPrevious() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.getPaginatedSearchResults(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchPrevious(bulkRequestForm);
+        assertNotNull(form);
+    }
     @Test
     public void searchNext() throws Exception{
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        BulkRequestForm bulkRequestFormResponse = bulkRequestController.searchNext(bulkRequestForm);
-        assertNotNull(bulkRequestFormResponse);
+        Mockito.when(bulkRequestService.getPaginatedSearchResults(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchNext(bulkRequestForm);
+        assertNotNull(form);
+    }
+    @Test
+    public void searchLast() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.getPaginatedSearchResults(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchLast(bulkRequestForm);
+        assertNotNull(form);
+    }
+    @Test
+    public void populateDeliveryLocations() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.processDeliveryLocations(any())).thenReturn(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.populateDeliveryLocations(bulkRequestForm);
+        assertNotNull(form);
+    }
+    @Test
+    public void searchRequestByPatronBarcode() throws Exception{
+        String patronBarcodeInRequest = "2453343";
+        ModelAndView modelAndView = bulkRequestController.searchRequestByPatronBarcode(patronBarcodeInRequest,model);
+        assertNotNull(modelAndView);
+    }
+    @Test
+    public void loadCreateRequestForSamePatron(){
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        Mockito.when(bulkRequestService.processDeliveryLocations(any())).thenReturn(bulkRequestForm);
+        ModelAndView modelAndView = bulkRequestController.loadCreateRequestForSamePatron(bulkRequestForm,model);
+        assertNotNull(modelAndView);
+    }
+    @Test
+    public void downloadReports() throws Exception{
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        BulkRequestItemEntity bulkRequestItemEntity = getBulkRequestItemEntity();
+        String bulkRequestId = bulkRequestForm.getRequestId().toString();
+        Mockito.when(bulkRequestService.saveUpadatedRequestStatus(any())).thenReturn(bulkRequestItemEntity);
+        bulkRequestController.downloadReports(bulkRequestId);
+
     }
 
-   /* @Test
-    public void searchPrevious() throws Exception{
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.searchPrevious(bulkRequestForm,model);
-        assertNotNull(modelAndView);
-    }*/
-    @Test
-    public void searchLast() throws Exception {
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        BulkRequestForm bulkRequestFormResponse = bulkRequestController.searchLast(bulkRequestForm);
-        assertNotNull(bulkRequestFormResponse);
+    private BulkRequestItemEntity getBulkRequestItemEntity() {
+        BulkRequestItemEntity bulkRequestItemEntity = new BulkRequestItemEntity();
+        bulkRequestItemEntity.setBulkRequestFileName("test");
+        bulkRequestItemEntity.setBulkRequestName("test");
+        bulkRequestItemEntity.setBulkRequestStatus("SUCCESS");
+        bulkRequestItemEntity.setCreatedBy("test");
+        bulkRequestItemEntity.setCreatedDate(new Date());
+        bulkRequestItemEntity.setEmailId("test@gmail.com");
+        bulkRequestItemEntity.setLastUpdatedDate(new Date());
+        bulkRequestItemEntity.setNotes("test");
+        bulkRequestItemEntity.setPatronId("123");
+        bulkRequestItemEntity.setRequestingInstitutionId(1);
+        bulkRequestItemEntity.setStopCode("test");
+        bulkRequestItemEntity.setBulkRequestFileData(new byte[1]);
+        return bulkRequestItemEntity;
     }
-   /* @Test
-    public void onPageSizeChange() throws Exception{
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.onPageSizeChange(bulkRequestForm,model);
-        assertNotNull(modelAndView);
-    }*/
-    @Test
-    public void searchRequest() throws Exception{
+
+    private BulkSearchResultRow getBulkSearchResultRow() {
         BulkSearchResultRow bulkSearchResultRow = new BulkSearchResultRow();
 
         bulkSearchResultRow.setBulkRequestId(1);
@@ -124,57 +209,9 @@ public class BulkRequestControllerUT extends BaseTestCase {
         bulkSearchResultRow.setPatronBarcode("123");
         bulkSearchResultRow.setRequestingInstitution("PUL");
         bulkSearchResultRow.setStatus("SUCCESS");
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        bulkRequestForm.setBulkSearchResultRows(Arrays.asList(bulkSearchResultRow));
-      //  ModelAndView modelAndView = bulkRequestController.searchRequest(bulkRequestForm,model);
-       // assertNotNull(modelAndView);
-    }
-    @Test
-    public void searchRequest1() throws Exception{
-
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-     //   ModelAndView modelAndView = bulkRequestController.searchRequest(bulkRequestForm,model);
-    //    assertNotNull(modelAndView);
-    }
-    @Test
-    public void createRequest() throws Exception{
-        when(request.getSession(false)).thenReturn(session);
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-     //   ModelAndView modelAndView = bulkRequestController.createRequest(bulkRequestForm,file,model,request);
-     //   assertNotNull(modelAndView);
-    }
-    @Test
-    public void loadCreateRequest(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        BulkRequestForm bulkRequestFormResponse = bulkRequestController.loadCreateRequest(bulkRequestForm);
-        assertNotNull(bulkRequestFormResponse);
+        return bulkSearchResultRow;
     }
 
-    @Test
-    public void searchRequestByPatronBarcode(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.searchRequestByPatronBarcode(bulkRequestForm.getPatronBarcodeInRequest(),model);
-        assertNotNull(modelAndView);
-    }
-    @Test
-    public void loadCreateRequestForSamePatron(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.loadCreateRequestForSamePatron(bulkRequestForm,model);
-        assertNotNull(modelAndView);
-    }
-    @Test
-    public void populateDeliveryLocations(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        BulkRequestForm bulkRequestFormResponse = bulkRequestController.populateDeliveryLocations(bulkRequestForm);
-        assertNotNull(bulkRequestFormResponse);
-    }
-    @Test
-    public void downloadReports() throws Exception{
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        String bulkRequestId = bulkRequestForm.getRequestId().toString();
-      //  bulkRequestController.downloadReports(bulkRequestId,response,model);
-
-    }
     private BulkRequestForm getBulkRequestForm(){
 
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
