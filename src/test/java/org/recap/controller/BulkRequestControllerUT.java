@@ -86,7 +86,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
     public void createRequest() throws Exception{
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
         Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenReturn(bulkRequestForm);
-        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com","Test Notes",request,response);
         assertNotNull(jsonObject);
     }
     @Test
@@ -94,13 +94,13 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
         bulkRequestForm.setErrorMessage(null);
         Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenReturn(bulkRequestForm);
-        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com","Test Notes",request,response);
         assertNotNull(jsonObject);
     }
     @Test
     public void createRequestException() throws Exception{
         Mockito.when(bulkRequestService.processCreateBulkRequest(any(), any())).thenThrow(new NullPointerException());
-        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com",request,response);
+        JSONObject jsonObject = bulkRequestController.createRequest(file,"PA","1","1436778","bulkRequest","testFile","test@gmail.com","Test Notes",request,response);
         assertNotNull(jsonObject);
     }
     @Test
