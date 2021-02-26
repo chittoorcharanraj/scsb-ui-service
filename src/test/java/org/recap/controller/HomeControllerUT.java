@@ -68,10 +68,11 @@ public class HomeControllerUT extends BaseTestCaseUT {
     }
     @Test
     public void loginException(){
-        Object obj = new Object();
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
+        usernamePasswordToken.setUsername("token");
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
-        Mockito.when(session.getAttribute(anyString())).thenReturn(obj);
+        Mockito.when(session.getAttribute(anyString())).thenReturn(usernamePasswordToken);
         homeController.login(request);
     }
     private InstitutionEntity getInstitutionEntity() {
