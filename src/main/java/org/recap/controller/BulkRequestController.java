@@ -78,7 +78,8 @@ public class BulkRequestController extends AbstractController {
             , @RequestParam("patronBarcodeId") String patronBarcodeId
             , @RequestParam("BulkRequestName") String BulkRequestName
             , @RequestParam("choosenFile") String choosenFile
-            , @RequestParam("patronEmailId") String patronEmailId, HttpServletRequest request, HttpServletResponse response) {
+            , @RequestParam("patronEmailId") String patronEmailId
+            , @RequestParam("notes") String notes, HttpServletRequest request, HttpServletResponse response) {
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
         bulkRequestForm.setFile(file);
         bulkRequestForm.setPatronEmailAddress(patronEmailId);
@@ -87,6 +88,7 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setBulkRequestName(BulkRequestName);
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
+        bulkRequestForm.setRequestNotes(notes);
         logger.info(RecapConstants.CREATE_BULKREQUEST_CALLED);
         HashMap<String, String> resStatus = new HashMap<>();
         try {
