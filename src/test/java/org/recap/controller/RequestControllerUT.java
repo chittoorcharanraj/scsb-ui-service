@@ -398,8 +398,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
 
     @Test
     public void refreshStatus(){
-        Mockito.when(requestService.getRefreshedStatus(request)).thenReturn(RecapCommonConstants.COMPLETE_STATUS);
-        String result = requestController.refreshStatus(request);
+        String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
+        Mockito.when(requestService.getRefreshedStatus(reqJson)).thenReturn(RecapCommonConstants.COMPLETE_STATUS);
+        String result = requestController.refreshStatus(reqJson);
         assertNotNull(result);
         assertEquals("Complete",result);
 

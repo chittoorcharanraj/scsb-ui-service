@@ -517,9 +517,8 @@ public class RequestController extends RecapController {
      * @param request the request
      * @return the string
      */
-    @ResponseBody
-    @GetMapping(value = "/request/refreshStatus")
-    public String refreshStatus(HttpServletRequest request) {
+    @PostMapping(value = "/refreshStatus")
+    public String refreshStatus(@RequestBody String request) {
         return requestService.getRefreshedStatus(request);
     }
 
