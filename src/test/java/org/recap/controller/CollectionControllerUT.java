@@ -20,7 +20,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.util.Arrays;
 import java.util.Date;
 
@@ -56,19 +55,21 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     RequestItemDetailsRepository requestItemDetailsRepository;
 
     @Test
-    public void collection(){
+    public void collection() {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.TRUE);
         boolean result = collectionController.collection(request);
         assertTrue(result);
     }
+
     @Test
-    public void collectionFailure(){
+    public void collectionFailure() {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.FALSE);
         boolean result = collectionController.collection(request);
         assertFalse(result);
     }
+
     @Test
     public void displayRecords() throws Exception {
         SearchRecordsResponse searchRecordsResponse = getSearchRecordsResponse();
@@ -78,8 +79,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         CollectionForm form = collectionController.displayRecords(collectionForm);
         assertNotNull(form);
     }
+
     @Test
-    public void openMarcView(){
+    public void openMarcView() {
         CollectionForm collectionForm = new CollectionForm();
         collectionForm.setBibId(1);
         collectionForm.setItemId(1);
@@ -87,10 +89,11 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = getUserDetailsForm();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
-        Mockito.when(marcRecordViewUtil.buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(),userDetailsForm)).thenReturn(bibliographicMarcForm);
-        CollectionForm form = collectionController.openMarcView(collectionForm,request);
+        Mockito.when(marcRecordViewUtil.buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm)).thenReturn(bibliographicMarcForm);
+        CollectionForm form = collectionController.openMarcView(collectionForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void collectionUpdate() throws Exception {
         CollectionForm collectionForm = new CollectionForm();
@@ -98,20 +101,22 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
         Mockito.doNothing().when(collectionServiceUtil).updateCGDForItem(collectionForm);
-        CollectionForm form = collectionController.collectionUpdate(collectionForm,request);
+        CollectionForm form = collectionController.collectionUpdate(collectionForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void collectionUpdateForDeaccession() throws Exception {
         CollectionForm collectionForm = new CollectionForm();
         collectionForm.setCollectionAction("Deaccession");
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
-        CollectionForm form = collectionController.collectionUpdate(collectionForm,request);
+        CollectionForm form = collectionController.collectionUpdate(collectionForm, request);
         assertNotNull(form);
     }
+
     @Test
-    public void checkCrossInstitutionBorrowed(){
+    public void checkCrossInstitutionBorrowed() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
@@ -119,8 +124,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(anyString(), anyString())).thenReturn(new RequestItemEntity());
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
+
     @Test
-    public void checkCrossInstitutionBorrowedWithNoActiveRecallRequest(){
+    public void checkCrossInstitutionBorrowedWithNoActiveRecallRequest() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
@@ -129,8 +135,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
+
     @Test
-    public void checkCrossInstitutionBorrowedWithNoActiveRecallRequestDiffInstCode(){
+    public void checkCrossInstitutionBorrowedWithNoActiveRecallRequestDiffInstCode() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
@@ -142,8 +149,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
+
     @Test
-    public void checkCrossInstitutionBorrowedWithNoActiveRetrievalRequest(){
+    public void checkCrossInstitutionBorrowedWithNoActiveRetrievalRequest() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
@@ -152,8 +160,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
+
     @Test
-    public void checkCrossInstitutionBorrowedWithNoActiveRetrievalRequestDiffInstCode(){
+    public void checkCrossInstitutionBorrowedWithNoActiveRetrievalRequestDiffInstCode() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("DEACCESSION");
@@ -165,32 +174,37 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
+
     @Test
-    public void limitedBarcodes(){
+    public void limitedBarcodes() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setItemBarcodes("1,1,1,2,2,2,3,3,3,4,4,4");
-        ReflectionTestUtils.invokeMethod(collectionController,"limitedBarcodes",collectionForm);
+        ReflectionTestUtils.invokeMethod(collectionController, "limitedBarcodes", collectionForm);
     }
+
     @Test
-    public void getMissingBarcodes(){
+    public void getMissingBarcodes() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setItemBarcodes("1,1,1,2,2,2,3,3,3,4,4,4");
         collectionForm.getSearchResultRows().get(0).setSearchItemResultRows(Arrays.asList(new SearchItemResultRow()));
-        ReflectionTestUtils.invokeMethod(collectionController,"getMissingBarcodes",collectionForm);
+        ReflectionTestUtils.invokeMethod(collectionController, "getMissingBarcodes", collectionForm);
     }
+
     @Test
-    public void getMissingBarcodesWithoutItemBarcodes(){
+    public void getMissingBarcodesWithoutItemBarcodes() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setItemBarcodes("");
-        ReflectionTestUtils.invokeMethod(collectionController,"getMissingBarcodes",collectionForm);
+        ReflectionTestUtils.invokeMethod(collectionController, "getMissingBarcodes", collectionForm);
     }
+
     @Test
-    public void buildResultRowsWithoutItemBarcodes(){
+    public void buildResultRowsWithoutItemBarcodes() {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setItemBarcodes("");
-        ReflectionTestUtils.invokeMethod(collectionController,"buildResultRows",collectionForm);
+        ReflectionTestUtils.invokeMethod(collectionController, "buildResultRows", collectionForm);
     }
-    private SearchRecordsRequest getSearchRecordsRequest(){
+
+    private SearchRecordsRequest getSearchRecordsRequest() {
         SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
         searchRecordsRequest.setFieldValue("23456");
         searchRecordsRequest.setFieldValue("BARCODE");
@@ -202,7 +216,8 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         searchRecordsRequest.setTotalPageCount(1);
         return searchRecordsRequest;
     }
-    private SearchRecordsResponse getSearchRecordsResponse(){
+
+    private SearchRecordsResponse getSearchRecordsResponse() {
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
         SearchResultRow searchResultRow1 = new SearchResultRow();
         searchResultRow1.setTitle("Title1");
@@ -220,11 +235,12 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         searchRecordsResponse.setErrorMessage("test");
         return searchRecordsResponse;
     }
-    private CollectionForm getCollectionForm(){
+
+    private CollectionForm getCollectionForm() {
         CollectionForm collectionForm = new CollectionForm();
+        CollectionForm collectionForm1 = new CollectionForm();
         collectionForm.setErrorMessage("test");
         collectionForm.setItemBarcodes("335454575437");
-
         collectionForm.setShowResults(false);
         collectionForm.setSelectAll(false);
         collectionForm.setBarcodesNotFoundErrorMessage("test");
@@ -232,9 +248,17 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         SearchResultRow searchResultRow = getSearchResultRow();
         collectionForm.setSearchResultRows(Arrays.asList(searchResultRow));
         collectionForm.setShowModal(false);
+        collectionForm1.setSearchResultRows(null);
+        assertFalse(collectionForm.isShowResults());
+        assertFalse(collectionForm.isSelectAll());
+        assertFalse(collectionForm.isShowModal());
+        assertNotNull(collectionForm.getErrorMessage());
+        assertNotNull(collectionForm.getBarcodesNotFoundErrorMessage());
+        assertNotNull(collectionForm.getIgnoredBarcodesErrorMessage());
         return collectionForm;
     }
-    private SearchResultRow getSearchResultRow(){
+
+    private SearchResultRow getSearchResultRow() {
         SearchResultRow searchResultRow = new SearchResultRow();
         searchResultRow.setShowItems(true);
         searchResultRow.setStatus("SUCCESS");
@@ -249,7 +273,8 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         searchResultRow.setAuthor("test");
         return searchResultRow;
     }
-    private BibliographicMarcForm getBibilographicMarcForm(){
+
+    private BibliographicMarcForm getBibilographicMarcForm() {
         BibliographicMarcForm bibliographicMarcForm = new BibliographicMarcForm();
         bibliographicMarcForm.setTitle("test");
         bibliographicMarcForm.setAuthor("test");
@@ -291,13 +316,15 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         bibliographicMarcForm.setAllowEdit(true);
         return bibliographicMarcForm;
     }
+
     private UserDetailsForm getUserDetailsForm() {
-        UserDetailsForm userDetailsForm= new UserDetailsForm();
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setLoginInstitutionId(2);
         userDetailsForm.setRecapUser(false);
         return userDetailsForm;
     }
+
     private CustomerCodeEntity getCustomerCodeEntity() {
         CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
         customerCodeEntity.setCustomerCode("PG");
@@ -308,7 +335,8 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         customerCodeEntity.setId(1);
         return customerCodeEntity;
     }
-    private RequestItemEntity getRequestItemEntity(){
+
+    private RequestItemEntity getRequestItemEntity() {
         RequestItemEntity requestItemEntity = new RequestItemEntity();
         requestItemEntity.setCreatedBy("Test");
         requestItemEntity.setCreatedDate(new Date());
@@ -338,7 +366,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         itemEntity.setItemStatusEntity(itemStatusEntity);
         requestItemEntity.setItemEntity(itemEntity);
 
-        RequestStatusEntity requestStatusEntity=new RequestStatusEntity();
+        RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
         requestStatusEntity.setRequestStatusCode("RETRIEVAL_ORDER_PLACED");
         requestStatusEntity.setRequestStatusDescription("RETRIEVAL ORDER PLACED");
         requestItemEntity.setRequestStatusEntity(requestStatusEntity);
