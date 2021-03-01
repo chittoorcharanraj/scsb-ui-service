@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class BulkRequestFormUT extends BaseTestCaseUT {
 
     @Test
-    public void testBulkRequestForm(){
+    public void testBulkRequestForm() {
 
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
 
@@ -38,7 +38,7 @@ public class BulkRequestFormUT extends BaseTestCaseUT {
         bulkRequestForm.setShowRequestErrorMsg(Boolean.TRUE);
         bulkRequestForm.setRequestingInstituionHidden("HD");
         bulkRequestForm.setSearchInstitutionHdn("HD");
-        bulkRequestForm.setFile(new MockMultipartFile("test",new byte[1]));
+        bulkRequestForm.setFile(new MockMultipartFile("test", new byte[1]));
         bulkRequestForm.setBulkSearchResultRows(Arrays.asList(new BulkSearchResultRow()));
         bulkRequestForm.setRequestIdSearch("1");
         bulkRequestForm.setRequestNameSearch("test");
@@ -74,6 +74,12 @@ public class BulkRequestFormUT extends BaseTestCaseUT {
         assertNotNull(bulkRequestForm.getPageNumber());
         assertNotNull(bulkRequestForm.getPageSize());
         assertNotNull(bulkRequestForm.getStatus());
+        assertNotNull(bulkRequestForm.getPatronBarcode());
+        assertNotNull(bulkRequestForm.getPatronBarcodeInRequest());
+        assertNotNull(bulkRequestForm.getPatronEmailAddress());
+        assertNotNull(bulkRequestForm.getRequestingInstitution());
+        assertNotNull(bulkRequestForm.getRequestType());
+        assertNotNull(bulkRequestForm.getRequestNotes());
         assertNotNull(bulkRequestForm.getPatronBarcodeSearch());
         assertNotNull(bulkRequestForm.getRequestNameSearch());
         assertNotNull(bulkRequestForm.getRequestIdSearch());
