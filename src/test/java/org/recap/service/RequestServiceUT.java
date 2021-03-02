@@ -131,7 +131,8 @@ public class RequestServiceUT{
         Mockito.when(requestItemDetailsRepository.findByIdIn(Mockito.any())).thenReturn(requestItemEntityList);
         Mockito.when(requestItemEntity.getRequestStatusEntity()).thenReturn(requestStatusEntity);
         Mockito.when(requestStatusEntity.getRequestStatusDescription()).thenReturn(RecapCommonConstants.REQUEST_STATUS_REFILED);
-        String status=requestService.getRefreshedStatus(request);
+        String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
+        String status=requestService.getRefreshedStatus(reqJson);
         assertNotNull(status);
     }
 

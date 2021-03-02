@@ -45,7 +45,8 @@ public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
         String transmissionType = "FULL";
         String emailToAddress = "test@gmail.com";
         String imsDepositoryCodes = "HD";
-        DataExportResponse response = dataExportsRecentInfoController.exportDataDump(institutionCodes,requestingInstitutionCode,imsDepositoryCodes,fetchType,outputFormat,date,collectionGroupIds,transmissionType,emailToAddress);
+        String userName = "test";
+        DataExportResponse response = dataExportsRecentInfoController.exportDataDump(institutionCodes,requestingInstitutionCode,imsDepositoryCodes,fetchType,outputFormat,date,collectionGroupIds,transmissionType,emailToAddress,userName);
         assertNotNull(response);
     }
 

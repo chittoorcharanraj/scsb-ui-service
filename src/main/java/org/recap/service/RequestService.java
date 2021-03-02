@@ -256,30 +256,33 @@ public class RequestService {
      * @param request the request
      * @return the refreshed status
      */
-    public String getRefreshedStatus(HttpServletRequest request) {
+    public String getRefreshedStatus(String request) {
         JSONObject jsonObject = new JSONObject();
         Map<Integer, Integer> map = new HashMap<>();
         Map<String, String> responseMap = new HashMap<>();
         Map<String, String> responseMapForNotes = new HashMap<>();
         List<Integer> requestIdList = new ArrayList<>();
-        List<String> listOfRequestStatusDesc = getRequestStatusDetailsRepository().findAllRequestStatusDescExceptProcessing();
-        String[] parameterValues = request.getParameterValues("status[]");
-        for (String parameterValue : parameterValues) {
-            String[] split = StringUtils.split(parameterValue, "-");
-            map.put(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
-            requestIdList.add(Integer.valueOf(split[0]));
-        }
-        List<RequestItemEntity> requestItemEntityList = getRequestItemDetailsRepository().findByIdIn(requestIdList);
-        for (RequestItemEntity requestItemEntity : requestItemEntityList) {
-            Integer rowUpdateNum = map.get(requestItemEntity.getId());
-            for (String requestStatusDescription : listOfRequestStatusDesc) {
-                if (requestStatusDescription.equals(requestItemEntity.getRequestStatusEntity().getRequestStatusDescription())) {
-                    responseMap.put(String.valueOf(rowUpdateNum), requestItemEntity.getRequestStatusEntity().getRequestStatusDescription());
-                    responseMapForNotes.put(String.valueOf(rowUpdateNum), requestItemEntity.getNotes());
+        try {
+            List<String> listOfRequestStatusDesc = getRequestStatusDetailsRepository().findAllRequestStatusDescExceptProcessing();
+            JSONObject requestJson = new JSONObject(request);
+            JSONArray parameterValues = (JSONArray) requestJson.get("status");
+            for (int i = 0; i < parameterValues.length(); i++) {
+                String parameterValue = (String) parameterValues.get(i);
+                String[] split = StringUtils.split(parameterValue, "-");
+                map.put(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
+                requestIdList.add(Integer.valueOf(split[0]));
+            }
+            List<RequestItemEntity> requestItemEntityList = getRequestItemDetailsRepository().findByIdIn(requestIdList);
+            for (RequestItemEntity requestItemEntity : requestItemEntityList) {
+                Integer rowUpdateNum = map.get(requestItemEntity.getId());
+                for (String requestStatusDescription : listOfRequestStatusDesc) {
+                    if (requestStatusDescription.equals(requestItemEntity.getRequestStatusEntity().getRequestStatusDescription())) {
+                        responseMap.put(String.valueOf(rowUpdateNum), requestItemEntity.getRequestStatusEntity().getRequestStatusDescription());
+                        responseMapForNotes.put(String.valueOf(rowUpdateNum), requestItemEntity.getNotes());
+                    }
                 }
             }
-        }
-        try {
+
             jsonObject.put(RecapCommonConstants.STATUS, responseMap);
             jsonObject.put(RecapCommonConstants.NOTES, responseMapForNotes);
         } catch (JSONException e) {
