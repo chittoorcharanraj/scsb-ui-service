@@ -73,7 +73,7 @@ public class DataExportsRecentInfoController {
         setInputMapValues(inputMap, institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes,userName);
         try {
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(HelperUtil.getSwaggerHeaders());
-            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + RecapConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}$userName={userName}", HttpMethod.GET, httpEntity, String.class, inputMap);
+            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + RecapConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}&userName={userName}", HttpMethod.GET, httpEntity, String.class, inputMap);
             if (responseEntity.getBody() != null && responseEntity.getStatusCode().is2xxSuccessful()) {
                 dataExportResponse.setMessage(responseEntity.getBody());
             } else {
