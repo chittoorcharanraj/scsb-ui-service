@@ -72,7 +72,6 @@ public class MonitoringController extends AbstractController {
     }
     @GetMapping("/properties")
     public Map<String,String> properties(){
-        logger.info("monitoring properties are loaded");
         Map<String,String> prop = new HashMap<>();
         prop.put("scsbURL",scsbURL);
         prop.put("dockerURL",dockerURL);

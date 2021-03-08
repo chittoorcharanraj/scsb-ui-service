@@ -57,7 +57,6 @@ public class HomeController extends AbstractController {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
         instList.put(RecapConstants.HTC, RecapConstants.HTC);
-        logger.info("Institutions fetched from DB successfully :: {}", instList);
         return instList;
     }
 

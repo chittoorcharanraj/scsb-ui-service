@@ -56,7 +56,6 @@ public class LoginController extends AbstractController {
         if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
             return RecapConstants.REDIRECT_SEARCH;
         }
-        logger.info("Login Screen Called");
         return RecapConstants.FORWARD_INDEX;
     }
 
@@ -98,7 +97,6 @@ public class LoginController extends AbstractController {
                     response.addCookie(cookieUserName);
                 }
             }
-            logger.info("passing in login-scsb");
             UsernamePasswordToken token = new UsernamePasswordToken(username + RecapConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
