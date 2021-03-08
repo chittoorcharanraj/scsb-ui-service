@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapConstants;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
@@ -41,8 +42,12 @@ public class ReCAPSimpleUrlLogoutSuccessHandler extends SimpleUrlLogoutSuccessHa
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
+        String logoutUrl = null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
-        return HelperUtil.getLogoutUrl(institution);
+        if (StringUtils.isNotBlank(institution)) {
+            logoutUrl = HelperUtil.getLogoutUrl(institution);
+        }
+        return logoutUrl;
     }
 }
