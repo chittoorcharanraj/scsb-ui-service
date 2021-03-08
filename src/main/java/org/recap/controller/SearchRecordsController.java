@@ -94,7 +94,6 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/searchResults")
     public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("search records Called");
         return searchRecordsPage(searchRecordsRequest);
     }
 

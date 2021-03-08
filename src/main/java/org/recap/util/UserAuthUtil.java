@@ -63,8 +63,6 @@ public class UserAuthUtil {
         } catch (Exception e) {
             if (serviceURL.contains(RecapConstants.LOGOUT))
                 logger.info(RecapConstants.LOG_USER_LOGOUT_SUCCESS+" :: {}", token != null ? token.getUsername() : null);
-            else
-                logger.error("{} {} {}", token != null ? token.getUsername() : null, RecapConstants.LOG_USER_NOT_VALID, e.getMessage());
         }
         return statusResponse;
     }
