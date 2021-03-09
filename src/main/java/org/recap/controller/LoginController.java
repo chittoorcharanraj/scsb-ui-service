@@ -102,7 +102,7 @@ public class LoginController extends AbstractController {
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
                 String errorMessage = (String) resultMap.get(RecapConstants.USER_AUTH_ERRORMSG);
                 logger.error("User: {}, {} {}", token.getUsername(), RecapCommonConstants.LOG_ERROR, errorMessage);
-                return RecapConstants.REDIRECT_HOME;
+                return RecapConstants.REDIRECT_USER;
             }
             setSessionValues(session, resultMap, token);
 
@@ -148,7 +148,7 @@ public class LoginController extends AbstractController {
                 session.invalidate();
             }
         }
-        return "redirect:/";
+        return RecapConstants.REDIRECT_HOME;
     }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {

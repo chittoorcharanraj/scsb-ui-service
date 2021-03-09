@@ -11,6 +11,7 @@ public class RecapConstants {
     public static final String SEARCH = "Search";
     public static final String REDIRECT_SEARCH = "redirect:search";
     public static final String REDIRECT_HOME = "redirect:home";
+    public static final String REDIRECT_USER = "redirect:userLogin";
     public static final String FORWARD_INDEX = "forward:/index.html";
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or Bib table does not contains this record";
@@ -74,6 +75,7 @@ public class RecapConstants {
     public static final String SCSB_SHIRO_REPORT_URL = "auth/reports";
     public static final String SCSB_SHIRO_USER_ROLE_URL = "auth/userRoles";
     public static final String SCSB_SHIRO_ROLE_URL = "auth/roles";
+    public static final String SCSB_SHIRO_DATAEXPORT_URL = "auth/dataExport";
     public static final String SCSB_SHIRO_LOGOUT_URL = "userAuth/logout";
     public static final String LOG_USER_NOT_VALID = ": User not valid :";
     public static final String LOG_USER_LOGOUT_SUCCESS = "User logged out successfully";
