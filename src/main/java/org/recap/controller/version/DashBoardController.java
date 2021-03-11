@@ -23,6 +23,9 @@ public class DashBoardController extends RecapController {
     @Value("${version.number}")
     private String versionNumberService;
 
+    @Value("${scsb.email.assist.to}")
+    private String recapAssistanceEmailTo;
+
     /**
      * Gets the version number for scsb application which is configured in external application properties file.
      *
@@ -42,5 +45,12 @@ public class DashBoardController extends RecapController {
      */
     public void setVersionNumberService(String versionNumberService) {
         this.versionNumberService = versionNumberService;
+    }
+
+    @GetMapping("/getEmail")
+    public String getEmail() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("email", recapAssistanceEmailTo);
+        return jsonObject.toString();
     }
 }
