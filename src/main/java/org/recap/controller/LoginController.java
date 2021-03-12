@@ -56,7 +56,6 @@ public class LoginController extends AbstractController {
         if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
             return RecapConstants.REDIRECT_SEARCH;
         }
-        logger.info("Login Screen Called");
         return RecapConstants.FORWARD_INDEX;
     }
 
