@@ -56,7 +56,7 @@ public class LoginController extends AbstractController {
         if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
             return RecapConstants.REDIRECT_SEARCH;
         }
-        //sesssionInvalidate(request);
+        logger.info("Login Screen Called");
         return RecapConstants.FORWARD_INDEX;
     }
 
@@ -68,7 +68,6 @@ public class LoginController extends AbstractController {
      */
     @GetMapping(value = "/home")
     public String home(HttpServletRequest request) {
-        //sesssionInvalidate(request);
         return RecapConstants.FORWARD_INDEX;
     }
 
@@ -185,17 +184,5 @@ public class LoginController extends AbstractController {
         session.setAttribute(RecapConstants.USER_TOKEN, token);
         session.setAttribute(RecapConstants.USER_AUTH, resultMap);
         setValuesInSession(session, resultMap);
-    }
-    public String sesssionInvalidate(HttpServletRequest request){
-        HttpSession session = null;
-        try {
-            session = request.getSession(false);
-            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
-        } finally {
-            if (session != null) {
-                session.invalidate();
-            }
-        }
-        return RecapConstants.REDIRECT_HOME;
     }
 }
