@@ -84,8 +84,8 @@ public class ScheduleJobsController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/jobs")
-    public ScheduleJobsForm scheduleJob(@RequestBody ScheduleJobsForm scheduleJobsForm) {
-
+    public ScheduleJobsForm scheduleJob(@RequestBody ScheduleJobsForm scheduleJobsForm, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         ScheduleJobResponse scheduleJobResponse = null;
         try {
             ScheduleJobRequest scheduleJobRequest = new ScheduleJobRequest();

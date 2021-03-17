@@ -61,7 +61,8 @@ public class DataExportsRecentInfoController {
     }
 
     @GetMapping("/getRecentDataExportsInfo")
-    public S3RecentDataExportInfoList getRecentDataExportsInfo() {
+    public S3RecentDataExportInfoList getRecentDataExportsInfo(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         S3RecentDataExportInfoList s3RecentDataExportInfoList = null;
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -87,7 +88,8 @@ public class DataExportsRecentInfoController {
                                              @RequestParam(value = "collectionGroupIds", required = false) String collectionGroupIds,
                                              @RequestParam(value = "transmissionType", required = false) String transmissionType,
                                              @RequestParam(value = "emailToAddress", required = false) String emailToAddress,
-                                             @RequestParam(value = "userName", required = false) String userName) {
+                                             @RequestParam(value = "userName", required = false) String userName,HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         DataExportResponse dataExportResponse = new DataExportResponse();
         Map<String, String> inputMap = new HashMap<>();
         setInputMapValues(inputMap, institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes, userName);
