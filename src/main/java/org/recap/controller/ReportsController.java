@@ -47,6 +47,9 @@ public class ReportsController extends AbstractController {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     /**
      * Gets reports util.
      *
@@ -70,7 +73,7 @@ public class ReportsController extends AbstractController {
             logger.info(RecapConstants.REPORTS_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
         }
 
     }

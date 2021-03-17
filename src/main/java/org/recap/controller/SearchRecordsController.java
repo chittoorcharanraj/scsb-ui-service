@@ -56,6 +56,9 @@ public class SearchRecordsController extends RecapController {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     /**
      * Gets search util.
      *
@@ -82,7 +85,7 @@ public class SearchRecordsController extends RecapController {
             logger.info(RecapConstants.SEARCH_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
         }
     }
 

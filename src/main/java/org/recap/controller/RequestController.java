@@ -85,6 +85,9 @@ public class RequestController extends RecapController {
     @Autowired
     private SecurityUtil securityUtil;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     public RequestService getRequestService() {
         return requestService;
     }
@@ -101,7 +104,7 @@ public class RequestController extends RecapController {
             logger.info(RecapConstants.REQUEST_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.REQUEST, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.REQUEST, logger);
         }
     }
 

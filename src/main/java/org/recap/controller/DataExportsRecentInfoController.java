@@ -46,6 +46,9 @@ public class DataExportsRecentInfoController {
     @Autowired
     private UserAuthUtil userAuthUtil;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     @GetMapping("/checkPermission")
     public boolean validateDataExport(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -53,7 +56,7 @@ public class DataExportsRecentInfoController {
         if (authenticated) {
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
         }
     }
 

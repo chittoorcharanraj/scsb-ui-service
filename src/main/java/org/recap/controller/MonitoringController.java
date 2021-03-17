@@ -46,6 +46,9 @@ public class MonitoringController extends AbstractController {
     @Autowired
     private MonitoringUtil monitoringUtil;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     /**
      * Display All Monitoring url's
      *
@@ -58,7 +61,7 @@ public class MonitoringController extends AbstractController {
         if (authenticated) {
             return true;
         }
-        return UserManagementService.unAuthorizedUser(session, "Monitoring", logger);
+        return userManagementService.unAuthorizedUser(session, "Monitoring", logger);
     }
 
     @GetMapping("/logging")
@@ -68,7 +71,7 @@ public class MonitoringController extends AbstractController {
         if (authenticated) {
             return true;
         }
-        return UserManagementService.unAuthorizedUser(session, "Logging", logger);
+        return userManagementService.unAuthorizedUser(session, "Logging", logger);
     }
     @GetMapping("/properties")
     public Map<String,String> properties(){

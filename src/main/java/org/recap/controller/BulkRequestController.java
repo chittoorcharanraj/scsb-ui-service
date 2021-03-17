@@ -55,6 +55,9 @@ public class BulkRequestController extends AbstractController {
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     @GetMapping("/checkPermission")
     public boolean bulkRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -63,7 +66,7 @@ public class BulkRequestController extends AbstractController {
             logger.info(RecapConstants.BULKREQUEST_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
         }
     }
 
