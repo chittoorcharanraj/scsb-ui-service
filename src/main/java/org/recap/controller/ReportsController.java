@@ -83,7 +83,8 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/submit")
-    public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm) throws Exception {
+    public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm,HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
         if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());

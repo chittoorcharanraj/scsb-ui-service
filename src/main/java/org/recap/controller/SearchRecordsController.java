@@ -93,7 +93,8 @@ public class SearchRecordsController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/searchResults")
-    public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
+    public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         return searchRecordsPage(searchRecordsRequest);
     }
 

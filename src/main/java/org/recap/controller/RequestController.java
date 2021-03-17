@@ -223,6 +223,7 @@ public class RequestController extends RecapController {
      */
     @GetMapping("/loadSearchRequest")
     public RequestForm loadSearchRequest(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);

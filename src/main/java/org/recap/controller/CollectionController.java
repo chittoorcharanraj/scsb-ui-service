@@ -103,7 +103,8 @@ public class CollectionController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/displayRecords")
-    public CollectionForm displayRecords(@RequestBody CollectionForm collectionForm) throws Exception {
+    public CollectionForm displayRecords(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
         return searchAndSetResults(collectionForm);
     }
 
