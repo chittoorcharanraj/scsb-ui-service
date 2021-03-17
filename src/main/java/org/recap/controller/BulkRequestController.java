@@ -55,6 +55,9 @@ public class BulkRequestController extends AbstractController {
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     @GetMapping("/checkPermission")
     public boolean bulkRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -63,7 +66,7 @@ public class BulkRequestController extends AbstractController {
             logger.info(RecapConstants.BULKREQUEST_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
         }
     }
 
@@ -80,6 +83,7 @@ public class BulkRequestController extends AbstractController {
             , @RequestParam("choosenFile") String choosenFile
             , @RequestParam("patronEmailId") String patronEmailId
             , @RequestParam("notes") String notes, HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
         bulkRequestForm.setFile(file);
         bulkRequestForm.setPatronEmailAddress(patronEmailId);
@@ -106,8 +110,8 @@ public class BulkRequestController extends AbstractController {
     }
 
     @PostMapping("/searchRequest")
-    public BulkRequestForm searchRequest(@RequestBody BulkRequestForm bulkRequestForm) {
-        logger.info(RecapConstants.CREATE_SR_BULKREQUEST_CALLED);
+    public BulkRequestForm searchRequest(@RequestBody BulkRequestForm bulkRequestForm,HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         return bulkRequestService.processSearchRequest(bulkRequestForm);
     }
 
@@ -125,7 +129,6 @@ public class BulkRequestController extends AbstractController {
 
     @PostMapping("/previous")
     public BulkRequestForm searchPrevious(@RequestBody BulkRequestForm bulkRequestForm) {
-
         bulkRequestForm.setPageNumber(bulkRequestForm.getPageNumber() - 1);
         return bulkRequestService.getPaginatedSearchResults(bulkRequestForm);
     }

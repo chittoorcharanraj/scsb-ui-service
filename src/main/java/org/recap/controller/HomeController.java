@@ -46,6 +46,9 @@ public class HomeController extends AbstractController {
     @Autowired
     private PropertyUtil propertyUtil;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     /**
      * @return InstitutionsList
      */
@@ -100,7 +103,7 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
             logger.info("Exception Occurred while User Validation :: {}", e.getMessage());
-            isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
+            isAuthenticated = userManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;

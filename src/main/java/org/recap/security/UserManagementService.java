@@ -4,6 +4,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.RoleEntity;
 import org.recap.repository.jpa.RolesDetailsRepositorty;
+import org.recap.util.UserAuthUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class UserManagementService {
     @Autowired
     RolesDetailsRepositorty rolesDetailsRepositorty;
 
+    @Autowired
+    UserAuthUtil userAuthUtil;
     /**
      * Un authorized logged-in user.
      *
@@ -30,10 +33,14 @@ public class UserManagementService {
      * @param logger     the logger
      * @return the string
      */
-    public static boolean unAuthorizedUser(HttpSession session, String moduleName, Logger logger) {
-        logger.debug("{} authorization Rejected for : {}", moduleName, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
-        if (session != null) {
-            session.invalidate();
+    public boolean unAuthorizedUser(HttpSession session, String moduleName, Logger logger) {
+        try {
+            logger.debug("{} authorization Rejected for : {}", moduleName, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+          userAuthUtil.authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+        } finally {
+            if (session != null) {
+                session.invalidate();
+            }
         }
         return RecapConstants.FALSE;
     }

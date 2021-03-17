@@ -57,6 +57,8 @@ public class RolesController extends AbstractController {
     @Autowired
     private PermissionsDetailsRepository permissionsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
 
     /**
      * Render the roles UI page for the scsb application.
@@ -72,7 +74,7 @@ public class RolesController extends AbstractController {
             logger.info(RecapConstants.ROLES_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.ROLES, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.ROLES, logger);
         }
     }
 

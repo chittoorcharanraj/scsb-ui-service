@@ -52,6 +52,9 @@ public class CollectionController extends AbstractController {
     @Autowired
     private CollectionServiceUtil collectionServiceUtil;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
 
     @Autowired
     private RequestItemDetailsRepository requestItemDetailsRepository;
@@ -91,7 +94,7 @@ public class CollectionController extends AbstractController {
             logger.info(RecapConstants.COLLECTION_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.COLLECTION, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.COLLECTION, logger);
         }
     }
 
@@ -103,7 +106,8 @@ public class CollectionController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/displayRecords")
-    public CollectionForm displayRecords(@RequestBody CollectionForm collectionForm) throws Exception {
+    public CollectionForm displayRecords(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
         return searchAndSetResults(collectionForm);
     }
 
