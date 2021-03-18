@@ -47,6 +47,9 @@ public class ReportsController extends AbstractController {
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Autowired
+    private  UserManagementService userManagementService;
+
     /**
      * Gets reports util.
      *
@@ -70,7 +73,7 @@ public class ReportsController extends AbstractController {
             logger.info(RecapConstants.REPORTS_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
+            return userManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
         }
 
     }
@@ -83,7 +86,8 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/submit")
-    public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm) throws Exception {
+    public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm,HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
         if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());
