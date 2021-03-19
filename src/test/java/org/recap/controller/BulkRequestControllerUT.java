@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import org.recap.model.jpa.BulkRequestItemEntity;
+import org.recap.security.UserManagementService;
 import org.springframework.ui.Model;
 import net.minidev.json.JSONObject;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -58,8 +59,11 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
 
+    @Mock
+    UserManagementService userManagementService;
+
     @Test
-    public void testBulkRequest() throws Exception{
+    public void testBulkRequest() {
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
@@ -68,7 +72,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         assertNotNull(response);
     }
     @Test
-    public void testBulkRequestFailure() throws Exception{
+    public void testBulkRequestFailure() {
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
@@ -109,7 +113,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
         bulkRequestForm.setBulkSearchResultRows(Arrays.asList(bulkSearchResultRow));
         Mockito.when(bulkRequestService.processSearchRequest(any())).thenReturn(bulkRequestForm);
-        BulkRequestForm form = bulkRequestController.searchRequest(bulkRequestForm);
+        BulkRequestForm form = bulkRequestController.searchRequest(bulkRequestForm,request);
         assertNotNull(form);
     }
 
