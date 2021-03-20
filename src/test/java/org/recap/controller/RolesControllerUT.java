@@ -11,6 +11,7 @@ import org.recap.model.jpa.RoleEntity;
 import org.recap.model.search.RolesForm;
 import org.recap.repository.jpa.PermissionsDetailsRepository;
 import org.recap.repository.jpa.RolesDetailsRepositorty;
+import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,15 +51,18 @@ public class RolesControllerUT extends BaseTestCaseUT {
     @Mock
     PermissionsDetailsRepository permissionsRepository;
 
+    @Mock
+    UserManagementService userManagementService;
+
     @Test
-    public void testRoles() throws Exception{
+    public void testRoles() {
         when(request.getSession(false)).thenReturn(session);
         when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.TRUE);
         boolean response = rolesController.roles(request);
         assertNotNull(response);
     }
     @Test
-    public void testRolesFailure() throws Exception{
+    public void testRolesFailure() {
         when(request.getSession(false)).thenReturn(session);
         when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.FALSE);
         boolean response = rolesController.roles(request);

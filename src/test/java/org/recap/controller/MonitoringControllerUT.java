@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
+import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -14,7 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MonitoringControllerUT extends BaseTestCaseUT {
 
@@ -29,6 +33,9 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
 
     @Mock
     UserAuthUtil userAuthUtil;
+
+    @Mock
+    UserManagementService userManagementService;
 
     private final String scsbURL = "scsbURL";
 

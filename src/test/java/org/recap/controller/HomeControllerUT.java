@@ -11,13 +11,13 @@ import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.usermanagement.UserForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class HomeControllerUT extends BaseTestCaseUT {
@@ -36,6 +36,10 @@ public class HomeControllerUT extends BaseTestCaseUT {
 
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
+
+
+    @Mock
+    UserManagementService userManagementService;
 
     @Before
     public void setup(){
@@ -72,7 +76,6 @@ public class HomeControllerUT extends BaseTestCaseUT {
         usernamePasswordToken.setUsername("token");
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
-        Mockito.when(session.getAttribute(anyString())).thenReturn(usernamePasswordToken);
         homeController.login(request);
     }
     private InstitutionEntity getInstitutionEntity() {
