@@ -30,6 +30,7 @@ import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.RequestStatusDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
 import org.recap.util.RequestServiceUtil;
@@ -137,6 +138,10 @@ public class RequestControllerIT extends BaseControllerUT {
 
     @Mock
     ItemRequestInformation itemRequestInformation;
+
+    @Mock
+    UserManagementService userManagementService;
+
 
     @Before
     public void setUp() {
