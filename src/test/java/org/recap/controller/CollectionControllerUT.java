@@ -8,10 +8,23 @@ import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.model.jpa.*;
-import org.recap.model.search.*;
+import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.ItemStatusEntity;
+import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.jpa.RequestStatusEntity;
+import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.search.BibDataField;
+import org.recap.model.search.BibliographicMarcForm;
+import org.recap.model.search.CollectionForm;
+import org.recap.model.search.SearchItemResultRow;
+import org.recap.model.search.SearchRecordsRequest;
+import org.recap.model.search.SearchRecordsResponse;
+import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
@@ -23,7 +36,9 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -54,6 +69,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     @Mock
     RequestItemDetailsRepository requestItemDetailsRepository;
 
+    @Mock
+    UserManagementService userManagementService;
+
     @Test
     public void collection() {
         Mockito.when(request.getSession(false)).thenReturn(session);
@@ -76,7 +94,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setErrorMessage("No results found.");
         Mockito.when(searchUtil.requestSearchResults(any())).thenReturn(searchRecordsResponse);
-        CollectionForm form = collectionController.displayRecords(collectionForm);
+        CollectionForm form = collectionController.displayRecords(collectionForm,request);
         assertNotNull(form);
     }
 

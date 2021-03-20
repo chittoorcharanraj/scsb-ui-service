@@ -14,6 +14,8 @@ import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.security.UserManagementService;
+import org.recap.util.CsvUtil;
 import org.recap.util.SearchUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -22,11 +24,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -56,12 +65,36 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
     @Mock
     WebDataBinder binder;
 
+    @Mock
+    UserManagementService userManagementService;
+
+    @Mock
+    SearchRecordsRequest searchRecordsRequest;
+
+    @Mock
+    CsvUtil csvUtil;
+
    @Test
    public void checkGetters(){
        searchRecordsController.getSearchUtil();
        searchRecordsController.getInstitutionDetailsRepository();
        searchRecordsController.getUserAuthUtil();
    }
+
+    @Test
+    public void exportRecords() throws Exception {
+        List<SearchResultRow> searchResultRows=new ArrayList<>();
+        Mockito.when(searchRecordsRequest.getSearchResultRows()).thenReturn(searchResultRows);
+        Mockito.when(csvUtil.writeSearchResultsToCsv(Mockito.any(),Mockito.anyString())).thenReturn(getBibContentFile());
+        byte[] fileContent = searchRecordsController.exportRecords(searchRecordsRequest);
+        assertNotNull(fileContent);
+   }
+
+    private File getBibContentFile() throws URISyntaxException {
+        URL resource = null;
+        resource = getClass().getResource("test.csv");
+        return new File(resource.toURI());
+    }
 
     @Test
     public void searchRecords() {
@@ -84,7 +117,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
         SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
         Mockito.when(searchUtil.searchAndSetResults(searchRecordsRequest)).thenReturn(searchRecordsResponse);
-        SearchRecordsResponse response = searchRecordsController.search(searchRecordsRequest);
+        SearchRecordsResponse response = searchRecordsController.search(searchRecordsRequest,request);
         assertNotNull(response);
     }
 

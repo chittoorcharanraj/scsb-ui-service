@@ -5,16 +5,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.recap.RecapConstants;
 import org.recap.model.dataexportinfo.DataExportResponse;
 import org.recap.model.jpa.InstitutionEntity;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.recap.security.UserManagementService;
+import org.recap.util.UserAuthUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
 
@@ -24,9 +28,37 @@ public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
     @Mock
     HomeController homeController;
 
+    @Mock
+    HttpServletRequest request;
+
+    @Mock
+    HttpSession session;
+
+    @Mock
+    UserAuthUtil userAuthUtil;
+
+    @Mock
+    UserManagementService userManagementService;
+
+    @Test
+    public void validateDataExportValidRequest(){
+        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(true);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        boolean validateDataExport=dataExportsRecentInfoController.validateDataExport(request);
+        assertTrue(validateDataExport);
+    }
+
+    @Test
+    public void validateDataExportInValidRequest(){
+        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(false);
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        boolean validateDataExport=dataExportsRecentInfoController.validateDataExport(request);
+        assertFalse(validateDataExport);
+    }
+
     @Test
     public void getRecentDataExportsInfo(){
-        dataExportsRecentInfoController.getRecentDataExportsInfo();
+        dataExportsRecentInfoController.getRecentDataExportsInfo(request);
     }
     @Test
     public void dataExportDescriptionFields(){
@@ -46,7 +78,7 @@ public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
         String emailToAddress = "test@gmail.com";
         String imsDepositoryCodes = "HD";
         String userName = "test";
-        DataExportResponse response = dataExportsRecentInfoController.exportDataDump(institutionCodes,requestingInstitutionCode,imsDepositoryCodes,fetchType,outputFormat,date,collectionGroupIds,transmissionType,emailToAddress,userName);
+        DataExportResponse response = dataExportsRecentInfoController.exportDataDump(institutionCodes,requestingInstitutionCode,imsDepositoryCodes,fetchType,outputFormat,date,collectionGroupIds,transmissionType,emailToAddress,userName,request);
         assertNotNull(response);
     }
 
