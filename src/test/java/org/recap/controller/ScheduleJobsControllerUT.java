@@ -1,7 +1,11 @@
 package org.recap.controller;
 
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.JobEntity;
@@ -26,7 +30,9 @@ import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 public class ScheduleJobsControllerUT extends BaseTestCaseUT {
 
@@ -87,7 +93,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ScheduleJobRequest>>any());
-        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm);
+        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
     @Test
@@ -104,7 +110,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ScheduleJobRequest>>any());
-        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm);
+        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
     @Test
@@ -121,7 +127,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ScheduleJobRequest>>any());
-        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm);
+        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
     @Test
@@ -137,7 +143,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ScheduleJobRequest>>any());
-        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm);
+        ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
 

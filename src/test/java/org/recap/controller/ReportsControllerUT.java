@@ -1,6 +1,5 @@
 package org.recap.controller;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,6 +14,7 @@ import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.util.ReportsUtil;
 import org.recap.util.UserAuthUtil;
 
@@ -27,7 +27,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 public class ReportsControllerUT extends BaseTestCaseUT {
@@ -53,6 +55,9 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Mock
     public UserAuthUtil userAuthUtil;
 
+    @Mock
+    UserManagementService userManagementService;
+
     @Test
     public void reports(){
         Mockito.when(request.getSession(false)).thenReturn(session);
@@ -75,7 +80,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         reportsForm.setRequestToDate("12/01/2016");
         reportsForm.setShowBy(RecapCommonConstants.REPORTS_PARTNERS);
         Mockito.when(reportsUtil.populatePartnersCountForRequest(any(), any(), any())).thenReturn(reportsForm);
-        ReportsForm form = reportsController.reportCounts(reportsForm);
+        ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
     }
     @Test
@@ -86,7 +91,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         reportsForm.setRequestToDate("12/01/2016");
         reportsForm.setShowBy(RecapCommonConstants.REPORTS_REQUEST_TYPE);
         Mockito.when(reportsUtil.populateRequestTypeInformation(any(), any(), any())).thenReturn(reportsForm);
-        ReportsForm form = reportsController.reportCounts(reportsForm);
+        ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
     }
     @Test
@@ -94,7 +99,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         ReportsForm reportsForm = new ReportsForm();
         reportsForm.setRequestType(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION);
         Mockito.when(reportsUtil.populateAccessionDeaccessionItemCounts(any())).thenReturn(reportsForm);
-        ReportsForm form = reportsController.reportCounts(reportsForm);
+        ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
     }
     @Test
@@ -102,7 +107,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         ReportsForm reportsForm = new ReportsForm();
         reportsForm.setRequestType("CollectionGroupDesignation");
         Mockito.when(reportsUtil.populateCGDItemCounts(any())).thenReturn(reportsForm);
-        ReportsForm form = reportsController.reportCounts(reportsForm);
+        ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
     }
     @Test
