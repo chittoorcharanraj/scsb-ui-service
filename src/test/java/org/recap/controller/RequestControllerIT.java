@@ -6,6 +6,7 @@ import org.apache.zookeeper.Op;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -71,6 +72,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by rajeshbabuk on 21/10/16.
  */
+@Ignore
 public class RequestControllerIT extends BaseControllerUT {
 
     @Autowired
