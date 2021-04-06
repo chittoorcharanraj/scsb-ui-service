@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -86,7 +87,7 @@ public class RequestController extends RecapController {
     private SecurityUtil securityUtil;
 
     @Autowired
-    private  UserManagementService userManagementService;
+    private UserManagementService userManagementService;
 
     public RequestService getRequestService() {
         return requestService;
@@ -540,6 +541,64 @@ public class RequestController extends RecapController {
             }
         }
         return requestForm;
+    }
+
+
+    /**
+     *
+     * @param institution
+     * @param fromDate
+     * @param toDate
+     * @return requestForm
+     */
+    @GetMapping("/exceptionReports")
+    public ResponseEntity<RequestForm> exceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        RequestForm requestForm = new RequestForm();
+        Page<RequestItemEntity> requestItemEntities = null;
+        try {
+            requestItemEntities = getRequestServiceUtil().searchExceptionRequests(institution, fromDate, toDate);
+        } catch (Exception e) {
+            logger.info("Exception Occured while pulling Exception Reports {}", e.getMessage());
+        }
+        List<SearchResultRow> searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
+        if (CollectionUtils.isNotEmpty(searchResultRows)) {
+            requestForm.setSearchResultRows(searchResultRows);
+            requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
+            requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+        } else {
+            requestForm.setSearchResultRows(Collections.emptyList());
+            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        requestForm.setShowResults(true);
+        return new ResponseEntity<>(requestForm, HttpStatus.OK);
+    }
+
+    /**
+     *
+     * @param institution
+     * @param fromDate
+     * @param toDate
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionReports")
+    public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        RequestForm requestForm = new RequestForm();
+        List<RequestItemEntity> requestItemEntities = null;
+        try {
+            requestItemEntities = getRequestServiceUtil().exportExceptionReports(institution, fromDate, toDate);
+        } catch (Exception e) {
+            logger.info("Exception Occured while Exporting Exception Reports {}", e.getMessage());
+        }
+        List<SearchResultRow> searchResultRows = buildSearchResultRows(requestItemEntities, requestForm);
+        if (CollectionUtils.isNotEmpty(searchResultRows)) {
+            requestForm.setSearchResultRows(searchResultRows);
+            requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.stream().count()));
+        } else {
+            requestForm.setSearchResultRows(Collections.emptyList());
+            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        requestForm.setShowResults(true);
+        return new ResponseEntity<>(requestForm, HttpStatus.OK);
     }
 
     private RequestForm search(RequestForm requestForm) {

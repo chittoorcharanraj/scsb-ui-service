@@ -184,6 +184,12 @@ public class RecapConstants {
 
     public static final String LOGGED_IN_INSTITUTION = "loggedInInstitution";
 
+    //EXCEPTION REPORTS
+    public static final String REPORTS_EXCEPTION = "EXCEPTION";
+    public static final String ID = "id";
+    public static final Integer PAGE_NUMBER = 0;
+    public static final Integer PAGE_SIZE = 10;
+
     public static final String UNSCHEDULE = "Unschedule";
     public static final String UNSCHEDULED = "Unscheduled";
     public static final String SCHEDULED = "Scheduled";
