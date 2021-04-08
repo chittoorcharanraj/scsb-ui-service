@@ -14,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,12 +125,11 @@ public class RequestServiceUtil {
      * @param institution
      * @param fromDate
      * @param toDate
-     * @return page
+     * @return page requestItemEntities
      */
-    public Page<RequestItemEntity> searchExceptionRequests(String institution, String fromDate, String toDate) {
+    public List<RequestItemEntity> exportExceptionReports(String institution, Date fromDate, Date toDate) {
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        Pageable pageable = PageRequest.of(RecapConstants.PAGE_NUMBER, RecapConstants.PAGE_SIZE, Sort.Direction.DESC, RecapConstants.ID);
-        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitution(pageable, RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId());
+        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),fromDate,toDate);
         return requestItemEntities;
     }
 
@@ -141,32 +140,10 @@ public class RequestServiceUtil {
      * @param toDate
      * @return page requestItemEntities
      */
-    public List<RequestItemEntity> exportExceptionReports(String institution, String fromDate, String toDate) {
+    public Page<RequestItemEntity> exportExceptionReportsWithDate(String institution, Date fromDate, Date toDate,Integer pageNumber,Integer size) throws ParseException {
+        Pageable pageable = PageRequest.of( pageNumber, size, Sort.Direction.DESC, RecapConstants.ID);
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId());
+        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable,RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),fromDate,toDate);
         return requestItemEntities;
-    }
-
-    /**
-     *
-     * @param institution
-     * @param fromDate
-     * @param toDate
-     * @return page requestItemEntities
-     */
-    public List<RequestItemEntity> exportExceptionReportsWithDate(String institution, String fromDate, String toDate) throws ParseException {
-        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),convertToDate(fromDate),convertToDate(toDate));
-        return requestItemEntities;
-    }
-
-    /**
-     *
-     * @param date
-     * @return Date
-     */
-    private Date convertToDate(String date) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.parse(date);
     }
 }

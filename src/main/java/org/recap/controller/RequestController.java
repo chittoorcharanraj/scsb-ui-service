@@ -49,13 +49,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by rajeshbabuk on 13/10/16.
@@ -69,23 +72,18 @@ import java.util.Optional;
 public class RequestController extends RecapController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
-
-
+    @Autowired
+    ReportsController reportsController;
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
-
     @Autowired
     private CustomerCodeDetailsRepository customerCodeDetailsRepository;
-
     @Autowired
     private RequestItemDetailsRepository requestItemDetailsRepository;
-
     @Autowired
     private RequestService requestService;
-
     @Autowired
     private SecurityUtil securityUtil;
-
     @Autowired
     private UserManagementService userManagementService;
 
@@ -543,56 +541,73 @@ public class RequestController extends RecapController {
         return requestForm;
     }
 
-
     /**
-     *
-     * @param institution
-     * @param fromDate
-     * @param toDate
-     * @return requestForm
-     */
-    @GetMapping("/exceptionReports")
-    public ResponseEntity<RequestForm> exceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
-        RequestForm requestForm = new RequestForm();
-        Page<RequestItemEntity> requestItemEntities = null;
-        try {
-            requestItemEntities = getRequestServiceUtil().searchExceptionRequests(institution, fromDate, toDate);
-        } catch (Exception e) {
-            logger.info("Exception Occured while pulling Exception Reports {}", e.getMessage());
-        }
-        List<SearchResultRow> searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
-        if (CollectionUtils.isNotEmpty(searchResultRows)) {
-            requestForm.setSearchResultRows(searchResultRows);
-            requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
-            requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
-        } else {
-            requestForm.setSearchResultRows(Collections.emptyList());
-            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
-        }
-        requestForm.setShowResults(true);
-        return new ResponseEntity<>(requestForm, HttpStatus.OK);
-    }
-
-    /**
-     *
-     * @param institution
-     * @param fromDate
-     * @param toDate
      * @return requestForm
      */
     @GetMapping("/exportExceptionReports")
     public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
         RequestForm requestForm = new RequestForm();
-        List<RequestItemEntity> requestItemEntities = null;
+        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_TRUE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionReportsWithDateRange")
+    public ResponseEntity<RequestForm> exportExceptionReportsWithDateRange(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        RequestForm requestForm = new RequestForm();
+        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionReportsPageSizeChange")
+    public ResponseEntity<RequestForm> pageSizeChange(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageSize") String pageSize) {
+        RequestForm requestForm = new RequestForm();
+        requestForm.setPageSize(Integer.parseInt(pageSize));
+        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionNextCall")
+    public ResponseEntity<RequestForm> nextCallException(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageNumber") String pageNumber, @RequestParam("pageSize") String pageSize) {
+        RequestForm requestForm = new RequestForm();
+        requestForm.setPageNumber(Integer.parseInt(pageNumber));
+        requestForm.setPageSize(Integer.parseInt(pageSize));
+        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    private ResponseEntity<RequestForm> exceptionRports(String institution, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
+        requestForm.setInstitution(institution);
+        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
+        Page<RequestItemEntity> requestItemEntities = null;
+        List<SearchResultRow> searchResultRows = null;
+        List<RequestItemEntity> requestItemEntitiesList = null;
         try {
-            requestItemEntities = getRequestServiceUtil().exportExceptionReports(institution, fromDate, toDate);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
+            Date requestFromDate = simpleDateFormat.parse(fromDate);
+            Date requestToDate = simpleDateFormat.parse(toDate);
+            Date fromDateAfter = reportsController.getFromDate(requestFromDate);
+            Date toDateAfter = reportsController.getToDate(requestToDate);
+            if (!isExport) {
+                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institution, fromDateAfter, toDateAfter, requestForm.getPageNumber(), requestForm.getPageSize());
+                searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
+            } else {
+                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institution, fromDateAfter, toDateAfter);
+                searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
+            }
         } catch (Exception e) {
             logger.info("Exception Occured while Exporting Exception Reports {}", e.getMessage());
         }
-        List<SearchResultRow> searchResultRows = buildSearchResultRows(requestItemEntities, requestForm);
         if (CollectionUtils.isNotEmpty(searchResultRows)) {
+            if (!isExport) {
+                requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+                requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
+            }
             requestForm.setSearchResultRows(searchResultRows);
-            requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.stream().count()));
         } else {
             requestForm.setSearchResultRows(Collections.emptyList());
             requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);

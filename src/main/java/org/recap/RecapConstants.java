@@ -52,6 +52,8 @@ public class RecapConstants {
     //Reports
     public static final Integer CGD_SHARED = 1;
     public static final Integer CGD_OPEN = 2;
+    public static final Boolean IS_EXPORT_FALSE = false;
+    public static final Boolean IS_EXPORT_TRUE = false;
     public static final String REPORTS = "Reports";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";

@@ -302,17 +302,6 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
     Page<RequestItemEntity> findAllActiveAndInstitution(Pageable pageable,@Param("institutionId")Integer institutionId);
 
     /**
-     * To get the pageable request item entity for the given status and institution.
-     *
-     * @param pageable      the pageable
-     * @param status        the status
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status))")
-    Page<RequestItemEntity> findByStatusAndInstitution(Pageable pageable, @Param("status") String status,@Param("institutionId")Integer institutionId);
-
-    /**
      * To get the list of  request item entities for the given list of request id.
      *
      * @param id the request id
@@ -328,10 +317,8 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param institutionId the institution id
      * @return the page
      */
-    /*@Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status and (DATE BETWEEN request.lastUpdatedDate=:lastUpdatedDateFrom AND request.lastUpdatedDate=:lastUpdatedDateTo))  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status)) and (DATE BETWEEN request.lastUpdatedDate=:lastUpdatedDateFrom AND request.lastUpdatedDate=:lastUpdatedDateTo)")
-    Page<RequestItemEntity> findByStatusAndInstitutionAndDateRange(Pageable pageable, @Param("status") String status,@Param("institutionId")Integer institutionId,@Param("lastUpdatedDate")Date lastUpdatedDateFrom,@Param("lastUpdatedDate")Date lastUpdatedDateTo);*/
-    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status and WHERE request.lastUpdatedDate BETWEEN :fromDate AND :toDate)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status) and WHERE request.lastUpdatedDate BETWEEN :fromDate AND :toDate)")
-    List<RequestItemEntity> findByStatusAndInstitutionAndDateRange(@Param("status") String status,@Param("institutionId")Integer institutionId, @Param("fromDate") Date fromDate,@Param("toDate") Date toDate);
+    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status))")
+    Page<RequestItemEntity> findByStatusAndInstitution(Pageable pageable, @Param("status") String status,@Param("institutionId")Integer institutionId);
 
     /**
      *
@@ -339,7 +326,16 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param institutionId
      * @return the list of RequestItemEntity
      */
-    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status))")
-    List<RequestItemEntity> findByStatusAndInstitutionAndAll(@Param("status") String status,@Param("institutionId")Integer institutionId);
+    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status and request.lastUpdatedDate BETWEEN :fromDate AND :toDate)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status) and request.lastUpdatedDate BETWEEN :fromDate AND :toDate)")
+    List<RequestItemEntity> findByStatusAndInstitutionAndAll(@Param("status") String status,@Param("institutionId")Integer institutionId,@Param("fromDate")Date fromDate,@Param("toDate")Date toDate);
+
+    /**
+     *
+     * @param status
+     * @param institutionId
+     * @return the list of RequestItemEntity
+     */
+    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status and request.lastUpdatedDate BETWEEN :fromDate AND :toDate)  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription in (:status) and request.lastUpdatedDate BETWEEN :fromDate AND :toDate)")
+    Page<RequestItemEntity> findByStatusAndInstitutionAndDateRange(Pageable pageable,@Param("status") String status,@Param("institutionId")Integer institutionId,@Param("fromDate")Date fromDate,@Param("toDate")Date toDate);
 
 }
