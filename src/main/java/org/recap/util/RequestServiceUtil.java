@@ -2,9 +2,12 @@ package org.recap.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.recap.RecapConstants;
+import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.reports.TransactionReport;
 import org.recap.model.search.RequestForm;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import javax.persistence.EntityManagerFactory;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by rajeshbabuk on 29/10/16.
@@ -31,6 +39,12 @@ public class RequestServiceUtil {
 
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Autowired
+    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Autowired
+    EntityManagerFactory entityManagerFactory;
 
     /**
      * Based on the given search criteria in the request search UI page, this method builds the request search results to show them as rows in the request search UI page.
@@ -145,5 +159,48 @@ public class RequestServiceUtil {
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
         Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable,RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),fromDate,toDate);
         return requestItemEntities;
+    }
+    public List<TransactionReport> getTransactionReportCount(String owningInsts,String requestingInsts,String typeOfUses,Date fromDate,Date toDate) {
+        List<TransactionReport> transactionReportsList = new ArrayList<>();
+        Map<Integer,String> institutionList = mappingInstitution();
+        List<Object[]> list = requestItemDetailsRepository.pullTransactionReportCount(convertToListFromString(owningInsts),convertToListFromString(requestingInsts),convertToListFromString(typeOfUses),fromDate,toDate);
+        for (Object[] o: list) {
+            transactionReportsList.add(new TransactionReport(o[0].toString(),institutionList.get(Integer.parseInt(o[1].toString())),institutionList.get(Integer.parseInt(o[2].toString())),o[3].toString(),Long.parseLong(o[4].toString())));
+        }
+        return transactionReportsList;
+    }
+
+    public List<TransactionReport> getTransactionReports(String owningInsts , String requestingInsts,String typeOfUses,Date fromDate,Date toDate, String cgdType) {
+        List<TransactionReport> transactionReportsList = new ArrayList<>();
+        Map<Integer,String> institutionList = mappingInstitution();
+        List<String> cgdList = new ArrayList<>();
+        if(cgdType.isEmpty())
+            cgdList = pullCGDList();
+        else
+            cgdList.add(cgdType);
+        List<Object[]> reportsList = requestItemDetailsRepository.findByOwnAndReqInstWithStatus(convertToListFromString(owningInsts),convertToListFromString(requestingInsts),convertToListFromString(typeOfUses),fromDate,toDate,cgdList);
+        for (Object[] o: reportsList) {
+            transactionReportsList.add(new TransactionReport(o[0].toString(),institutionList.get(Integer.parseInt(o[1].toString())),institutionList.get(Integer.parseInt(o[2].toString())),o[3].toString(),o[4].toString(),o[5].toString(),o[6].toString()));
+        }
+        return transactionReportsList;
+    }
+
+    private Map<Integer,String> mappingInstitution(){
+        Map<Integer,String> institutionList = new HashMap<>();
+        List<InstitutionEntity> institutionEntities = institutionDetailsRepository.getInstitutionCodes();
+        institutionEntities.stream().forEach(inst->institutionList.put(inst.getId(),inst.getInstitutionCode()));
+        return institutionList;
+    }
+
+    private List<String> pullCGDList(){
+        List<String> cgdList = new ArrayList<>();
+        List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
+        collectionGroupEntities.stream().forEach(cgd->cgdList.add(cgd.getCollectionGroupCode()));
+        return cgdList;
+    }
+
+    private List<String> convertToListFromString(String stringContent){
+        return Stream.of(stringContent.split(","))
+                .collect(Collectors.toList());
     }
 }

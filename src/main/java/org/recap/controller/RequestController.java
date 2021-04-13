@@ -14,6 +14,8 @@ import org.recap.model.jpa.CustomerCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.reports.TransactionReport;
+import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
@@ -54,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -542,7 +545,11 @@ public class RequestController extends RecapController {
     }
 
     /**
-     * @return requestForm
+     *
+     * @param institution
+     * @param fromDate
+     * @param toDate
+     * @return Request Form
      */
     @GetMapping("/exportExceptionReports")
     public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
@@ -586,17 +593,14 @@ public class RequestController extends RecapController {
         Page<RequestItemEntity> requestItemEntities = null;
         List<SearchResultRow> searchResultRows = null;
         List<RequestItemEntity> requestItemEntitiesList = null;
+        Map<String,Date> dateMap = null;
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
-            Date requestFromDate = simpleDateFormat.parse(fromDate);
-            Date requestToDate = simpleDateFormat.parse(toDate);
-            Date fromDateAfter = reportsController.getFromDate(requestFromDate);
-            Date toDateAfter = reportsController.getToDate(requestToDate);
+            dateMap = dateFormatter(fromDate,toDate);
             if (!isExport) {
-                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institution, fromDateAfter, toDateAfter, requestForm.getPageNumber(), requestForm.getPageSize());
+                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institution, dateMap.get("fromDate"), dateMap.get("toDate"), requestForm.getPageNumber(), requestForm.getPageSize());
                 searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
             } else {
-                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institution, fromDateAfter, toDateAfter);
+                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institution,dateMap.get("fromDate"), dateMap.get("toDate"));
                 searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
             }
         } catch (Exception e) {
@@ -616,6 +620,47 @@ public class RequestController extends RecapController {
         return new ResponseEntity<>(requestForm, HttpStatus.OK);
     }
 
+    @GetMapping("/transactionData")
+    public ResponseEntity<TransactionReports> pullTransactionRportCount(@RequestParam("owningInsts") String owningInsts,@RequestParam("requestingInsts") String requestingInsts,@RequestParam("typeOfUses") String typeOfUses,@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        return new ResponseEntity<>(transactionReportData(owningInsts,requestingInsts,typeOfUses,fromDate,toDate,"COUNT",""), HttpStatus.OK);
+    }
+
+    @GetMapping("transactionReports")
+    public ResponseEntity<TransactionReports>  pullTransactionReports(@RequestParam("owningInsts") String owningInsts,@RequestParam("requestingInsts") String requestingInsts,@RequestParam("typeOfUses") String typeOfUses,@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,@RequestParam("cgdType") String cgdType){
+        return new ResponseEntity<>(transactionReportData(owningInsts,requestingInsts,typeOfUses,fromDate,toDate,"REPORTS",cgdType), HttpStatus.OK);
+    }
+    private TransactionReports transactionReportData(String owningInsts,String requestingInsts,String typeOfUses,String fromDate, String toDate,String trasactionCallType,String cgdType){
+        TransactionReports transactionReports = new TransactionReports();
+        List<TransactionReport> transactionReportsList = null;
+        Map<String, Date> dateMap = null;
+        try {
+            dateMap = dateFormatter(fromDate, toDate);
+            if ((trasactionCallType.equalsIgnoreCase("COUNT"))) {
+                transactionReportsList = getRequestServiceUtil().getTransactionReportCount(owningInsts,requestingInsts,typeOfUses,dateMap.get("fromDate"), dateMap.get("toDate"));
+            } else {
+                transactionReportsList =  getRequestServiceUtil().getTransactionReports(owningInsts,requestingInsts,typeOfUses,dateMap.get("fromDate"), dateMap.get("toDate"),cgdType);
+            }
+        } catch (Exception e) {
+            logger.info("Exception Occured while pulling records from DB:: {}"+e.getMessage());
+        }
+        if (CollectionUtils.isNotEmpty(transactionReportsList)) {
+            transactionReports.setTransactionReportList(transactionReportsList);
+        } else {
+            transactionReports.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        return transactionReports;
+    }
+    private Map<String,Date> dateFormatter(String fromDate, String toDate) throws Exception{
+        Map<String,Date> dateMap = new HashMap<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        Date requestFromDate = simpleDateFormat.parse(fromDate);
+        Date requestToDate = simpleDateFormat.parse(toDate);
+        Date fromDateAfter = reportsController.getFromDate(requestFromDate);
+        Date toDateAfter = reportsController.getToDate(requestToDate);
+        dateMap.put("fromDate",fromDateAfter);
+        dateMap.put("toDate",toDateAfter);
+        return  dateMap;
+    }
     private RequestForm search(RequestForm requestForm) {
         return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
     }
