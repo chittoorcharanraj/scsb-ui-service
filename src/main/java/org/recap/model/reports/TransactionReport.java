@@ -29,10 +29,10 @@ public class TransactionReport {
         this.count = count;
     }
 
-    public TransactionReport(String requestType, String owningInst, String requestingInst, String cgd, String itemBarcode, String createdDate, String requestStatus) {
+    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, String itemBarcode, String createdDate, String requestStatus) {
         this.requestType = requestType;
-        this.owningInst = owningInst;
         this.requestingInst = requestingInst;
+        this.owningInst = owningInst;
         this.cgd = cgd;
         this.itemBarcode = itemBarcode;
         this.createdDate = createdDate;
