@@ -6,6 +6,7 @@ import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.reports.TransactionReport;
+import org.recap.model.reports.TransactionReports;
 import org.recap.model.search.RequestForm;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -25,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by rajeshbabuk on 29/10/16.
@@ -135,72 +134,68 @@ public class RequestServiceUtil {
     }
 
     /**
-     *
-     * @param institution
-     * @param fromDate
-     * @param toDate
      * @return page requestItemEntities
      */
-    public List<RequestItemEntity> exportExceptionReports(String institution, Date fromDate, Date toDate) {
-        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),fromDate,toDate);
+    public List<RequestItemEntity> exportExceptionReports(String institutionCode, Date fromDate, Date toDate) {
+        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionCode);
+        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
         return requestItemEntities;
     }
 
     /**
-     *
-     * @param institution
-     * @param fromDate
-     * @param toDate
      * @return page requestItemEntities
      */
-    public Page<RequestItemEntity> exportExceptionReportsWithDate(String institution, Date fromDate, Date toDate,Integer pageNumber,Integer size) throws ParseException {
-        Pageable pageable = PageRequest.of( pageNumber, size, Sort.Direction.DESC, RecapConstants.ID);
-        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable,RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(),fromDate,toDate);
+    public Page<RequestItemEntity> exportExceptionReportsWithDate(String institutionCode, Date fromDate, Date toDate, Integer pageNumber, Integer size) throws ParseException {
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.Direction.DESC, RecapConstants.ID);
+        InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionCode);
+        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable, RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
         return requestItemEntities;
     }
-    public List<TransactionReport> getTransactionReportCount(String owningInsts,String requestingInsts,String typeOfUses,Date fromDate,Date toDate) {
+    /**
+     *
+     * @param fromDate
+     * @param toDate
+     * @return list of Transaction Reports
+     */
+    public List<TransactionReport> getTransactionReportCount(TransactionReports transactionReports, Date fromDate, Date toDate) {
         List<TransactionReport> transactionReportsList = new ArrayList<>();
-        Map<Integer,String> institutionList = mappingInstitution();
-        List<Object[]> list = requestItemDetailsRepository.pullTransactionReportCount(convertToListFromString(owningInsts),convertToListFromString(requestingInsts),convertToListFromString(typeOfUses),fromDate,toDate);
-        for (Object[] o: list) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(),institutionList.get(Integer.parseInt(o[1].toString())),institutionList.get(Integer.parseInt(o[2].toString())),o[3].toString(),Long.parseLong(o[4].toString())));
+        Map<Integer, String> institutionList = mappingInstitution();
+        List<Object[]> list = requestItemDetailsRepository.pullTransactionReportCount(transactionReports.getOwningInsts(),transactionReports.getRequestingInsts(),transactionReports.getTypeOfUses(), fromDate, toDate);
+        for (Object[] o : list) {
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), o[3].toString(), Long.parseLong(o[4].toString())));
         }
         return transactionReportsList;
     }
 
-    public List<TransactionReport> getTransactionReports(String owningInsts , String requestingInsts,String typeOfUses,Date fromDate,Date toDate, String cgdType) {
+    /**
+     *
+     * @param fromDate
+     * @param toDate
+     * @return list of Transaction Reports
+     */
+    public List<TransactionReport> getTransactionReports(TransactionReports transactionReports,Date fromDate, Date toDate) {
         List<TransactionReport> transactionReportsList = new ArrayList<>();
-        Map<Integer,String> institutionList = mappingInstitution();
-        List<String> cgdList = new ArrayList<>();
-        if(cgdType.isEmpty())
-            cgdList = pullCGDList();
-        else
-            cgdList.add(cgdType);
-        List<Object[]> reportsList = requestItemDetailsRepository.findByOwnAndReqInstWithStatus(convertToListFromString(owningInsts),convertToListFromString(requestingInsts),convertToListFromString(typeOfUses),fromDate,toDate,cgdList);
-        for (Object[] o: reportsList) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(),institutionList.get(Integer.parseInt(o[1].toString())),institutionList.get(Integer.parseInt(o[2].toString())),o[3].toString(),o[4].toString(),o[5].toString(),o[6].toString()));
+        Pageable pageable = PageRequest.of(transactionReports.getPageNumber(), transactionReports.getPageSize());
+        Map<Integer, String> institutionList = mappingInstitution();
+        List<String> cgdList = (transactionReports.getCgdType().size() > 0) ? transactionReports.getCgdType() : pullCGDList();
+        List<Object[]> reportsList = requestItemDetailsRepository.findByOwnAndReqInstWithStatus(pageable,transactionReports.getOwningInsts(),transactionReports.getRequestingInsts(),transactionReports.getTypeOfUses(), fromDate, toDate, cgdList);
+        for (Object[] o : reportsList) {
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), o[3].toString(), o[4].toString(), o[5].toString(), o[6].toString()));
         }
         return transactionReportsList;
     }
 
-    private Map<Integer,String> mappingInstitution(){
-        Map<Integer,String> institutionList = new HashMap<>();
+    private Map<Integer, String> mappingInstitution() {
+        Map<Integer, String> institutionList = new HashMap<>();
         List<InstitutionEntity> institutionEntities = institutionDetailsRepository.getInstitutionCodes();
-        institutionEntities.stream().forEach(inst->institutionList.put(inst.getId(),inst.getInstitutionCode()));
+        institutionEntities.stream().forEach(inst -> institutionList.put(inst.getId(), inst.getInstitutionCode()));
         return institutionList;
     }
 
-    private List<String> pullCGDList(){
+    private List<String> pullCGDList() {
         List<String> cgdList = new ArrayList<>();
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
-        collectionGroupEntities.stream().forEach(cgd->cgdList.add(cgd.getCollectionGroupCode()));
+        collectionGroupEntities.stream().forEach(cgd -> cgdList.add(cgd.getCollectionGroupCode()));
         return cgdList;
-    }
-
-    private List<String> convertToListFromString(String stringContent){
-        return Stream.of(stringContent.split(","))
-                .collect(Collectors.toList());
     }
 }

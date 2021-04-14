@@ -384,8 +384,9 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
             "    IN (SELECT REQUEST_TYPE_ID FROM REQUEST_TYPE_T WHERE REQUEST_TYPE_CODE IN (:typeOfUses))" +
             "    AND REQUEST_ITEM_T.CREATED_DATE >= :fromDate AND REQUEST_ITEM_T.CREATED_DATE <= :toDate " +
             "    AND COLLECTION_GROUP_T.COLLECTION_GROUP_CODE IN (:cgdType) " +
-            "ORDER BY ITEM_T.OWNING_INST_ID, REQUEST_ITEM_T.REQUESTING_INST_ID, REQUEST_ITEM_T.REQUEST_STATUS_ID,ITEM_T.COLLECTION_GROUP_ID",nativeQuery = true)
-    List<Object[]> findByOwnAndReqInstWithStatus(@Param("owningInsts") List<String> owningInsts,
+            "ORDER BY ITEM_T.OWNING_INST_ID, REQUEST_ITEM_T.REQUESTING_INST_ID, REQUEST_ITEM_T.REQUEST_STATUS_ID,ITEM_T.COLLECTION_GROUP_ID DESC ",nativeQuery = true)
+    List<Object[]> findByOwnAndReqInstWithStatus(Pageable pageable,
+                                                 @Param("owningInsts") List<String> owningInsts,
                                                  @Param("requestingInsts") List<String> requestingInsts,
                                                  @Param("typeOfUses") List<String> typeOfUses,
                                                  @Param("fromDate") Date fromDate,

@@ -55,6 +55,7 @@ public class RecapConstants {
     public static final Boolean IS_EXPORT_FALSE = false;
     public static final Boolean IS_EXPORT_TRUE = false;
     public static final String REPORTS = "Reports";
+    public static  final String COUNT = "COUNT";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
     public static final String SCSB_UPDATE_CGD_URL = "updateCgdService/updateCgd";
@@ -70,7 +71,9 @@ public class RecapConstants {
     public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL = "auth/touchExistingSession";
     public static final String SCSB_SHIRO_REQUEST_URL = "auth/request";
     public static final String SCSB_SHIRO_COLLECTION_URL = "auth/collection";
-
+    //  REPORT LOGS
+    public static final String EXCEPTION_LOGS_TRANSACTION = "Exception Occured in while pulling Transaction Reports :: {}";
+    public static final String EXCEPTION_LOGS_REQUEST_EXCEPTIONS = "Exception Occured while Exporting Request Exception Reports :: {}";
     //Monitoring and Logging
     public static final String SCSB_SHIRO_MONITORING_URL = "auth/monitoring";
     public static final String SCSB_SHIRO_LOGGING_URL = "auth/logging";

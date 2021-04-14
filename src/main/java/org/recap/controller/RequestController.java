@@ -552,7 +552,7 @@ public class RequestController extends RecapController {
      * @return Request Form
      */
     @GetMapping("/exportExceptionReports")
-    public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+    public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institutionCode") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
         RequestForm requestForm = new RequestForm();
         return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_TRUE);
     }
@@ -561,34 +561,34 @@ public class RequestController extends RecapController {
      * @return requestForm
      */
     @GetMapping("/exportExceptionReportsWithDateRange")
-    public ResponseEntity<RequestForm> exportExceptionReportsWithDateRange(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+    public ResponseEntity<RequestForm> exportExceptionReportsWithDateRange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
         RequestForm requestForm = new RequestForm();
-        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
     }
 
     /**
      * @return requestForm
      */
     @GetMapping("/exportExceptionReportsPageSizeChange")
-    public ResponseEntity<RequestForm> pageSizeChange(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageSize") String pageSize) {
+    public ResponseEntity<RequestForm> pageSizeChange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageSize") String pageSize) {
         RequestForm requestForm = new RequestForm();
         requestForm.setPageSize(Integer.parseInt(pageSize));
-        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
     }
 
     /**
      * @return requestForm
      */
     @GetMapping("/exportExceptionNextCall")
-    public ResponseEntity<RequestForm> nextCallException(@RequestParam("institution") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageNumber") String pageNumber, @RequestParam("pageSize") String pageSize) {
+    public ResponseEntity<RequestForm> nextCallException(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageNumber") String pageNumber, @RequestParam("pageSize") String pageSize) {
         RequestForm requestForm = new RequestForm();
         requestForm.setPageNumber(Integer.parseInt(pageNumber));
         requestForm.setPageSize(Integer.parseInt(pageSize));
-        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
     }
 
-    private ResponseEntity<RequestForm> exceptionRports(String institution, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
-        requestForm.setInstitution(institution);
+    private ResponseEntity<RequestForm> exceptionRports(String institutionCode, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
+        requestForm.setInstitution(institutionCode);
         requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
         Page<RequestItemEntity> requestItemEntities = null;
         List<SearchResultRow> searchResultRows = null;
@@ -597,14 +597,14 @@ public class RequestController extends RecapController {
         try {
             dateMap = dateFormatter(fromDate,toDate);
             if (!isExport) {
-                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institution, dateMap.get("fromDate"), dateMap.get("toDate"), requestForm.getPageNumber(), requestForm.getPageSize());
+                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institutionCode, dateMap.get("fromDate"), dateMap.get("toDate"), requestForm.getPageNumber(), requestForm.getPageSize());
                 searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
             } else {
-                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institution,dateMap.get("fromDate"), dateMap.get("toDate"));
+                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institutionCode,dateMap.get("fromDate"), dateMap.get("toDate"));
                 searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
             }
         } catch (Exception e) {
-            logger.info("Exception Occured while Exporting Exception Reports {}", e.getMessage());
+            logger.info(RecapConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(searchResultRows)) {
             if (!isExport) {
@@ -620,31 +620,41 @@ public class RequestController extends RecapController {
         return new ResponseEntity<>(requestForm, HttpStatus.OK);
     }
 
-    @GetMapping("/transactionData")
-    public ResponseEntity<TransactionReports> pullTransactionRportCount(@RequestParam("owningInsts") String owningInsts,@RequestParam("requestingInsts") String requestingInsts,@RequestParam("typeOfUses") String typeOfUses,@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
-        return new ResponseEntity<>(transactionReportData(owningInsts,requestingInsts,typeOfUses,fromDate,toDate,"COUNT",""), HttpStatus.OK);
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionData")
+    public ResponseEntity<TransactionReports> pullTransactionRportCount(@RequestBody TransactionReports transactionReports) {
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
     }
 
-    @GetMapping("transactionReports")
-    public ResponseEntity<TransactionReports>  pullTransactionReports(@RequestParam("owningInsts") String owningInsts,@RequestParam("requestingInsts") String requestingInsts,@RequestParam("typeOfUses") String typeOfUses,@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,@RequestParam("cgdType") String cgdType){
-        return new ResponseEntity<>(transactionReportData(owningInsts,requestingInsts,typeOfUses,fromDate,toDate,"REPORTS",cgdType), HttpStatus.OK);
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionReports")
+    public ResponseEntity<TransactionReports>  pullTransactionReports(@RequestBody TransactionReports transactionReports){
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
     }
-    private TransactionReports transactionReportData(String owningInsts,String requestingInsts,String typeOfUses,String fromDate, String toDate,String trasactionCallType,String cgdType){
-        TransactionReports transactionReports = new TransactionReports();
+    private TransactionReports transactionReportData(TransactionReports transactionReports){
         List<TransactionReport> transactionReportsList = null;
         Map<String, Date> dateMap = null;
         try {
-            dateMap = dateFormatter(fromDate, toDate);
-            if ((trasactionCallType.equalsIgnoreCase("COUNT"))) {
-                transactionReportsList = getRequestServiceUtil().getTransactionReportCount(owningInsts,requestingInsts,typeOfUses,dateMap.get("fromDate"), dateMap.get("toDate"));
+            dateMap = dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
+            if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.COUNT))) {
+                transactionReportsList = getRequestServiceUtil().getTransactionReportCount(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             } else {
-                transactionReportsList =  getRequestServiceUtil().getTransactionReports(owningInsts,requestingInsts,typeOfUses,dateMap.get("fromDate"), dateMap.get("toDate"),cgdType);
+                transactionReportsList =  getRequestServiceUtil().getTransactionReports(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             }
         } catch (Exception e) {
-            logger.info("Exception Occured while pulling records from DB:: {}"+e.getMessage());
+            logger.info(RecapConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(transactionReportsList)) {
             transactionReports.setTransactionReportList(transactionReportsList);
+            transactionReports.setTotalPageCount(findTotatlPageCount(transactionReports));
         } else {
             transactionReports.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }
@@ -684,6 +694,10 @@ public class RequestController extends RecapController {
     private RequestForm setSearch(RequestForm requestForm) {
         requestForm.setPageNumber(0);
         return searchAndSetResults(requestForm);
+    }
+    private  int findTotatlPageCount(TransactionReports transactionReports){
+        return ((transactionReports.getTotalRecordsCount()%transactionReports.getPageSize()) == 0)? (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize()) :
+                (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize())+1;
     }
 }
 

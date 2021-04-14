@@ -13,18 +13,18 @@ import java.util.List;
 @Setter
 @Getter
 public class TransactionReports {
-   private String totalRecordsCount = "0";
+   private Integer totalRecordsCount = 0;
    private Integer pageNumber = 0;
    private Integer pageSize = 10;
    private Integer totalPageCount = 0;
    private String message;
    private List<TransactionReport> transactionReportList = new ArrayList<>();
-   String owningInsts;
-   String requestingInsts;
-   String typeOfUses;
+   List<String> owningInsts;
+   List<String> requestingInsts;
+   List<String> typeOfUses;
    String fromDate;
    String toDate;
    String trasactionCallType;
-   String cgdType;
+   List<String> cgdType;
 
 }
