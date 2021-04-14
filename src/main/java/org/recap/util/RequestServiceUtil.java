@@ -178,13 +178,30 @@ public class RequestServiceUtil {
         Pageable pageable = PageRequest.of(transactionReports.getPageNumber(), transactionReports.getPageSize());
         Map<Integer, String> institutionList = mappingInstitution();
         List<String> cgdList = (transactionReports.getCgdType().size() > 0) ? transactionReports.getCgdType() : pullCGDList();
-        List<Object[]> reportsList = requestItemDetailsRepository.findByOwnAndReqInstWithStatus(pageable,transactionReports.getOwningInsts(),transactionReports.getRequestingInsts(),transactionReports.getTypeOfUses(), fromDate, toDate, cgdList);
+        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatus(pageable,transactionReports.getOwningInsts(),transactionReports.getRequestingInsts(),transactionReports.getTypeOfUses(), fromDate, toDate, cgdList);
         for (Object[] o : reportsList) {
             transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), o[3].toString(), o[4].toString(), o[5].toString(), o[6].toString()));
         }
         return transactionReportsList;
     }
 
+    /**
+     *
+     * @param transactionReports
+     * @param fromDate
+     * @param toDate
+     * @return th elist of Transaction Reports
+     */
+    public List<TransactionReport> getTransactionReportsExport(TransactionReports transactionReports,Date fromDate, Date toDate) {
+        List<TransactionReport> transactionReportsList = new ArrayList<>();
+        Map<Integer, String> institutionList = mappingInstitution();
+        List<String> cgdList = (transactionReports.getCgdType().size() > 0) ? transactionReports.getCgdType() : pullCGDList();
+        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(transactionReports.getOwningInsts(),transactionReports.getRequestingInsts(),transactionReports.getTypeOfUses(), fromDate, toDate, cgdList);
+        for (Object[] o : reportsList) {
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), o[3].toString(), o[4].toString(), o[5].toString(), o[6].toString()));
+        }
+        return transactionReportsList;
+    }
     private Map<Integer, String> mappingInstitution() {
         Map<Integer, String> institutionList = new HashMap<>();
         List<InstitutionEntity> institutionEntities = institutionDetailsRepository.getInstitutionCodes();

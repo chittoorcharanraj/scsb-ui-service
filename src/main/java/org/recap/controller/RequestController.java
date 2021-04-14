@@ -639,6 +639,15 @@ public class RequestController extends RecapController {
     public ResponseEntity<TransactionReports>  pullTransactionReports(@RequestBody TransactionReports transactionReports){
         return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
     }
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionReportsExport")
+    public ResponseEntity<TransactionReports>  pullTransactionReportsExport(@RequestBody TransactionReports transactionReports){
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
+    }
     private TransactionReports transactionReportData(TransactionReports transactionReports){
         List<TransactionReport> transactionReportsList = null;
         Map<String, Date> dateMap = null;
@@ -646,8 +655,10 @@ public class RequestController extends RecapController {
             dateMap = dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
             if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.COUNT))) {
                 transactionReportsList = getRequestServiceUtil().getTransactionReportCount(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
-            } else {
+            } else if((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.REPORTS))){
                 transactionReportsList =  getRequestServiceUtil().getTransactionReports(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
+            } else {
+                transactionReportsList =  getRequestServiceUtil().getTransactionReportsExport(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             }
         } catch (Exception e) {
             logger.info(RecapConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
