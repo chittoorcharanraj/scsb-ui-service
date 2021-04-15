@@ -6,6 +6,7 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.reports.ReportsResponse;
+import org.recap.model.reports.TransactionReport;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;

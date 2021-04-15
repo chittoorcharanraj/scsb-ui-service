@@ -14,6 +14,8 @@ import org.recap.model.jpa.CustomerCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.reports.TransactionReport;
+import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +42,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,13 +51,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by rajeshbabuk on 13/10/16.
@@ -68,25 +75,20 @@ import java.util.Optional;
 public class RequestController extends RecapController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
-
-
+    @Autowired
+    ReportsController reportsController;
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
-
     @Autowired
     private CustomerCodeDetailsRepository customerCodeDetailsRepository;
-
     @Autowired
     private RequestItemDetailsRepository requestItemDetailsRepository;
-
     @Autowired
     private RequestService requestService;
-
     @Autowired
     private SecurityUtil securityUtil;
-
     @Autowired
-    private  UserManagementService userManagementService;
+    private UserManagementService userManagementService;
 
     public RequestService getRequestService() {
         return requestService;
@@ -542,6 +544,144 @@ public class RequestController extends RecapController {
         return requestForm;
     }
 
+    /**
+     *
+     * @param institution
+     * @param fromDate
+     * @param toDate
+     * @return Request Form
+     */
+    @GetMapping("/exportExceptionReports")
+    public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institutionCode") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        RequestForm requestForm = new RequestForm();
+        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_TRUE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionReportsWithDateRange")
+    public ResponseEntity<RequestForm> exportExceptionReportsWithDateRange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+        RequestForm requestForm = new RequestForm();
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionReportsPageSizeChange")
+    public ResponseEntity<RequestForm> pageSizeChange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageSize") String pageSize) {
+        RequestForm requestForm = new RequestForm();
+        requestForm.setPageSize(Integer.parseInt(pageSize));
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    /**
+     * @return requestForm
+     */
+    @GetMapping("/exportExceptionNextCall")
+    public ResponseEntity<RequestForm> nextCallException(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageNumber") String pageNumber, @RequestParam("pageSize") String pageSize) {
+        RequestForm requestForm = new RequestForm();
+        requestForm.setPageNumber(Integer.parseInt(pageNumber));
+        requestForm.setPageSize(Integer.parseInt(pageSize));
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+    }
+
+    private ResponseEntity<RequestForm> exceptionRports(String institutionCode, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
+        requestForm.setInstitution(institutionCode);
+        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
+        Page<RequestItemEntity> requestItemEntities = null;
+        List<SearchResultRow> searchResultRows = null;
+        List<RequestItemEntity> requestItemEntitiesList = null;
+        Map<String,Date> dateMap = null;
+        try {
+            dateMap = dateFormatter(fromDate,toDate);
+            if (!isExport) {
+                requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institutionCode, dateMap.get("fromDate"), dateMap.get("toDate"), requestForm.getPageNumber(), requestForm.getPageSize());
+                searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
+            } else {
+                requestItemEntitiesList = getRequestServiceUtil().exportExceptionReports(institutionCode,dateMap.get("fromDate"), dateMap.get("toDate"));
+                searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
+            }
+        } catch (Exception e) {
+            logger.info(RecapConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
+        }
+        if (CollectionUtils.isNotEmpty(searchResultRows)) {
+            if (!isExport) {
+                requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+                requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
+            }
+            requestForm.setSearchResultRows(searchResultRows);
+        } else {
+            requestForm.setSearchResultRows(Collections.emptyList());
+            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        requestForm.setShowResults(true);
+        return new ResponseEntity<>(requestForm, HttpStatus.OK);
+    }
+
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionData")
+    public ResponseEntity<TransactionReports> pullTransactionRportCount(@RequestBody TransactionReports transactionReports) {
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
+    }
+
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionReports")
+    public ResponseEntity<TransactionReports>  pullTransactionReports(@RequestBody TransactionReports transactionReports){
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
+    }
+    /**
+     *
+     * @param transactionReports
+     * @return Transaxtion Reports
+     */
+    @PostMapping("/transactionReportsExport")
+    public ResponseEntity<TransactionReports>  pullTransactionReportsExport(@RequestBody TransactionReports transactionReports){
+        return new ResponseEntity<>(transactionReportData(transactionReports), HttpStatus.OK);
+    }
+    private TransactionReports transactionReportData(TransactionReports transactionReports){
+        List<TransactionReport> transactionReportsList = null;
+        Map<String, Date> dateMap = null;
+        try {
+            dateMap = dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
+            if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.COUNT))) {
+                transactionReportsList = getRequestServiceUtil().getTransactionReportCount(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
+            } else if((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.REPORTS))){
+                transactionReportsList =  getRequestServiceUtil().getTransactionReports(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
+            } else {
+                transactionReportsList =  getRequestServiceUtil().getTransactionReportsExport(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
+            }
+        } catch (Exception e) {
+            logger.info(RecapConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
+        }
+        if (CollectionUtils.isNotEmpty(transactionReportsList)) {
+            transactionReports.setTransactionReportList(transactionReportsList);
+            transactionReports.setTotalPageCount(findTotatlPageCount(transactionReports));
+        } else {
+            transactionReports.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        return transactionReports;
+    }
+    private Map<String,Date> dateFormatter(String fromDate, String toDate) throws Exception{
+        Map<String,Date> dateMap = new HashMap<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        Date requestFromDate = simpleDateFormat.parse(fromDate);
+        Date requestToDate = simpleDateFormat.parse(toDate);
+        Date fromDateAfter = reportsController.getFromDate(requestFromDate);
+        Date toDateAfter = reportsController.getToDate(requestToDate);
+        dateMap.put("fromDate",fromDateAfter);
+        dateMap.put("toDate",toDateAfter);
+        return  dateMap;
+    }
     private RequestForm search(RequestForm requestForm) {
         return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
     }
@@ -565,6 +705,10 @@ public class RequestController extends RecapController {
     private RequestForm setSearch(RequestForm requestForm) {
         requestForm.setPageNumber(0);
         return searchAndSetResults(requestForm);
+    }
+    private  int findTotatlPageCount(TransactionReports transactionReports){
+        return ((transactionReports.getTotalRecordsCount()%transactionReports.getPageSize()) == 0)? (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize()) :
+                (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize())+1;
     }
 }
 
