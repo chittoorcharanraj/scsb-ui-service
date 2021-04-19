@@ -21,7 +21,7 @@ public class TransactionReport {
     private String createdDate;
     private String requestStatus;
 
-    public TransactionReport(String requestType, String owningInst, String requestingInst, String cgd, Long count) {
+    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, Long count) {
         this.requestType = requestType;
         this.owningInst = owningInst;
         this.requestingInst = requestingInst;
