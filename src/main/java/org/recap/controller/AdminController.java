@@ -3,16 +3,12 @@ package org.recap.controller;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.LocationEntity;
 import org.recap.model.jpa.SCSBProprtiesEntity;
-import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.LocationDetailsRepository;
-import org.recap.repository.jpa.SCSBPropertiesDetailRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.FileUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +47,7 @@ public class AdminController {
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
     @Autowired
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
     @Autowired
     BulkCustomerCodeDetailsRepository bulkCustomerCodeDetailsRepository;
     @Autowired
@@ -284,16 +280,16 @@ public class AdminController {
         if (customerNode.getNodeType() == Node.ELEMENT_NODE) {
             Element eElement = (Element) customerNode;
 
-            CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-            customerCodeEntity.setOwningInstitutionId(institutionEntity.getId());
-            customerCodeEntity.setCustomerCode(eElement.getElementsByTagName("Code").item(0).getTextContent());
-            customerCodeEntity.setDeliveryRestrictions(eElement.getElementsByTagName("DeliveryRestrictions").item(0).getTextContent());
-            customerCodeEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
-            customerCodeEntity.setPwdDeliveryRestrictions(eElement.getElementsByTagName("PWDDeliveryRestrictions").item(0).getTextContent());
-            customerCodeEntity.setRecapDeliveryRestrictions(eElement.getElementsByTagName("IMS-LocationDeliveryRestrictions").item(0).getTextContent());
-            customerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
+            OwnerCodeEntity ownerCodeEntity = new OwnerCodeEntity();
+            ownerCodeEntity.setInstitutionId(institutionEntity.getId());
+            ownerCodeEntity.setOwnerCode(eElement.getElementsByTagName("Code").item(0).getTextContent());
+         //   ownerCodeEntity.setDeliveryRestrictions(eElement.getElementsByTagName("DeliveryRestrictions").item(0).getTextContent());
+            ownerCodeEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
+           // ownerCodeEntity.setPwdDeliveryRestrictions(eElement.getElementsByTagName("PWDDeliveryRestrictions").item(0).getTextContent());
+           // ownerCodeEntity.setRecapDeliveryRestrictions(eElement.getElementsByTagName("IMS-LocationDeliveryRestrictions").item(0).getTextContent());
+            ownerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
             try {
-                customerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
+                ownerCodeDetailsRepository.saveAndFlush(ownerCodeEntity);
                 fileuploadResponse.put("Customer Code Added Status", RecapConstants.SUCCESSED);
             } catch (Exception e) {
                 fileuploadResponse.put("Customer Code Added Status", RecapConstants.FAILED);

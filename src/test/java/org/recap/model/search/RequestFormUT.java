@@ -3,7 +3,7 @@ package org.recap.model.search;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,7 @@ public class RequestFormUT extends BaseTestCaseUT {
         requestForm.setShowRequestErrorMsg(Boolean.TRUE);
         requestForm.setItemBarcodeHidden("234522");
         requestForm.setSearchInstitutionHdn("1");
-        requestForm.setDeliveryLocations(new ArrayList<CustomerCodeEntity>());
+        requestForm.setDeliveryLocations(new ArrayList<OwnerCodeEntity>());
         requestForm.setSearchResultRows(new ArrayList<>());
         requestForm.setShowResults(true);
         requestForm.resetPageNumber();

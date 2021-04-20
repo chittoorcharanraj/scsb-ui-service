@@ -11,14 +11,14 @@ import org.recap.RecapConstants;
 import org.recap.model.deaccession.DeAccessionItem;
 import org.recap.model.deaccession.DeAccessionRequest;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.service.RestHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,7 +87,7 @@ public class CollectionServiceUtilIT extends BaseTestCase {
     private ItemDetailsRepository mockedItemDetailsRepository;
 
     @Mock
-    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Value("${scsb.gateway.url}")
     String scsbUrl;
@@ -180,8 +180,8 @@ public class CollectionServiceUtilIT extends BaseTestCase {
         assertNotNull(fetchedBibliographicEntity.getItemEntities().get(0));
         assertNotNull(fetchedBibliographicEntity.getItemEntities().get(0).getId());
 
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PB");
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PB");
 
         Integer itemId = fetchedBibliographicEntity.getItemEntities().get(0).getId();
         ItemEntity fetchedItemEntity = itemDetailsRepository.findById(itemId).orElse(null);
@@ -208,7 +208,7 @@ public class CollectionServiceUtilIT extends BaseTestCase {
         map.put(itemBarcode,RecapCommonConstants.SUCCESS);
         collectionServiceUtil = Mockito.mock(CollectionServiceUtil.class);
         Mockito.when(collectionServiceUtil.getDeAccessionRequest()).thenReturn(deAccessionRequest);
-        Mockito.when(collectionServiceUtil.getCustomerCodeDetailsRepository()).thenReturn(customerCodeDetailsRepository);
+        Mockito.when(collectionServiceUtil.getCustomerCodeDetailsRepository()).thenReturn(ownerCodeDetailsRepository);
         Mockito.when(collectionServiceUtil.getCustomerCodeDetailsRepository().findByDescription(bibliographicMarcForm.getDeliveryLocation())).thenReturn(customerCodeEntity);
         HttpEntity<DeAccessionRequest> requestEntity = new HttpEntity<>(deAccessionRequest, restHeaderService.getHttpHeaders());
         Mockito.when(collectionServiceUtil.getRestTemplate()).thenReturn(restTemplate);
@@ -244,7 +244,7 @@ public class CollectionServiceUtilIT extends BaseTestCase {
 
         assertNotEquals(mockedCollectionServiceUtil.getScsbUrl(),scsbUrl);
         assertNotEquals(mockedCollectionServiceUtil.getRestTemplate(),restTemplate);
-        assertNotEquals(mockedCollectionServiceUtil.getCustomerCodeDetailsRepository(),customerCodeDetailsRepository);
+        assertNotEquals(mockedCollectionServiceUtil.getCustomerCodeDetailsRepository(),ownerCodeDetailsRepository);
         assertNotEquals(mockedCollectionServiceUtil.getItemChangeLogDetailsRepository(),mockedItemChangeLogDetailsRepository);
         assertNotEquals(mockedCollectionServiceUtil.getItemDetailsRepository(),mockedItemDetailsRepository);
 

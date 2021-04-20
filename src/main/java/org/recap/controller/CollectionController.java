@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.marc4j.MarcException;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.DeliveryCodeEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.search.CollectionForm;
@@ -14,6 +16,7 @@ import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.util.CollectionServiceUtil;
@@ -55,9 +58,11 @@ public class CollectionController extends AbstractController {
     @Autowired
     private  UserManagementService userManagementService;
 
-
     @Autowired
     private RequestItemDetailsRepository requestItemDetailsRepository;
+
+    @Autowired
+    private ItemDetailsRepository itemDetailsRepository;
 
     /**
      * Gets marc record view util.
@@ -161,7 +166,9 @@ public class CollectionController extends AbstractController {
         logger.info(RecapConstants.COLLECTION_CCIB_CALLED);
         String itemBarcode = collectionForm.getBarcode();
         String warningMessage = null;
-        List<CustomerCodeEntity> deliveryLocations = marcRecordViewUtil.getDeliveryLocationsList(collectionForm.getCustomerCode());
+        List<ItemEntity> itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
+        int owningInstitutionId = !itemEntities.isEmpty() ? itemEntities.get(0).getOwningInstitutionId() : 0;
+        List<DeliveryCodeEntity> deliveryLocations = marcRecordViewUtil.getDeliveryLocationsList(collectionForm.getCustomerCode(), owningInstitutionId);
         collectionForm.setDeliveryLocations(deliveryLocations);
         RequestItemEntity activeRetrievalRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED);
         RequestItemEntity activeRecallRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, RecapCommonConstants.REQUEST_STATUS_RECALLED);

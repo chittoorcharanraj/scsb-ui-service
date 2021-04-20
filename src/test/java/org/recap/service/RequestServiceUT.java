@@ -9,8 +9,7 @@ import org.mockito.Mockito;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.DeliveryRestrictionEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.ItemStatusEntity;
@@ -19,12 +18,7 @@ import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.util.UserAuthUtil;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -86,10 +80,10 @@ public class RequestServiceUT{
     ItemEntity itemEntity;
 
     @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
-    CustomerCodeEntity customerCodeEntity;
+    OwnerCodeEntity customerCodeEntity;
 
     @Mock
     BibliographicEntity bibliographicEntity;
@@ -99,9 +93,6 @@ public class RequestServiceUT{
 
     @Mock
     UserDetailsForm userDetailsFormAuth;
-
-    @Mock
-    DeliveryRestrictionEntity deliveryRestrictionEntity;
 
     @Mock
     ItemStatusEntity itemStatusEntity;
@@ -190,7 +181,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -216,7 +207,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -243,7 +234,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -270,7 +261,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -304,13 +295,11 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(customerCodeEntity.getDeliveryRestrictions()).thenReturn("PB");
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
-        Mockito.when(customerCodeEntity.getRecapDeliveryRestrictions()).thenReturn("Recap");
-        Mockito.when(customerCodeEntity.getCustomerCode()).thenReturn("PB");
+        Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntity);
@@ -349,17 +338,11 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(deliveryRestrictionEntity.getDeliveryRestriction()).thenReturn("PB,PA");
-        List<DeliveryRestrictionEntity> deliveryRestrictionEntityList=new ArrayList<>();
-        deliveryRestrictionEntityList.add(deliveryRestrictionEntity);
-        Mockito.when(deliveryRestrictionEntity.getInstitutionEntity()).thenReturn(institutionEntity);
-        Mockito.when(customerCodeEntity.getDeliveryRestrictionEntityList()).thenReturn(deliveryRestrictionEntityList);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
-        Mockito.when(customerCodeEntity.getRecapDeliveryRestrictions()).thenReturn("Recap");
-        Mockito.when(customerCodeEntity.getCustomerCode()).thenReturn("PB");
+        Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntityCUL);
@@ -397,13 +380,11 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(customerCodeEntity.getDeliveryRestrictions()).thenReturn("PB");
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
-        Mockito.when(customerCodeEntity.getRecapDeliveryRestrictions()).thenReturn("Recap");
-        Mockito.when(customerCodeEntity.getCustomerCode()).thenReturn("PB");
+        Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntity);
@@ -441,13 +422,11 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(customerCodeEntity.getDeliveryRestrictions()).thenReturn("PB");
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
-        Mockito.when(customerCodeEntity.getRecapDeliveryRestrictions()).thenReturn("Recap");
-        Mockito.when(customerCodeEntity.getCustomerCode()).thenReturn("PB");
+        Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntity);
@@ -484,13 +463,11 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(customerCodeEntity.getDeliveryRestrictions()).thenReturn("PB");
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
-        Mockito.when(customerCodeEntity.getRecapDeliveryRestrictions()).thenReturn("Recap");
-        Mockito.when(customerCodeEntity.getCustomerCode()).thenReturn("PB");
+        Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntity);

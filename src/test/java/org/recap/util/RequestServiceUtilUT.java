@@ -2,7 +2,7 @@ package org.recap.util;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.search.RequestForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class RequestServiceUtilUT extends BaseTestCase {
         requestForm.setArticleAuthor("john");
         requestForm.setArticleTitle("test");
         requestForm.setDeliveryLocationInRequest("PB");
-        requestForm.setDeliveryLocations(new ArrayList<CustomerCodeEntity>());
+        requestForm.setDeliveryLocations(new ArrayList<OwnerCodeEntity>());
         requestForm.setSearchResultRows(new ArrayList<>());
         requestForm.setShowResults(true);
         return requestForm;

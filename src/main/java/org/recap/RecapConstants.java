@@ -230,6 +230,8 @@ public class RecapConstants {
     public static final String SUCCESSED = "Successed";
     public static final String FAILED = "Failed";
 
+    public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
+
     private RecapConstants() {
         //Do nothing
     }
