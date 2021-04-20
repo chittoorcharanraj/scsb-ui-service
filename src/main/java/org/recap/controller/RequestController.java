@@ -348,6 +348,8 @@ public class RequestController extends RecapController {
             }
 
             HttpEntity<ItemRequestInformation> requestEntity = new HttpEntity<>(itemRequestInformation, getRestHeaderService().getHttpHeaders());
+            logger.info("Item Request Info DL : {}", itemRequestInformation.getDeliveryLocation());
+            logger.info("Item Request Info : {}", itemRequestInformation.toString());
             ResponseEntity<ItemResponseInformation> itemResponseEntity = getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class);
             ItemResponseInformation itemResponseInformation = itemResponseEntity.getBody();
             if (null != itemResponseInformation && !itemResponseInformation.isSuccess()) {
