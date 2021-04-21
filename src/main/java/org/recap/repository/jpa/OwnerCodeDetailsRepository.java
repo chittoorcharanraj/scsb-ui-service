@@ -84,7 +84,7 @@ public interface OwnerCodeDetailsRepository extends BaseRepository<OwnerCodeEnti
     @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.REQUESTING_INST_ID =:requestingInstitutionId) AND DC.IMS_LOCATION_ID =:imsLocationId", nativeQuery = true)
     List<Object[]> findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(@Param("ownerCodeId") Integer ownerCodeId, @Param("requestingInstitutionId") Integer requestingInstitutionId, @Param("imsLocationId") Integer imsLocationId);
 
-    @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.DEL_RESTRICT_TYPE_ID = (SELECT DRT.DEL_RESTRICT_TYPE_ID FROM DEL_RESTRICT_TYPE_T DRT WHERE DRT.DEL_RESTRICT_TYPE =:deliveryRestrictType))", nativeQuery = true)
+    @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.DEL_RESTRICT_TYPE_ID = (SELECT DRT.DEL_RESTRICT_TYPE_ID FROM DELIVERY_RESTRICT_TYPE_T DRT WHERE DRT.DEL_RESTRICT_TYPE =:deliveryRestrictType))", nativeQuery = true)
     List<Object[]> findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(@Param("ownerCodeId") Integer ownerCodeId, @Param("deliveryRestrictType") String deliveryRestrictType);
 
 
