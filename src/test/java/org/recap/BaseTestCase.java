@@ -2,19 +2,7 @@ package org.recap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemStatusDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.RolesDetailsRepositorty;
-import org.recap.repository.jpa.PermissionsDetailsRepository;
-import org.recap.repository.jpa.UserDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -51,7 +39,7 @@ public class BaseTestCase {
     public ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
 
     @Autowired
-    public CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    public OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Autowired
     public RequestItemDetailsRepository requestItemDetailsRepository;

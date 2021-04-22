@@ -50,7 +50,7 @@ public class AdminControllerUT extends BaseTestCaseUT {
     LocationDetailsRepository locationDetailsRepository;
 
     @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
     BulkCustomerCodeDetailsRepository bulkCustomerCodeDetailsRepository;
@@ -258,7 +258,7 @@ public class AdminControllerUT extends BaseTestCaseUT {
         Mockito.when(element.getNodeType()).thenReturn(Node.ELEMENT_NODE);
         Mockito.when(element.getTextContent()).thenReturn("test");
         ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
-        Mockito.doThrow(new NullPointerException()).when(customerCodeDetailsRepository).saveAndFlush(any());
+        Mockito.doThrow(new NullPointerException()).when(ownerCodeDetailsRepository).saveAndFlush(any());
         ReflectionTestUtils.invokeMethod(adminController,"loadCustomerData",institutionEntity, element);
     }
     @Test

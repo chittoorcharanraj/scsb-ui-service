@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -31,22 +31,20 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
     MarcRecordViewUtil mockMarcRecordViewUtil;
 
     @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Test
     public void getDeliveryLocationsList() {
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(getCustomerCodeEntity());
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCodeIn(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
-        mockMarcRecordViewUtil.getDeliveryLocationsList("PA");
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(getCustomerCodeEntity());
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn((OwnerCodeEntity) Arrays.asList(getCustomerCodeEntity()));
+        mockMarcRecordViewUtil.getDeliveryLocationsList("PA", 1);
     }
 
-    private CustomerCodeEntity getCustomerCodeEntity() {
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PA");
+    private OwnerCodeEntity getCustomerCodeEntity() {
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PA");
         customerCodeEntity.setDescription("test");
-        customerCodeEntity.setOwningInstitutionId(1);
-        customerCodeEntity.setDeliveryRestrictions("PA");
-        customerCodeEntity.setPwdDeliveryRestrictions("test");
+        customerCodeEntity.setInstitutionId(1);
         return customerCodeEntity;
     }
 
