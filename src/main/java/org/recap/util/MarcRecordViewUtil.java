@@ -7,22 +7,16 @@ import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.ItemStatusEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.search.BibDataField;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +30,7 @@ public class MarcRecordViewUtil {
     private BibliographicDetailsRepository bibliographicDetailsRepository;
 
     @Autowired
-    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     /**
      * This method used to get information about the item or bib from the scsb database for the given bib id or item id and
@@ -106,8 +100,8 @@ public class MarcRecordViewUtil {
                                         bibliographicMarcForm.setDeaccessionType(RecapCommonConstants.PERMANENT_WITHDRAWAL_INDIRECT);
                                     }
                                 }
-                                List<CustomerCodeEntity> deliveryLocations = getDeliveryLocationsList(bibliographicMarcForm.getCustomerCode());
-                                    bibliographicMarcForm.setDeliveryLocations(deliveryLocations);
+                                List<DeliveryCodeEntity> deliveryLocations = getDeliveryLocationsList(bibliographicMarcForm.getCustomerCode(), itemEntity.getOwningInstitutionId());
+                                bibliographicMarcForm.setDeliveryLocations(deliveryLocations);
                             }
                         }
                         if (null == bibliographicMarcForm.getItemId()) {
@@ -166,22 +160,30 @@ public class MarcRecordViewUtil {
     }
 
 
-    public List<CustomerCodeEntity> getDeliveryLocationsList(String customerCode) {
-        CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(customerCode);
-        List<CustomerCodeEntity> deliveryLocations = new ArrayList<>();
-        if (null != customerCodeEntity && StringUtils.isNotBlank(customerCodeEntity.getPwdDeliveryRestrictions())) {
-            String pwdDeliveryRestrictions = customerCodeEntity.getPwdDeliveryRestrictions();
-            String[] pwdDeliveryRestrictionsArray = StringUtils.split(pwdDeliveryRestrictions, ",");
-            String[] pwdDeliveryRestrictionsTrimmed = Arrays.stream(pwdDeliveryRestrictionsArray).map(String::trim).toArray(String[]::new);
-            List<CustomerCodeEntity> customerCodeEntities = customerCodeDetailsRepository.findByCustomerCodeIn(Arrays.asList(pwdDeliveryRestrictionsTrimmed));
-            if (CollectionUtils.isNotEmpty(customerCodeEntities)) {
-                deliveryLocations.addAll(customerCodeEntities);
-            }
-            for (CustomerCodeEntity deliveryLocation:deliveryLocations) {
-                deliveryLocation.setDeliveryRestrictionEntityList(new ArrayList<>());
-            }
-            Collections.sort(deliveryLocations);
+    public List<DeliveryCodeEntity> getDeliveryLocationsList(String customerCode, Integer institutionId) {
+        OwnerCodeEntity ownerCodeEntity = ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(customerCode, institutionId);
+        List<DeliveryCodeEntity> deliveryLocations = new ArrayList<>();
+        if (null != ownerCodeEntity) {
+            List<DeliveryCodeEntity> deliveryCodeEntities = new ArrayList<>();
+            List<Object[]> deliveryCodeObjects = ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(ownerCodeEntity.getId(), RecapConstants.PWD_DELIVERY_RESTRICT_TYPE);
+            prepareDeliveryCodeEntities(deliveryCodeEntities, deliveryCodeObjects);
+            Collections.sort(deliveryCodeEntities);
+            return deliveryCodeEntities;
         }
         return deliveryLocations;
+    }
+
+    private void prepareDeliveryCodeEntities(List<DeliveryCodeEntity> deliveryCodeEntities, List<Object[]> deliveryCodeObjects) {
+        for (Object[] obj : deliveryCodeObjects) {
+            DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+            deliveryCodeEntity.setId(Integer.parseInt(obj[0].toString()));
+            deliveryCodeEntity.setDeliveryCode(obj[1] != null ? obj[1].toString() : null);
+            deliveryCodeEntity.setDescription(obj[2] != null ? obj[2].toString() : null);
+            deliveryCodeEntity.setAddress(obj[3] != null ? obj[3].toString() : null);
+            deliveryCodeEntity.setOwningInstitutionId(obj[4] != null ? Integer.parseInt(obj[4].toString()) : null);
+            deliveryCodeEntity.setImsLocationId(obj[5] != null ? Integer.parseInt(obj[5].toString()) : null);
+            deliveryCodeEntity.setDeliveryCodeTypeId(obj[6] != null ? Integer.parseInt(obj[6].toString()) : null);
+            deliveryCodeEntities.add(deliveryCodeEntity);
+        }
     }
 }

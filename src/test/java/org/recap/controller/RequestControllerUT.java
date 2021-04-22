@@ -16,8 +16,8 @@ import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -78,7 +77,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     InstitutionDetailsRepository institutionDetailsRepository;
 
     @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
     RequestItemDetailsRepository requestItemDetailsRepository;
@@ -229,11 +228,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void createRequest() throws JSONException {
         RequestForm requestForm = getRequestForm();
         ResponseEntity responseEntity1 = new ResponseEntity<>(getItemResponseInformation(),HttpStatus.OK);
-        CustomerCodeEntity customerCodeEntity = getCustomerCodeEntity();
+        OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doReturn(responseEntity1).when(restTemplate).exchange(
@@ -247,11 +246,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
     @Test
     public void createRequestException() throws JSONException {
         RequestForm requestForm = getRequestForm();
-        CustomerCodeEntity customerCodeEntity = getCustomerCodeEntity();
+        OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doThrow(new NullPointerException()).when(restTemplate).exchange(
@@ -266,11 +265,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void createRequestHttpClientErrorException() throws JSONException {
         RequestForm requestForm = getRequestForm();
         requestForm.setVolumeNumber(null);
-        CustomerCodeEntity customerCodeEntity = getCustomerCodeEntity();
+        OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(customerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST)).when(restTemplate).exchange(
@@ -413,13 +412,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
         return cancelRequestResponse;
     }
 
-    private CustomerCodeEntity getCustomerCodeEntity() {
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PG");
-        customerCodeEntity.setPwdDeliveryRestrictions("PA");
-        customerCodeEntity.setDeliveryRestrictions("PA");
+    private OwnerCodeEntity getCustomerCodeEntity() {
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PG");
         customerCodeEntity.setDescription("Test");
-        customerCodeEntity.setOwningInstitutionId(1);
+        customerCodeEntity.setInstitutionId(1);
         customerCodeEntity.setId(1);
         return customerCodeEntity;
     }

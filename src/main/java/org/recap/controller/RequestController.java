@@ -10,10 +10,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.CancelRequestResponse;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.reports.TransactionReport;
 import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
@@ -22,8 +19,9 @@ import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.repository.jpa.DeliveryCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
@@ -79,16 +77,24 @@ public class RequestController extends RecapController {
     ReportsController reportsController;
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
+
     @Autowired
-    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
+
+    @Autowired
+    private DeliveryCodeDetailsRepository deliveryCodeDetailsRepository;
+
     @Autowired
     private RequestItemDetailsRepository requestItemDetailsRepository;
+
     @Autowired
     private RequestService requestService;
+
     @Autowired
     private SecurityUtil securityUtil;
+
     @Autowired
-    private UserManagementService userManagementService;
+    private  UserManagementService userManagementService;
 
     public RequestService getRequestService() {
         return requestService;
@@ -276,7 +282,7 @@ public class RequestController extends RecapController {
                 Object itemOwningInstitution = responseJsonObject.has(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? responseJsonObject.get(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
                 Object deliveryLocations = responseJsonObject.has(RecapConstants.DELIVERY_LOCATION) ? responseJsonObject.get(RecapConstants.DELIVERY_LOCATION) : null;
                 Object requestTypes = responseJsonObject.has(RecapConstants.REQUEST_TYPES) ? responseJsonObject.get(RecapConstants.REQUEST_TYPES) : null;
-                List<CustomerCodeEntity> customerCodeEntities = new ArrayList<>();
+                List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
                 List<String> requestTypeList = new ArrayList<>();
                 if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
                     requestForm.setItemTitle((String) itemTitle);
@@ -286,8 +292,8 @@ public class RequestController extends RecapController {
                     while (iterator.hasNext()) {
                         String customerCode = (String) iterator.next();
                         String description = (String) deliveryLocationsJson.get(customerCode);
-                        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-                        customerCodeEntity.setCustomerCode(customerCode);
+                        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+                        customerCodeEntity.setOwnerCode(customerCode);
                         customerCodeEntity.setDescription(description);
                         customerCodeEntities.add(customerCodeEntity);
                     }
@@ -336,13 +342,14 @@ public class RequestController extends RecapController {
             }
 
             if (StringUtils.isNotBlank(requestForm.getDeliveryLocationInRequest())) {
-                CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCode(requestForm.getDeliveryLocationInRequest());
-                if (null != customerCodeEntity) {
-                    itemRequestInformation.setDeliveryLocation(customerCodeEntity.getCustomerCode());
+                DeliveryCodeEntity deliveryCodeEntity = deliveryCodeDetailsRepository.findByDeliveryCode(requestForm.getDeliveryLocationInRequest());
+                if (null != deliveryCodeEntity) {
+                    itemRequestInformation.setDeliveryLocation(deliveryCodeEntity.getDeliveryCode());
                 }
             }
 
             HttpEntity<ItemRequestInformation> requestEntity = new HttpEntity<>(itemRequestInformation, getRestHeaderService().getHttpHeaders());
+            logger.info("Item Request Info DL : {}", itemRequestInformation.getDeliveryLocation());
             ResponseEntity<ItemResponseInformation> itemResponseEntity = getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class);
             ItemResponseInformation itemResponseInformation = itemResponseEntity.getBody();
             if (null != itemResponseInformation && !itemResponseInformation.isSuccess()) {

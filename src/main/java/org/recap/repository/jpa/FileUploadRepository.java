@@ -1,6 +1,6 @@
 package org.recap.repository.jpa;
 
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.FileUploadEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

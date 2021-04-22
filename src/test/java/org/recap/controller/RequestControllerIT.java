@@ -1,8 +1,5 @@
 package org.recap.controller;
 
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.util.Assert;
-import org.apache.zookeeper.Op;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -11,8 +8,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.*;
@@ -21,21 +16,13 @@ import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
-import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchResultRow;
-import org.recap.model.search.SearchResultRowUT;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
 import org.recap.util.RequestServiceUtil;
-import org.recap.util.RequestServiceUtilUT;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +40,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
@@ -62,7 +48,6 @@ import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.function.Function;
 
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,7 +88,7 @@ public class RequestControllerIT extends BaseControllerUT {
     RequestTypeDetailsRepository requestTypeDetailsRepository;
 
     @Mock
-    CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
     HttpSession session;
@@ -324,13 +309,11 @@ public class RequestControllerIT extends BaseControllerUT {
     public void populateItem() throws Exception {
         RequestForm requestForm = new RequestForm();
         BibliographicEntity bibliographicEntity = saveBibSingleHoldingsSingleItem();
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("CU12513083");
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("CU12513083");
         customerCodeEntity.setId(5);
-        customerCodeEntity.setOwningInstitutionId(1);
-        customerCodeEntity.setDeliveryRestrictions("PG,QP");
+        customerCodeEntity.setInstitutionId(1);
         customerCodeEntity.setDescription("Rare Books");
-        customerCodeEntity.setPwdDeliveryRestrictions("QC");
         String barcode = bibliographicEntity.getItemEntities().get(0).getBarcode();
         String customerCode = bibliographicEntity.getItemEntities().get(0).getCustomerCode();
         requestForm.setItemBarcodeInRequest(barcode);
@@ -358,7 +341,7 @@ public class RequestControllerIT extends BaseControllerUT {
         Mockito.when(requestController.getRequestServiceUtil()).thenCallRealMethod();
         Mockito.when(requestController.getUserAuthUtil()).thenCallRealMethod();
         Mockito.when(requestController.getInstitutionDetailsRepository()).thenCallRealMethod();
-        Mockito.when(requestController.getCustomerCodeDetailsRepository()).thenCallRealMethod();
+        Mockito.when(requestController.getOwnerCodeDetailsRepository()).thenCallRealMethod();
         Mockito.when(requestController.getScsbShiro()).thenCallRealMethod();
         Mockito.when(requestController.getScsbUrl()).thenCallRealMethod();
         Mockito.when(requestController.getRequestItemDetailsRepository()).thenCallRealMethod();
@@ -368,7 +351,7 @@ public class RequestControllerIT extends BaseControllerUT {
         assertNotEquals(requestController.getRequestServiceUtil(),requestServiceUtil);
         assertNotEquals(requestController.getUserAuthUtil(),userAuthUtil);
         assertNotEquals(requestController.getInstitutionDetailsRepository(),institutionDetailsRepository);
-        assertNotEquals(requestController.getCustomerCodeDetailsRepository(),requestServiceUtil);
+        assertNotEquals(requestController.getOwnerCodeDetailsRepository(),requestServiceUtil);
         assertNotEquals(requestController.getScsbShiro(),requestServiceUtil);
         assertNotEquals(requestController.getScsbUrl(),scsbUrl);
         assertNotEquals(requestController.getRequestItemDetailsRepository(),requestItemDetailsRepository);
@@ -402,19 +385,19 @@ public class RequestControllerIT extends BaseControllerUT {
         HttpEntity<ItemRequestInformation> requestEntity = new HttpEntity<>(itemRequestInformation, restHeaderService.getHttpHeaders());
         String validateRequestItemUrl = getScsbUrl() + RecapConstants.VALIDATE_REQUEST_ITEM_URL;
         String requestItemUrl = scsbUrl + RecapConstants.REQUEST_ITEM_URL;
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PG");
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PG");
         Mockito.when(requestController.getItemRequestInformation()).thenReturn(itemRequestInformation);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         Mockito.when(requestController.getScsbShiro()).thenReturn(scsbShiro);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestHeaderService()).thenReturn(restHeaderService);
-        Mockito.when(requestController.getCustomerCodeDetailsRepository()).thenReturn(customerCodeDetailsRepository);
+        Mockito.when(requestController.getOwnerCodeDetailsRepository()).thenReturn(ownerCodeDetailsRepository);
         Mockito.when(requestController.getRequestService()).thenReturn(requestService);
 //        Mockito.when(requestController.getRequestService().populateItemForRequest(requestForm, request)).thenReturn("test");
       //  Mockito.when(requestController.populateItem(requestForm,null,model,request)).thenReturn(message);
-        Mockito.when(requestController.getCustomerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
+        Mockito.when(requestController.getOwnerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
         Mockito.when(requestController.getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class)).thenReturn(responseEntity1);
         Mockito.when(requestController.getRestTemplate().exchange(validateRequestItemUrl, HttpMethod.POST, requestEntity, String.class)).thenReturn(responseEntity);
         Mockito.when(requestController.createRequest(requestForm,request)).thenCallRealMethod();
@@ -432,19 +415,19 @@ public class RequestControllerIT extends BaseControllerUT {
         HttpEntity<ItemRequestInformation> requestEntity = new HttpEntity<>(itemRequestInformation, restHeaderService.getHttpHeaders());
         String validateRequestItemUrl = getScsbUrl() + RecapConstants.VALIDATE_REQUEST_ITEM_URL;
         String requestItemUrl = scsbUrl + RecapConstants.REQUEST_ITEM_URL;
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PG");
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PG");
         Mockito.when(requestController.getItemRequestInformation()).thenReturn(itemRequestInformation);
         Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         Mockito.when(requestController.getScsbShiro()).thenReturn(scsbShiro);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestHeaderService()).thenReturn(restHeaderService);
-        Mockito.when(requestController.getCustomerCodeDetailsRepository()).thenReturn(customerCodeDetailsRepository);
+        Mockito.when(requestController.getOwnerCodeDetailsRepository()).thenReturn(ownerCodeDetailsRepository);
         Mockito.when(requestController.getRequestService()).thenReturn(requestService);
 //        Mockito.when(requestController.getRequestService().populateItemForRequest(requestForm, request)).thenReturn("test");
        // Mockito.when(requestController.populateItem(requestForm,null,model,request)).thenReturn(message);
-        Mockito.when(requestController.getCustomerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
+        Mockito.when(requestController.getOwnerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
         Mockito.when(requestController.getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class)).thenReturn(responseEntity1);
         Mockito.when(requestController.getRestTemplate().exchange(validateRequestItemUrl, HttpMethod.POST, requestEntity, String.class)).thenReturn(responseEntity);
         Mockito.when(requestController.createRequest(requestForm,request)).thenCallRealMethod();

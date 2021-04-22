@@ -2,7 +2,8 @@ package org.recap.model.search;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.DeliveryCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class BibliographicMarcForm {
     private String customerCode;
     private String deaccessionType;
     private String deaccessionNotes;
-    private List<CustomerCodeEntity> deliveryLocations = new ArrayList<>();
+    private List<DeliveryCodeEntity> deliveryLocations = new ArrayList<>();
     private String deliveryLocation;
     private boolean shared = false;
     private boolean submitted = false;
