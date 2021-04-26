@@ -9,8 +9,8 @@ import org.marc4j.marc.Record;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.DeliveryRestrictionEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
+import org.recap.model.jpa.DeliveryCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
@@ -18,12 +18,7 @@ import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.util.BibJSONUtil;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
@@ -55,7 +50,7 @@ public class RequestService {
     private RequestTypeDetailsRepository requestTypeDetailsRepository;
 
     @Autowired
-    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
@@ -125,8 +120,8 @@ public class RequestService {
      *
      * @return the customer code details repository
      */
-    public CustomerCodeDetailsRepository getCustomerCodeDetailsRepository() {
-        return customerCodeDetailsRepository;
+    public OwnerCodeDetailsRepository getOwnerCodeDetailsRepository() {
+        return ownerCodeDetailsRepository;
     }
 
 
@@ -169,55 +164,45 @@ public class RequestService {
      * @param institutionId        the institution id
      */
     public void processCustomerAndDeliveryCodes(RequestForm requestForm, Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm, ItemEntity itemEntity, Integer institutionId) {
-        String customerCode = itemEntity.getCustomerCode();
-        CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(customerCode, institutionId);
-        if (requestForm.getItemOwningInstitution().equals(requestForm.getRequestingInstitution())) {
-            if (customerCodeEntity != null) {
-                String deliveryRestrictions = customerCodeEntity.getDeliveryRestrictions();
-                if (StringUtils.isNotBlank(deliveryRestrictions)) {
-                    String[] deliverLocationsArray = deliveryRestrictions.split(",");
-                    addDeliveryLocations(deliveryLocationsMap, deliverLocationsArray);
-                }
-            }
-        } else {
-            addDeliveryLocationsForCrossPartner(requestForm, deliveryLocationsMap, customerCodeEntity);
-        }
-        addRecapDeliveryRestrictions(deliveryLocationsMap, userDetailsForm, customerCodeEntity);
-    }
-
-    private void addDeliveryLocationsForCrossPartner(RequestForm requestForm, Map<String, String> deliveryLocationsMap, CustomerCodeEntity customerCodeEntity) {
-        if (customerCodeEntity != null) {
-            List<DeliveryRestrictionEntity> deliveryRestrictionEntityList = customerCodeEntity.getDeliveryRestrictionEntityList();
-            if (CollectionUtils.isNotEmpty(deliveryRestrictionEntityList)) {
-                for (DeliveryRestrictionEntity deliveryRestrictionEntity : deliveryRestrictionEntityList) {
-                    if (requestForm.getRequestingInstitution().equals(deliveryRestrictionEntity.getInstitutionEntity().getInstitutionCode())) {
-                        String deliveryRestriction = deliveryRestrictionEntity.getDeliveryRestriction();
-                        String[] splitDeliveryLocation = StringUtils.split(deliveryRestriction, ",");
-                        addDeliveryLocations(deliveryLocationsMap, splitDeliveryLocation);
-                    }
-                }
+        String ownerCode = itemEntity.getCustomerCode();
+        OwnerCodeEntity ownerCodeEntity = ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(ownerCode, institutionId);
+        InstitutionEntity requestingInstitutionEntity = institutionDetailsRepository.findByInstitutionCode(requestForm.getRequestingInstitution());
+        if (ownerCodeEntity != null) {
+            List<DeliveryCodeEntity> insDeliveryCodeEntities = new ArrayList<>();
+            List<Object[]> instDeliveryCodeObjects = ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId());
+            prepareDeliveryCodeEntities(insDeliveryCodeEntities, instDeliveryCodeObjects);
+            addDeliveryLocationsToMap(deliveryLocationsMap, insDeliveryCodeEntities);
+            if (userDetailsForm.isRecapUser()) {
+                List<DeliveryCodeEntity> imsDeliveryCodeEntities = new ArrayList<>();
+                List<Object[]> imsDeliveryCodeObjects = ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId(), itemEntity.getImsLocationId());
+                prepareDeliveryCodeEntities(imsDeliveryCodeEntities, imsDeliveryCodeObjects);
+                addDeliveryLocationsToMap(deliveryLocationsMap, imsDeliveryCodeEntities);
             }
         }
     }
 
-    private void addDeliveryLocations(Map<String, String> deliveryLocationsMap, String[] deliveryRestrictions) {
-        String[] deliveryRestrictionsArray = Arrays.stream(deliveryRestrictions).map(String::trim).toArray(String[]::new);
-        List<CustomerCodeEntity> deliveryRestrictionsList = customerCodeDetailsRepository.findByCustomerCodeIn(Arrays.asList(deliveryRestrictionsArray));
-        if (CollectionUtils.isNotEmpty(deliveryRestrictionsList)) {
-            Collections.sort(deliveryRestrictionsList);
-            for (CustomerCodeEntity customerCodeEntity : deliveryRestrictionsList) {
-                if (customerCodeEntity != null) {
-                    deliveryLocationsMap.put(customerCodeEntity.getCustomerCode(), customerCodeEntity.getDescription());
-                }
-            }
+    private void prepareDeliveryCodeEntities(List<DeliveryCodeEntity> deliveryCodeEntities, List<Object[]> deliveryCodeObjects) {
+        for (Object[] obj : deliveryCodeObjects) {
+            DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+            deliveryCodeEntity.setId(Integer.parseInt(obj[0].toString()));
+            deliveryCodeEntity.setDeliveryCode(obj[1] != null ? obj[1].toString() : null);
+            deliveryCodeEntity.setDescription(obj[2] != null ? obj[2].toString() : null);
+            deliveryCodeEntity.setAddress(obj[3] != null ? obj[3].toString() : null);
+            deliveryCodeEntity.setOwningInstitutionId(obj[4] != null ? Integer.parseInt(obj[4].toString()) : null);
+            deliveryCodeEntity.setImsLocationId(obj[5] != null ? Integer.parseInt(obj[5].toString()) : null);
+            deliveryCodeEntity.setDeliveryCodeTypeId(obj[6] != null ? Integer.parseInt(obj[6].toString()) : null);
+            deliveryCodeEntities.add(deliveryCodeEntity);
         }
     }
 
-    private void addRecapDeliveryRestrictions(Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm, CustomerCodeEntity customerCodeEntity) {
-        if (userDetailsForm.isRecapUser()) {
-            String recapDeliveryRestrictions = customerCodeEntity.getRecapDeliveryRestrictions();
-            String[] recapDeliveryRestrictionsArray = recapDeliveryRestrictions.split(",");
-            addDeliveryLocations(deliveryLocationsMap, recapDeliveryRestrictionsArray);
+    private void addDeliveryLocationsToMap(Map<String, String> deliveryLocationsMap, List<DeliveryCodeEntity> deliveryCodeEntities) {
+        if (CollectionUtils.isNotEmpty(deliveryCodeEntities)) {
+            Collections.sort(deliveryCodeEntities);
+            for (DeliveryCodeEntity deliveryCodeEntity : deliveryCodeEntities) {
+                if (deliveryCodeEntity != null) {
+                    deliveryLocationsMap.put(deliveryCodeEntity.getDeliveryCode(), deliveryCodeEntity.getDescription());
+                }
+            }
         }
     }
 
@@ -320,8 +305,8 @@ public class RequestService {
                     List<ItemEntity> itemEntities = getItemDetailsRepository().findByBarcodeAndCatalogingStatusAndIsDeletedFalse(barcode, RecapCommonConstants.COMPLETE_STATUS);
                     if (CollectionUtils.isNotEmpty(itemEntities)) {
                         for (ItemEntity itemEntity : itemEntities) {
-                            CustomerCodeEntity customerCodeEntity = getCustomerCodeDetailsRepository().findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode());
-                            if (customerCodeEntity != null) {
+                            OwnerCodeEntity ownerCodeEntity = getOwnerCodeDetailsRepository().findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode());
+                            if (ownerCodeEntity != null) {
                                 showEDD = true;
                             }
                             if (null != itemEntity && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
@@ -437,7 +422,7 @@ public class RequestService {
                 Object itemOwningInstitution = jsonObject.has(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? jsonObject.get(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
                 Object deliveryLocations = jsonObject.has(RecapConstants.DELIVERY_LOCATION) ? jsonObject.get(RecapConstants.DELIVERY_LOCATION) : null;
                 Object requestTypes = jsonObject.has(RecapConstants.REQUEST_TYPES) ? jsonObject.get(RecapConstants.REQUEST_TYPES) : null;
-                List<CustomerCodeEntity> customerCodeEntities = new ArrayList<>();
+                List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
                 List<String> requestTypeList = new ArrayList<>();
                 if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
                     requestForm.setItemTitle((String) itemTitle);
@@ -447,8 +432,8 @@ public class RequestService {
                     while (iterator.hasNext()) {
                         String customerCode = (String) iterator.next();
                         String description = (String) deliveryLocationsJson.get(customerCode);
-                        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-                        customerCodeEntity.setCustomerCode(customerCode);
+                        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+                        customerCodeEntity.setOwnerCode(customerCode);
                         customerCodeEntity.setDescription(description);
                         customerCodeEntities.add(customerCodeEntity);
                     }

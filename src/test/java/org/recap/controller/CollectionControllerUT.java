@@ -8,13 +8,8 @@ import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.model.jpa.CustomerCodeEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.jpa.*;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.search.BibDataField;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.search.CollectionForm;
@@ -138,7 +133,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
-        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
+        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(anyString(), anyString())).thenReturn(new RequestItemEntity());
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
@@ -149,7 +144,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
         RequestItemEntity requestItemEntity = getRequestItemEntity();
-        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
+        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
@@ -163,7 +158,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("HD");
         requestItemEntity.getItemEntity().setInstitutionEntity(institutionEntity);
-        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
+        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
@@ -174,7 +169,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         collectionForm.setBarcode("123556");
         collectionForm.setCollectionAction("Update CGD");
         RequestItemEntity requestItemEntity = getRequestItemEntity();
-        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
+        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
@@ -188,7 +183,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setInstitutionCode("HD");
         requestItemEntity.getItemEntity().setInstitutionEntity(institutionEntity);
-        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any())).thenReturn(Arrays.asList(getCustomerCodeEntity()));
+        Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
         Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
@@ -321,9 +316,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         bibliographicMarcForm.setCustomerCode("3456");
         bibliographicMarcForm.setDeaccessionType("DENIED");
         bibliographicMarcForm.setDeaccessionNotes("test");
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setDeliveryRestrictions("No");
-        bibliographicMarcForm.setDeliveryLocations(Arrays.asList(customerCodeEntity));
+        DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+        deliveryCodeEntity.setDeliveryCode("No");
+        bibliographicMarcForm.setDeliveryLocations(Arrays.asList(deliveryCodeEntity));
         bibliographicMarcForm.setDeliveryLocation("PA");
         bibliographicMarcForm.setShared(true);
         bibliographicMarcForm.setSubmitted(true);
@@ -343,15 +338,22 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         return userDetailsForm;
     }
 
-    private CustomerCodeEntity getCustomerCodeEntity() {
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode("PG");
-        customerCodeEntity.setPwdDeliveryRestrictions("PA");
-        customerCodeEntity.setDeliveryRestrictions("PA");
+    private OwnerCodeEntity getCustomerCodeEntity() {
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode("PG");
         customerCodeEntity.setDescription("Test");
-        customerCodeEntity.setOwningInstitutionId(1);
+        customerCodeEntity.setInstitutionId(1);
         customerCodeEntity.setId(1);
         return customerCodeEntity;
+    }
+
+    private DeliveryCodeEntity getDeliveryCodeEntity() {
+        DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+        deliveryCodeEntity.setDeliveryCode("PG");
+        deliveryCodeEntity.setDescription("Test");
+        deliveryCodeEntity.setOwningInstitutionId(1);
+        deliveryCodeEntity.setId(1);
+        return deliveryCodeEntity;
     }
 
     private RequestItemEntity getRequestItemEntity() {

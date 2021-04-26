@@ -2,7 +2,7 @@ package org.recap.repository.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,57 +21,56 @@ public class CustomerCodeDetailsRepositoryUT extends BaseTestCase {
     private EntityManager entityManager;
 
     @Test
-    public void findByCustomerCode() throws Exception {
-        CustomerCodeEntity customerCodeEntity = getCustomerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
-        CustomerCodeEntity saveCustomerCodeEntity = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
+    public void findByOwnerCode() throws Exception {
+        OwnerCodeEntity customerCodeEntity = getOwnerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
+        OwnerCodeEntity saveCustomerCodeEntity = ownerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
         entityManager.refresh(saveCustomerCodeEntity);
         assertNotNull(saveCustomerCodeEntity);
         assertNotNull(saveCustomerCodeEntity.getId());
-        assertNotNull(saveCustomerCodeEntity.getCustomerCode());
+        assertNotNull(saveCustomerCodeEntity.getOwnerCode());
 
-        CustomerCodeEntity byCustomerCode = customerCodeDetailsRepository.findByCustomerCode(saveCustomerCodeEntity.getCustomerCode());
+        OwnerCodeEntity byCustomerCode = ownerCodeDetailsRepository.findByOwnerCode(saveCustomerCodeEntity.getOwnerCode());
         assertNotNull(byCustomerCode);
-        assertNotNull(byCustomerCode.getCustomerCode());
-        assertEquals("ZZ", byCustomerCode.getCustomerCode());
+        assertNotNull(byCustomerCode.getOwnerCode());
+        assertEquals("ZZ", byCustomerCode.getOwnerCode());
         assertNotNull(byCustomerCode.getInstitutionEntity());
     }
 
     @Test
-    public void findByCustomerCodeIn() throws Exception {
-        CustomerCodeEntity customerCodeEntity1 = getCustomerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
-        CustomerCodeEntity saveCustomerCodeEntity1 = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity1);
+    public void findByOwnerCodeIn() throws Exception {
+        OwnerCodeEntity customerCodeEntity1 = getOwnerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
+        OwnerCodeEntity saveCustomerCodeEntity1 = ownerCodeDetailsRepository.saveAndFlush(customerCodeEntity1);
         entityManager.refresh(saveCustomerCodeEntity1);
         assertNotNull(saveCustomerCodeEntity1);
         assertNotNull(saveCustomerCodeEntity1.getId());
-        assertNotNull(saveCustomerCodeEntity1.getCustomerCode());
+        assertNotNull(saveCustomerCodeEntity1.getOwnerCode());
 
-        CustomerCodeEntity customerCodeEntity2 = getCustomerCodeEntity("YY", "Desc YY", 3, "ZZ,YY");
-        CustomerCodeEntity saveCustomerCodeEntity2 = customerCodeDetailsRepository.saveAndFlush(customerCodeEntity2);
+        OwnerCodeEntity customerCodeEntity2 = getOwnerCodeEntity("YY", "Desc YY", 3, "ZZ,YY");
+        OwnerCodeEntity saveCustomerCodeEntity2 = ownerCodeDetailsRepository.saveAndFlush(customerCodeEntity2);
         entityManager.refresh(saveCustomerCodeEntity2);
         assertNotNull(saveCustomerCodeEntity2);
         assertNotNull(saveCustomerCodeEntity2.getId());
-        assertNotNull(saveCustomerCodeEntity2.getCustomerCode());
+        assertNotNull(saveCustomerCodeEntity2.getOwnerCode());
 
-        List<CustomerCodeEntity> byCustomerCodeIn = customerCodeDetailsRepository.findByCustomerCodeIn(Arrays.asList("ZZ", "YY"));
+        List<OwnerCodeEntity> byCustomerCodeIn = ownerCodeDetailsRepository.findByOwnerCodeIn(Arrays.asList("ZZ", "YY"));
         assertNotNull(byCustomerCodeIn);
         assertEquals(2, byCustomerCodeIn.size());
         assertNotNull(byCustomerCodeIn.get(0));
         assertNotNull(byCustomerCodeIn.get(1));
-        for(CustomerCodeEntity customerCodeEntity:byCustomerCodeIn){
-            if(customerCodeEntity.getCustomerCode().equals("ZZ")){
-                assertEquals("ZZ", customerCodeEntity.getCustomerCode());
+        for(OwnerCodeEntity customerCodeEntity:byCustomerCodeIn){
+            if(customerCodeEntity.getOwnerCode().equals("ZZ")){
+                assertEquals("ZZ", customerCodeEntity.getOwnerCode());
             } else {
-                assertEquals("YY", customerCodeEntity.getCustomerCode());
+                assertEquals("YY", customerCodeEntity.getOwnerCode());
             }
         }
     }
 
-    private CustomerCodeEntity getCustomerCodeEntity(String customerCode, String description, Integer institutionId, String deliveryRestrictions) {
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setCustomerCode(customerCode);
+    private OwnerCodeEntity getOwnerCodeEntity(String customerCode, String description, Integer institutionId, String deliveryRestrictions) {
+        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+        customerCodeEntity.setOwnerCode(customerCode);
         customerCodeEntity.setDescription(description);
-        customerCodeEntity.setOwningInstitutionId(institutionId);
-        customerCodeEntity.setDeliveryRestrictions(deliveryRestrictions);
+        customerCodeEntity.setInstitutionId(institutionId);
         return customerCodeEntity;
     }
 }

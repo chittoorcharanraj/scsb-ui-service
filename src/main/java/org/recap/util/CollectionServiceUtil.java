@@ -7,9 +7,9 @@ import org.recap.RecapCommonConstants;
 import org.recap.model.deaccession.DeAccessionItem;
 import org.recap.model.deaccession.DeAccessionRequest;
 import org.recap.model.search.BibliographicMarcForm;
-import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.service.RestHeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class CollectionServiceUtil {
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
 
     @Autowired
-    private CustomerCodeDetailsRepository customerCodeDetailsRepository;
+    private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
@@ -85,8 +85,8 @@ public class CollectionServiceUtil {
      *
      * @return the customer code details repository
      */
-    public CustomerCodeDetailsRepository getCustomerCodeDetailsRepository() {
-        return customerCodeDetailsRepository;
+    public OwnerCodeDetailsRepository getCustomerCodeDetailsRepository() {
+        return ownerCodeDetailsRepository;
     }
 
     /**
