@@ -23,5 +23,5 @@ public class BulkSearchResultRow {
     private Date createdDate;
     private String status;
     private String bulkRequestNotes;
-
+    private String imsLocation;
 }
