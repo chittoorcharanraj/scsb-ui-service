@@ -497,6 +497,7 @@ public class RequestController extends RecapController {
         }
         searchResultRow.setPatronBarcode(requestItemEntity.getPatronId());
         searchResultRow.setDeliveryLocation(requestItemEntity.getStopCode());
+        searchResultRow.setImsLocation(requestItemEntity.getItemEntity().getImsLocationId().toString());
         setBibData(requestItemEntity, searchResultRow, searchResultRows);
     }
 

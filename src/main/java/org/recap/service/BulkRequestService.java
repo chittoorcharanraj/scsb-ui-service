@@ -178,6 +178,7 @@ public class BulkRequestService {
                     bulkSearchResultRow.setCreatedDate(bulkRequestItemEntity.getCreatedDate());
                     bulkSearchResultRow.setStatus(bulkRequestItemEntity.getBulkRequestStatus());
                     bulkSearchResultRow.setBulkRequestNotes(bulkRequestItemEntity.getNotes());
+                    bulkSearchResultRow.setImsLocation(bulkRequestItemEntity.getImsLocationEntity().getImsLocationCode());
                     bulkSearchResultRows.add(bulkSearchResultRow);
                 } catch (Exception ex) {
                     logger.error(RecapCommonConstants.LOG_ERROR, ex);
