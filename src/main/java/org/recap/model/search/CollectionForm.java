@@ -17,6 +17,8 @@ public class CollectionForm extends BibliographicMarcForm {
     private List<SearchResultRow> searchResultRows = new ArrayList<>();
     private boolean showModal = false;
 
+
+
     /**
      * Gets item barcodes.
      *

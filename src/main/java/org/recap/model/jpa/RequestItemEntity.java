@@ -27,4 +27,5 @@ public class RequestItemEntity extends RequestItemAbstractEntity {
 
     @Column(name = "EMAIL_ID")
     private String emailId;
+
 }

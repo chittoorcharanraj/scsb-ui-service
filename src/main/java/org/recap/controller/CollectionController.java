@@ -18,7 +18,9 @@ import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserManagementService;
+import org.recap.service.SCSBService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
@@ -35,6 +37,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Created by rajeshbabuk on 12/10/16.
@@ -63,6 +66,12 @@ public class CollectionController extends AbstractController {
 
     @Autowired
     private ItemDetailsRepository itemDetailsRepository;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    SCSBService scsbService;
 
     /**
      * Gets marc record view util.
@@ -129,6 +138,7 @@ public class CollectionController extends AbstractController {
         UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
+        collectionFormUpdated.setAllowCGDandDeaccession(checkIsCGDandDeaccessionRestricted(collectionForm.getBarcode(),request));
         return collectionFormUpdated;
     }
 
@@ -201,7 +211,14 @@ public class CollectionController extends AbstractController {
         }
         return collectionForm;
     }
-
+    private boolean checkIsCGDandDeaccessionRestricted (String barcode,HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
+        String itemCode = itemDetailsRepository.findInstitutionCodeByBarcode(barcode);
+        List<String> userRoles = userDetailsRepository.getUserRoles(username);
+        return scsbService.validateUserRoles(userRoles,userCode,itemCode);
+    }
     private CollectionForm searchAndSetResults(CollectionForm collectionForm) throws Exception {
         return buildMissingBarcodes(buildResultRows(trimBarcodes(collectionForm)));
     }

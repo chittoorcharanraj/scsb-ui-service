@@ -33,9 +33,9 @@ public class BulkRequestItemEntity extends BulkRequestItemAbstractEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "IMS_LOCATION_ID", referencedColumnName = "IMS_LOCATION_ID", insertable = false, updatable = false)
     private ImsLocationEntity imsLocationEntity;
-
+/*
     @Column(
             name = "IMS_LOCATION_ID"
     )
-    private Integer imsLocationCode;
+    private Integer imsLocationCode;*/
 }
