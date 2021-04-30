@@ -20,6 +20,7 @@ import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.DeliveryCodeDetailsRepository;
+import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
@@ -95,6 +96,9 @@ public class RequestController extends RecapController {
 
     @Autowired
     private  UserManagementService userManagementService;
+
+    @Autowired
+    private ImsLocationDetailRepository imsLocationDetailRepository;
 
     public RequestService getRequestService() {
         return requestService;
@@ -483,6 +487,7 @@ public class RequestController extends RecapController {
     private void populateRequestResultsForRecall(List<SearchResultRow> searchResultRows, RequestItemEntity requestItemEntity) {
         SearchResultRow searchResultRow = setSearchResultRow(requestItemEntity);
         searchResultRow.setShowItems(false);
+        searchResultRow.setImsLocation(requestItemEntity.getItemEntity().getImsLocationEntity().getImsLocationCode());
         setBibData(requestItemEntity, searchResultRow, searchResultRows);
     }
 
@@ -497,10 +502,9 @@ public class RequestController extends RecapController {
         }
         searchResultRow.setPatronBarcode(requestItemEntity.getPatronId());
         searchResultRow.setDeliveryLocation(requestItemEntity.getStopCode());
-        searchResultRow.setImsLocation(requestItemEntity.getItemEntity().getImsLocationId().toString());
+        searchResultRow.setImsLocation(requestItemEntity.getItemEntity().getImsLocationEntity().getImsLocationCode());
         setBibData(requestItemEntity, searchResultRow, searchResultRows);
     }
-
     private Integer getPageNumberOnPageSizeChange(RequestForm requestForm) {
         int totalRecordsCount;
         Integer pageNumber = requestForm.getPageNumber();

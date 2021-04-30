@@ -9,34 +9,36 @@ import org.springframework.data.domain.Pageable;
  */
 
 public interface BulkRequestDetailsRepository extends BaseRepository<BulkRequestItemEntity> {
-    Page<BulkRequestItemEntity> findByIdAndRequestingInstitutionId(Pageable pageable, Integer id, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByIdAndRequestingInstitutionIdAndImsLocation(Pageable pageable, Integer id, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findById(Pageable pageable, Integer id);
+    Page<BulkRequestItemEntity> findByIdAndImsLocation(Pageable pageable, Integer id,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByBulkRequestNameAndRequestingInstitutionId(Pageable pageable, String bulkRequestName, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(Pageable pageable, String bulkRequestName, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByBulkRequestName(Pageable pageable, String bulkRequestName);
+    Page<BulkRequestItemEntity> findByBulkRequestNameAndImsLocation(Pageable pageable, String bulkRequestName,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByPatronIdAndRequestingInstitutionId(Pageable pageable, String patronId, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByPatronIdAndRequestingInstitutionIdAndImsLocation(Pageable pageable, String patronId, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByPatronId(Pageable pageable, String patronId);
+    Page<BulkRequestItemEntity> findByPatronIdAndImsLocation(Pageable pageable, String patronId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndRequestingInstitutionId(Pageable pageable, Integer id, String bulkRequestName, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndRequestingInstitutionIdAndImsLocation(Pageable pageable, Integer id, String bulkRequestName, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndBulkRequestName(Pageable pageable, Integer id, String bulkRequestName);
+    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndImsLocation(Pageable pageable, Integer id, String bulkRequestName,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByBulkRequestNameAndPatronIdAndRequestingInstitutionId(Pageable pageable, String bulkRequestName, String patronId, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Pageable pageable, String bulkRequestName, String patronId, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByBulkRequestNameAndPatronId(Pageable pageable, String bulkRequestName, String patronId);
+    Page<BulkRequestItemEntity> findByBulkRequestNameAndPatronIdAndImsLocation(Pageable pageable, String bulkRequestName, String patronId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndPatronIdAndRequestingInstitutionId(Pageable pageable, Integer id, String patronId, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(Pageable pageable, Integer id, String patronId, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndPatronId(Pageable pageable, Integer id, String patronId);
+    Page<BulkRequestItemEntity> findByIdAndPatronIdAndImsLocation(Pageable pageable, Integer id, String patronId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionId(Pageable pageable, Integer id, String bulkRequestName, String patronId, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Pageable pageable, Integer id, String bulkRequestName, String patronId, Integer requestingInstitutionId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndPatronId(Pageable pageable, Integer id, String bulkRequestName, String patronId);
+    Page<BulkRequestItemEntity> findByIdAndBulkRequestNameAndPatronIdAndImsLocation(Pageable pageable, Integer id, String bulkRequestName, String patronId,Integer imsLocation);
 
-    Page<BulkRequestItemEntity> findByRequestingInstitutionId(Pageable pageable, Integer requestingInstitutionId);
+    Page<BulkRequestItemEntity> findByRequestingInstitutionIdAndImsLocation(Pageable pageable, Integer requestingInstitutionId,Integer imsLocation);
+
+    Page<BulkRequestItemEntity> findByImsLocation(Pageable pageable,Integer imsLocation);
 
 }

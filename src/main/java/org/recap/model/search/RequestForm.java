@@ -20,6 +20,7 @@ public class RequestForm {
     private String deliveryLocationInRequest;
     private String itemTitle;
     private String itemOwningInstitution;
+    private String storageLocation;
     private String patronEmailAddress;
     private String requestingInstitution;
     private String requestType;
@@ -815,4 +816,22 @@ public class RequestForm {
     public void setItemBarcodeHidden(String itemBarcodeHidden) {
         this.itemBarcodeHidden = itemBarcodeHidden;
     }
+
+    /**
+     *  Gets storage location
+     * @return storage location
+     */
+    public String getStorageLocation() {
+        return storageLocation;
+    }
+
+    /**
+     *  set storage location
+     * @param storageLocation
+     */
+    public void setStorageLocation(String storageLocation) {
+        this.storageLocation = storageLocation;
+    }
+
+
 }

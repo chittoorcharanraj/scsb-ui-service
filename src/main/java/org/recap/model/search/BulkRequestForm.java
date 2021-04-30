@@ -23,6 +23,7 @@ public class BulkRequestForm {
     private String deliveryLocationInRequest;
     private String itemTitle;
     private String itemOwningInstitution;
+    private String storageLocation;
     private String patronEmailAddress;
     private String requestingInstitution;
     private String requestType;

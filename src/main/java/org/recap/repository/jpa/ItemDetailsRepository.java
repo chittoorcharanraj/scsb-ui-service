@@ -90,4 +90,17 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      */
     @Query(value = "select itemStatus.statusCode from ItemEntity item, ItemStatusEntity itemStatus where item.itemAvailabilityStatusId = itemStatus.id and item.barcode = :barcode and item.isDeleted = 0")
     String getItemStatusByBarcodeAndIsDeletedFalse(@Param("barcode") String barcode);
+
+
+    /**
+     *
+     * @param itemBarcode
+     * @return Instituiton COde
+     */
+
+    @Query(value = "SELECT INSTITUTION_CODE" +
+            "    FROM ITEM_T" +
+            "    INNER JOIN INSTITUTION_T ON ITEM_T.OWNING_INST_ID = INSTITUTION_T.INSTITUTION_ID" +
+            "    WHERE ITEM_T.BARCODE = :itemBarcode",nativeQuery = true)
+    String findInstitutionCodeByBarcode(@Param("itemBarcode") String itemBarcode);
 }

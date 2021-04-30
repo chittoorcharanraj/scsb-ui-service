@@ -295,6 +295,7 @@ public class RequestService {
             List<String> invalidBarcodes = new ArrayList<>();
             List<String> notAvailableBarcodes = new ArrayList<>();
             Set<String> itemTitles = new HashSet<>();
+            var storageLocations = new HashSet<String>();
             Set<String> itemOwningInstitutions = new HashSet<>();
             LinkedHashSet<String> requestTypes = new LinkedHashSet<>();
             Boolean showEDD = false;
@@ -331,6 +332,7 @@ public class RequestService {
                                         Record marcRecord = records.get(0);
                                         itemTitles.add(bibJSONUtil.getTitle(marcRecord));
                                         itemOwningInstitutions.add(institutionCode);
+                                        storageLocations.add(itemEntity.getImsLocationEntity().getImsLocationCode());
                                     }
                                     if (StringUtils.isNotBlank(requestForm.getRequestingInstituionHidden())) {
                                         String replaceReqInst = requestForm.getRequestingInstituionHidden();
@@ -353,6 +355,9 @@ public class RequestService {
             }
             if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
                 jsonObject.put(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
+            }
+            if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
+                jsonObject.put(RecapConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
             }
             if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes)) {
                 requestForm.setRequestType(RecapCommonConstants.RECALL);

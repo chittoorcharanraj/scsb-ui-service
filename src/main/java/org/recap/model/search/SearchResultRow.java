@@ -11,7 +11,7 @@ import java.util.List;
  * Created by rajeshbabuk on 11/7/16.
  */
 @ApiModel(value="SearchResultRow", description="Model for Displaying Search Result")
-public class SearchResultRow extends AbstractSearchResultRow{
+public class SearchResultRow extends AbstractSearchResultRow {
 
     @ApiModelProperty(name= "bibId", value= "Bibliographic Id",position = 0)
     private Integer bibId;

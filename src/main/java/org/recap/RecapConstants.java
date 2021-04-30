@@ -53,7 +53,7 @@ public class RecapConstants {
     public static final Integer CGD_SHARED = 1;
     public static final Integer CGD_OPEN = 2;
     public static final Boolean IS_EXPORT_FALSE = false;
-    public static final Boolean IS_EXPORT_TRUE = false;
+    public static final Boolean IS_EXPORT_TRUE = true;
     public static final String REPORTS = "REPORTS";
     public static  final String COUNT = "COUNT";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
@@ -129,7 +129,7 @@ public class RecapConstants {
     public static final String REQUESTED_BARCODE = "requestedBarcode";
     public static final String REQUESTED_ITEM_TITLE = "itemTitle";
     public static final String REQUESTED_ITEM_OWNING_INSTITUTION = "itemOwningInstitution";
-
+    public static final String REQUESTED_ITEM_STORAGE_LOCATION = "storageLocation";
     public static final String OWNING_INSTITUTION = "owningInstitution";
 
     public static final String ADMIN = "ROLE_ADMIN";
