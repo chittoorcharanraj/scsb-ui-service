@@ -20,6 +20,7 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserManagementService;
+import org.recap.service.SCSBService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
@@ -68,6 +69,9 @@ public class CollectionController extends AbstractController {
 
     @Autowired
     private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    SCSBService scsbService;
 
     /**
      * Gets marc record view util.
@@ -213,15 +217,7 @@ public class CollectionController extends AbstractController {
         String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
         String itemCode = itemDetailsRepository.findInstitutionCodeByBarcode(barcode);
         List<String> userRoles = userDetailsRepository.getUserRoles(username);
-        return validateUserRoles(userRoles,userCode,itemCode);
-    }
-    private boolean validateUserRoles(List<String> userRoles, String userCode, String itemCode) {
-        for (String userRole : userRoles){
-            if(userRole.equalsIgnoreCase(RecapCommonConstants.ROLE_RECAP) || userRole.equalsIgnoreCase(RecapCommonConstants.ROLE_SUPER_ADMIN)
-                    || userCode.equalsIgnoreCase(itemCode))
-                return RecapCommonConstants.BOOLEAN_TRUE;
-        }
-        return RecapCommonConstants.BOOLEAN_FALSE;
+        return scsbService.validateUserRoles(userRoles,userCode,itemCode);
     }
     private CollectionForm searchAndSetResults(CollectionForm collectionForm) throws Exception {
         return buildMissingBarcodes(buildResultRows(trimBarcodes(collectionForm)));

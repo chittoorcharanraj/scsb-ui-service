@@ -356,7 +356,7 @@ public class RequestService {
             if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
                 jsonObject.put(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
             }
-            if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
+            if (CollectionUtils.isNotEmpty(storageLocations)) {
                 jsonObject.put(RecapConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
             }
             if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes)) {

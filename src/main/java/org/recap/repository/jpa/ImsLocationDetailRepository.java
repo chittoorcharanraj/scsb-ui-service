@@ -15,9 +15,4 @@ public interface ImsLocationDetailRepository extends BaseRepository<ImsLocationE
      */
     ImsLocationEntity findByImsLocationCode(String imsLocationCode);
 
-    /**
-     *
-     * @return All ImsLocations Entities
-     */
-    List<ImsLocationEntity> findAll();
 }
