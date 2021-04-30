@@ -52,5 +52,5 @@ public class BibliographicMarcForm {
     private String collectionAction;
     private boolean allowEdit;
     private String username;
-
+    private boolean allowCGDandDeaccession;
 }

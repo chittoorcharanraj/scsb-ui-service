@@ -16,7 +16,7 @@ public class CollectionForm extends BibliographicMarcForm {
     private String ignoredBarcodesErrorMessage;
     private List<SearchResultRow> searchResultRows = new ArrayList<>();
     private boolean showModal = false;
-    private boolean isCGDAndDeaccessionRestricted;
+
 
 
     /**
@@ -156,14 +156,5 @@ public class CollectionForm extends BibliographicMarcForm {
      */
     public void setShowModal(boolean showModal) {
         this.showModal = showModal;
-    }
-
-
-    /**
-     *
-     * @param CGDAndDeaccessionRestricted
-     */
-    public void setCGDAndDeaccessionRestricted(boolean CGDAndDeaccessionRestricted) {
-        isCGDAndDeaccessionRestricted = CGDAndDeaccessionRestricted;
     }
 }

@@ -134,7 +134,7 @@ public class CollectionController extends AbstractController {
         UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
-        collectionFormUpdated.setCGDAndDeaccessionRestricted(checkIsCGDandDeaccessionRestricted(collectionForm.getBarcode(),request));
+        collectionFormUpdated.setAllowCGDandDeaccession(checkIsCGDandDeaccessionRestricted(collectionForm.getBarcode(),request));
         return collectionFormUpdated;
     }
 
@@ -207,7 +207,7 @@ public class CollectionController extends AbstractController {
         }
         return collectionForm;
     }
-    private Boolean checkIsCGDandDeaccessionRestricted (String barcode,HttpServletRequest request){
+    private boolean checkIsCGDandDeaccessionRestricted (String barcode,HttpServletRequest request){
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(RecapConstants.USER_NAME);
         String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
@@ -215,7 +215,7 @@ public class CollectionController extends AbstractController {
         List<String> userRoles = userDetailsRepository.getUserRoles(username);
         return validateUserRoles(userRoles,userCode,itemCode);
     }
-    private Boolean validateUserRoles(List<String> userRoles, String userCode, String itemCode) {
+    private boolean validateUserRoles(List<String> userRoles, String userCode, String itemCode) {
         for (String userRole : userRoles){
             if(userRole.equalsIgnoreCase(RecapCommonConstants.ROLE_RECAP) || userRole.equalsIgnoreCase(RecapCommonConstants.ROLE_SUPER_ADMIN)
                     || userCode.equalsIgnoreCase(itemCode))
