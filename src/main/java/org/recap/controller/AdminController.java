@@ -8,7 +8,11 @@ import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.LocationEntity;
 import org.recap.model.jpa.SCSBProprtiesEntity;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.LocationDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.repository.jpa.SCSBPropertiesDetailRepository;
 import org.recap.service.FileUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,7 +291,7 @@ public class AdminController {
             ownerCodeEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
            // ownerCodeEntity.setPwdDeliveryRestrictions(eElement.getElementsByTagName("PWDDeliveryRestrictions").item(0).getTextContent());
            // ownerCodeEntity.setRecapDeliveryRestrictions(eElement.getElementsByTagName("IMS-LocationDeliveryRestrictions").item(0).getTextContent());
-            ownerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
+       //     ownerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
             try {
                 ownerCodeDetailsRepository.saveAndFlush(ownerCodeEntity);
                 fileuploadResponse.put("Customer Code Added Status", RecapConstants.SUCCESSED);
