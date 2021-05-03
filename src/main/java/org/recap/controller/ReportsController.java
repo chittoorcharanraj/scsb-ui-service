@@ -2,11 +2,14 @@ package org.recap.controller;
 
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.model.facets.FacetsForm;
+import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.util.HelperUtil;
@@ -49,6 +52,9 @@ public class ReportsController extends AbstractController {
 
     @Autowired
     private  UserManagementService userManagementService;
+
+    @Autowired
+    private ImsLocationDetailRepository imsLocationDetailRepository;
 
     /**
      * Gets reports util.
@@ -227,16 +233,22 @@ public class ReportsController extends AbstractController {
      * @return the institution for incomplete report
      */
     @GetMapping("/getInstitutions")
-    public ReportsForm getInstitutionForIncompleteReport() {
-        ReportsForm reportsForm = new ReportsForm();
+    public FacetsForm getInstitutionForIncompleteReport() {
+        FacetsForm facetsForm = new FacetsForm();
         List<String> instList = new ArrayList<>();
+        List<String> storageLocationsList = new ArrayList<String>();
         List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
+        List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
+        for(ImsLocationEntity imsLocationEntity: imsLocationEntities){
+            storageLocationsList.add(imsLocationEntity.getImsLocationCode());
+        }
         for (InstitutionEntity institutionEntity : institutionCodeForSuperAdmin) {
             instList.add(institutionEntity.getInstitutionCode());
         }
-        reportsForm.setIncompleteShowByInst(instList);
+        facetsForm.setInstitutionList(instList);
+        facetsForm.setStorageLocationsList(storageLocationsList);
         logger.info("Institutions List Returned");
-        return reportsForm;
+        return facetsForm;
     }
 
 
