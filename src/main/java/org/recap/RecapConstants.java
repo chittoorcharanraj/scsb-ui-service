@@ -22,6 +22,7 @@ public class RecapConstants {
     public static final String COLLECTION_OMV_CALLED = "Open MarcView Called";
     public static final String BARCODES_NOT_AVAILABLE = "Barcode(s) not available";
     public static final String BARCODE_LIMIT_ERROR = "Only ten items can be processed. Items not processed:";
+    public static final String OWNING_INST_CIRCULATION_FREEZE_ERROR = "The Owning Institution is on circulation freeze.";
     public static final String DEACCESSION_ERROR_REQUEST_CANCEL = "The active request associated with the item has been cancelled.";
 
     //Request
@@ -40,6 +41,7 @@ public class RecapConstants {
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String NOT_AVAILABLE_ERROR_MESSAGE = "notAvailableErrorMessage";
     public static final String NO_PERMISSION_ERROR_MESSAGE = "noPermissionErrorMessage";
+    public static final String NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE = "notAvailableFrozenItemsErrorMessage";
     public static final Integer CGD_PRIVATE = 3;
 
     public static final String REQUEST_TYPE = "requestType";
