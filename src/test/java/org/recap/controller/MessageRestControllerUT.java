@@ -24,7 +24,7 @@ public class MessageRestControllerUT extends BaseTestCaseUT {
     @Test
     public void getValue(){
         JSONObject jsonObject = new JSONObject();
-        Mockito.when(propertyUtil.getPropertyByInstitution(any())).thenReturn(jsonObject);
+        Mockito.when(propertyUtil.getPropertyByInstitution(any(), any())).thenReturn(jsonObject);
         Map<String, Object> objectMap = messageRestController.getValue(any());
         assertNotNull(objectMap);
     }

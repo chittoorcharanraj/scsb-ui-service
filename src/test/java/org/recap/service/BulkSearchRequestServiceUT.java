@@ -39,7 +39,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByRequestingInstitutionId(Mockito.any(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -52,7 +52,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionId(Mockito.any(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -65,7 +65,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionId(Mockito.any(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -80,7 +80,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndRequestingInstitutionId(Mockito.any(),Mockito.any(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -95,7 +95,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndRequestingInstitutionId(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -110,7 +110,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionId(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -125,7 +125,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionId(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
@@ -140,7 +140,7 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionId(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
