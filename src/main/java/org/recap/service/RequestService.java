@@ -20,6 +20,7 @@ import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.*;
 import org.recap.util.BibJSONUtil;
+import org.recap.util.PropertyUtil;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
 import org.slf4j.Logger;
@@ -66,6 +67,9 @@ public class RequestService {
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private PropertyUtil propertyUtil;
 
     /**
      * Gets request item details repository.
@@ -287,6 +291,7 @@ public class RequestService {
         JSONObject jsonObject = new JSONObject();
         Boolean multipleItemBarcodes = false;
         Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
+        Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
             List<String> itemBarcodes = Arrays.asList(requestForm.getItemBarcodeInRequest().split(","));
             if (itemBarcodes.size() > 1) {
@@ -294,6 +299,7 @@ public class RequestService {
             }
             List<String> invalidBarcodes = new ArrayList<>();
             List<String> notAvailableBarcodes = new ArrayList<>();
+            List<String> frozenBarcodes = new ArrayList<>();
             Set<String> itemTitles = new HashSet<>();
             var storageLocations = new HashSet<String>();
             Set<String> itemOwningInstitutions = new HashSet<>();
@@ -311,36 +317,41 @@ public class RequestService {
                                 showEDD = true;
                             }
                             if (null != itemEntity && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
-                                userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-                                if ((itemEntity.getCollectionGroupId().equals(RecapConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
-                                    jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
-                                    return jsonObject.toString();
-                                } else if (!userDetailsForm.isRecapPermissionAllowed()) {
-                                    jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
-                                    return jsonObject.toString();
+                                boolean isCirculationFreezeEnabled = Boolean.parseBoolean(frozenInstitutionPropertyMap.get(itemEntity.getInstitutionEntity().getInstitutionCode()));
+                                if (isCirculationFreezeEnabled) {
+                                    frozenBarcodes.add(barcode);
                                 } else {
-                                    if (null != itemEntity.getItemStatusEntity() && itemEntity.getItemStatusEntity().getStatusCode().equals(RecapCommonConstants.NOT_AVAILABLE)) {
-                                        notAvailableBarcodes.add(barcode);
-                                    }
-                                    Integer institutionId = itemEntity.getInstitutionEntity().getId();
-                                    String institutionCode = itemEntity.getInstitutionEntity().getInstitutionCode();
-                                    requestForm.setItemOwningInstitution(institutionCode);
-                                    for (BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
-                                        String bibContent = new String(bibliographicEntity.getContent());
-                                        BibJSONUtil bibJSONUtil = new BibJSONUtil();
-                                        List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
-                                        Record marcRecord = records.get(0);
-                                        itemTitles.add(bibJSONUtil.getTitle(marcRecord));
-                                        itemOwningInstitutions.add(institutionCode);
-                                        storageLocations.add(itemEntity.getImsLocationEntity().getImsLocationCode());
-                                    }
-                                    if (StringUtils.isNotBlank(requestForm.getRequestingInstituionHidden())) {
-                                        String replaceReqInst = requestForm.getRequestingInstituionHidden();
-                                        requestForm.setRequestingInstitution(replaceReqInst);
-                                    }
-                                    if ("true".equals(requestForm.getOnChange()) && StringUtils.isNotBlank(requestForm.getRequestingInstitution())) {
-                                        getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
-                                        deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
+                                    userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+                                    if ((itemEntity.getCollectionGroupId().equals(RecapConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
+                                        jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
+                                        return jsonObject.toString();
+                                    } else if (!userDetailsForm.isRecapPermissionAllowed()) {
+                                        jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
+                                        return jsonObject.toString();
+                                    } else {
+                                        if (null != itemEntity.getItemStatusEntity() && itemEntity.getItemStatusEntity().getStatusCode().equals(RecapCommonConstants.NOT_AVAILABLE)) {
+                                            notAvailableBarcodes.add(barcode);
+                                        }
+                                        Integer institutionId = itemEntity.getInstitutionEntity().getId();
+                                        String institutionCode = itemEntity.getInstitutionEntity().getInstitutionCode();
+                                        requestForm.setItemOwningInstitution(institutionCode);
+                                        for (BibliographicEntity bibliographicEntity : itemEntity.getBibliographicEntities()) {
+                                            String bibContent = new String(bibliographicEntity.getContent());
+                                            BibJSONUtil bibJSONUtil = new BibJSONUtil();
+                                            List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
+                                            Record marcRecord = records.get(0);
+                                            itemTitles.add(bibJSONUtil.getTitle(marcRecord));
+                                            itemOwningInstitutions.add(institutionCode);
+                                            storageLocations.add(itemEntity.getImsLocationEntity().getImsLocationCode());
+                                        }
+                                        if (StringUtils.isNotBlank(requestForm.getRequestingInstituionHidden())) {
+                                            String replaceReqInst = requestForm.getRequestingInstituionHidden();
+                                            requestForm.setRequestingInstitution(replaceReqInst);
+                                        }
+                                        if ("true".equals(requestForm.getOnChange()) && StringUtils.isNotBlank(requestForm.getRequestingInstitution())) {
+                                            getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
+                                            deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
+                                        }
                                     }
                                 }
                             }
@@ -379,6 +390,9 @@ public class RequestService {
             jsonObject.put(RecapConstants.SHOW_EDD, showEDD);
             jsonObject.put(RecapConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
+            if (CollectionUtils.isNotEmpty(frozenBarcodes)) {
+                jsonObject.put(RecapConstants.NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE, RecapConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(frozenBarcodes, ",") + " " + RecapConstants.OWNING_INST_CIRCULATION_FREEZE_ERROR);
+            }
             if (CollectionUtils.isNotEmpty(invalidBarcodes)) {
                 jsonObject.put(RecapConstants.ERROR_MESSAGE, RecapCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(invalidBarcodes, ","));
             }
