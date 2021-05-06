@@ -59,7 +59,7 @@ public class SearchRecordsRequest implements Serializable {
 
     private String catalogingStatus;
 
-    private List<String> storageLocations = new ArrayList<>();
+    private List<String> imsDepositoryCodes = new ArrayList<>();
 
     /**
      * Instantiates a new Search records request.
