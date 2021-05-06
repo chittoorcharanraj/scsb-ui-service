@@ -17,35 +17,8 @@ import java.util.List;
  * Created by rajeshbabuk on 26/10/16.
  */
 public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity> {
-    /**
-     * To get the pageable request item entities for the given status.
-     *
-     * @param pageable the pageable
-     * @param status   the status
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join  request.requestStatusEntity status where status.requestStatusDescription = :status")
-    Page<RequestItemEntity> findByStatus(Pageable pageable, @Nullable @Param("status") String status);
 
-    /**
-     * To get the pageable request item entity which has retrieval, recall and edd status for the given item barcode.
-     *
-     * @param pageable    the pageable
-     * @param itemBarcode the item barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED','RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED','RECALL_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByItemBarcodeAndActive(Pageable pageable, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
 
-    /**
-     * To get the pageable request item entity which has retrieval, recall and edd status for the given patron barcode.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) OR (request.patronId = :patronBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByPatronBarcodeAndActive(Pageable pageable, @Param("patronBarcode") String patronBarcode,@Param("institutionId")Integer institutionId);
 
     /**
      *To get the pageable request item entity for the given patron barcode, item barcode, status and institution.
@@ -70,68 +43,6 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      */
     @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where ((request.patronId = :patronBarcode OR :patronBarcode = '') and (request.requestingInstitutionId = :institutionId) and (item.barcode = :itemBarcode OR :itemBarcode = '') and (status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) and (item.imsLocationId = :imsLocationId)) OR ((request.patronId = :patronBarcode OR :patronBarcode = '') and (item.barcode = :itemBarcode OR :itemBarcode = '') and (request.requestingInstitutionId not in (:institutionId)) and (item.owningInstitutionId = :institutionId OR :institutionId = 0) and (status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) and (item.imsLocationId = :imsLocationId))")
     Page<RequestItemEntity> findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("itemBarcode") String itemBarcode,@Param("imsLocationId") Integer imsLocationId,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode and status.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param status        the status
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and status.requestStatusDescription = :status) OR (request.patronId = :patronBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription = :status)")
-    Page<RequestItemEntity> findByPatronBarcodeAndStatus(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("status") String status,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given item barcode and status.
-     *
-     * @param pageable    the pageable
-     * @param itemBarcode the item barcode
-     * @param status      the status
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode and status.requestStatusDescription = :status) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription = :status)")
-    Page<RequestItemEntity> findByItemBarcodeAndStatus(Pageable pageable, @Param("itemBarcode") String itemBarcode, @Param("status") String status,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity which has retrieval, recall and edd status.
-     *
-     * @param pageable the pageable
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED','EDD_ORDER_PLACED')")
-    Page<RequestItemEntity> findAllActive(Pageable pageable);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request where request.patronId = :patronBarcode")
-    Page<RequestItemEntity> findByPatronBarcode(Pageable pageable, @Param("patronBarcode") String patronBarcode);
-
-    /**
-     * To get the pageable request item entity for the given item barcode.
-     *
-     * @param pageable    the pageable
-     * @param itemBarcode the item barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByItemBarcode(Pageable pageable, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode and item barcode.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param itemBarcode   the item barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join  request.requestStatusEntity status where (request.patronId = :patronBarcode and item.barcode = :itemBarcode)  OR (request.patronId = :patronBarcode and item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByPatronBarcodeAndItemBarcode(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
 
     /**
      * To get the request item entity for the given item barcode and status.
@@ -191,136 +102,12 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
                                  @Param("requestTypeCodes") List<String> requestTypeCodes);
 
     /**
-     *To get the pageable request item entity for the given patron barcode, item barcode and institution.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param itemBarcode   the item barcode
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join  request.requestStatusEntity status where (request.patronId = :patronBarcode and request.requestingInstitutionId = :institutionId and item.barcode = :itemBarcode)  OR (request.patronId = :patronBarcode and item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId)")
-    Page<RequestItemEntity> findByPatronBarcodeAndItemBarcodeAndInstitution(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity which has retrieval, recall and edd status for the given patron barcode and institution.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and request.requestingInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) OR (request.patronId = :patronBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED','EDD_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByPatronBarcodeAndActiveAndInstitution(Pageable pageable, @Param("patronBarcode") String patronBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode, status,and institution.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param status        the status
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status) OR (request.patronId = :patronBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription = :status)")
-    Page<RequestItemEntity> findByPatronBarcodeAndStatusAndInstitution(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("status") String status,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode, item barcode and status.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param itemBarcode   the item barcode
-     * @param status        the status
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and item.barcode = :itemBarcode and status.requestStatusDescription = :status)  OR (request.patronId = :patronBarcode and item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription = :status)")
-    Page<RequestItemEntity> findByPatronBarcodeAndItemBarcodeAndStatus(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("itemBarcode") String itemBarcode, @Param("status")String status,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity which has retrieval, recall and edd status for the given patron barcode and item barcode.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param itemBarcode   the item barcode
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (request.patronId = :patronBarcode and item.barcode = :itemBarcode and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED'))  OR (request.patronId = :patronBarcode and item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByPatronBarcodeAndItemBarcodeAndActive(Pageable pageable, @Param("patronBarcode") String patronBarcode, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity which has which has retrieval, recall and edd status for the given item barcode and institution.
-     *
-     * @param pageable      the pageable
-     * @param itemBarcode   the item barcode
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode and request.requestingInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED','RECALL_ORDER_PLACED', 'EDD_ORDER_PLACED')) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED','RECALL_ORDER_PLACED','EDD_ORDER_PLACED'))")
-    Page<RequestItemEntity> findByItemBarcodeAndActiveAndInstitution(Pageable pageable, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given item barcode, status and institution.
-     *
-     * @param pageable      the pageable
-     * @param itemBarcode   the item barcode
-     * @param status        the status
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode and request.requestingInstitutionId = :institutionId and status.requestStatusDescription = :status) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusDescription = :status)")
-    Page<RequestItemEntity> findByItemBarcodeAndStatusAndInstitution(Pageable pageable, @Param("itemBarcode") String itemBarcode, @Param("status") String status,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given patron barcode and institution.
-     *
-     * @param pageable      the pageable
-     * @param patronBarcode the patron barcode
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request where request.patronId = :patronBarcode and request.requestingInstitutionId = :institutionId")
-    Page<RequestItemEntity> findByPatronBarcodeAndInstitution(Pageable pageable, @Param("patronBarcode") String patronBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity for the given item barcode and institution.
-     *
-     * @param pageable      the pageable
-     * @param itemBarcode   the item barcode
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where (item.barcode = :itemBarcode and request.requestingInstitutionId = :institutionId) OR (item.barcode = :itemBarcode and request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId)")
-    Page<RequestItemEntity> findByItemBarcodeAndInstitution(Pageable pageable, @Param("itemBarcode") String itemBarcode,@Param("institutionId")Integer institutionId);
-
-    /**
-     * To get the pageable request item entity which has which has retrieval, recall and edd status for the given institution.
-     *
-     * @param pageable      the pageable
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED','EDD_ORDER_PLACED')) OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and status.requestStatusCode in ('RETRIEVAL_ORDER_PLACED', 'RECALL_ORDER_PLACED','EDD_ORDER_PLACED'))")
-    Page<RequestItemEntity> findAllActiveAndInstitution(Pageable pageable,@Param("institutionId")Integer institutionId);
-
-    /**
      * To get the list of  request item entities for the given list of request id.
      *
      * @param id the request id
      * @return the list
      */
     List<RequestItemEntity> findByIdIn(List<Integer> id);
-
-    /**
-     * To get the pageable request item entity for the given status and institution.
-     *
-     * @param pageable      the pageable
-     * @param status        the status
-     * @param institutionId the institution id
-     * @return the page
-     */
-    @Query(value = "select request from RequestItemEntity request inner join  request.requestStatusEntity status inner join request.itemEntity item where (request.requestingInstitutionId = :institutionId and (status.requestStatusDescription = :status OR :status = ''))  OR (request.requestingInstitutionId not in (:institutionId) and item.owningInstitutionId = :institutionId and (status.requestStatusDescription = :status OR :status = ''))")
-    Page<RequestItemEntity> findByStatusAndInstitution(Pageable pageable, @Param("status") String status,@Param("institutionId")Integer institutionId);
 
     /**
      *

@@ -62,7 +62,6 @@ public class RequestServiceUtil {
         String institution = StringUtils.isNotBlank(requestForm.getInstitution()) ? requestForm.getInstitution().trim() : requestForm.getInstitution();
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
         Integer imsLocationId = imsLocationDetailRepository.findByImsLocationCode(requestForm.getStorageLocation()).getId();
-        //String imsLocationCode = requestForm.getStorageLocation();
         Optional<InstitutionEntity> institutionEntityOptional = Optional.ofNullable(institutionEntity);
         if (!institutionEntityOptional.isPresent()) {
             institutionEntity = new InstitutionEntity();
@@ -70,7 +69,6 @@ public class RequestServiceUtil {
         }
         Pageable pageable = PageRequest.of(requestForm.getPageNumber(), requestForm.getPageSize(), Sort.Direction.DESC, "id");
         Page<RequestItemEntity> requestItemEntities = null;
-
         requestItemEntities = (status.equals(RecapConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode,imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status,imsLocationId, institutionEntity.getId());
 
         return requestItemEntities;
