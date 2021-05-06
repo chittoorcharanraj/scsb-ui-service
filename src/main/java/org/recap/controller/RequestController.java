@@ -450,15 +450,22 @@ public class RequestController extends RecapController {
     }
 
     private RequestForm searchAndSetResults(RequestForm requestForm) {
-        Page<RequestItemEntity> requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
-        List<SearchResultRow> searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
-        if (CollectionUtils.isNotEmpty(searchResultRows)) {
-            requestForm.setSearchResultRows(searchResultRows);
-            requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
-            requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
-        } else {
-            requestForm.setSearchResultRows(Collections.emptyList());
-            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        List<SearchResultRow> searchResultRows = new ArrayList<>();
+        Page<RequestItemEntity> requestItemEntities = null;
+        try {
+            requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
+            searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
+        } catch (Exception e) {
+            logger.error(RecapCommonConstants.LOG_ERROR, e.getMessage());
+        } finally {
+            if (CollectionUtils.isNotEmpty(searchResultRows)) {
+                requestForm.setSearchResultRows(searchResultRows);
+                requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
+                requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+            } else {
+                requestForm.setSearchResultRows(Collections.emptyList());
+                requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+            }
         }
         requestForm.setShowResults(true);
         return requestForm;
