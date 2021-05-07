@@ -2,8 +2,8 @@ package org.recap.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
@@ -84,7 +84,7 @@ public class BulkRequestService {
                 MultipartFile multipartFile = bulkRequestForm.getFile();
                 byte[] bytes = multipartFile.getBytes();
                 HttpSession session = request.getSession(false);
-                Integer userId = (Integer) session.getAttribute(RecapConstants.USER_ID);
+                Integer userId = (Integer) session.getAttribute(ScsbConstants.USER_ID);
                 Optional<UsersEntity> usersEntity = userDetailsRepository.findById(userId);
                 BulkRequestItemEntity bulkRequestItemEntity = new BulkRequestItemEntity();
                 bulkRequestItemEntity.setCreatedBy(usersEntity.isPresent() ? usersEntity.get().getLoginId() : "");
@@ -98,10 +98,10 @@ public class BulkRequestService {
                 bulkRequestItemEntity.setStopCode(bulkRequestForm.getDeliveryLocationInRequest());
                 bulkRequestItemEntity.setRequestingInstitutionId(institutionEntity.getId());
                 bulkRequestItemEntity.setNotes(bulkRequestForm.getRequestNotes());
-                bulkRequestItemEntity.setBulkRequestStatus(RecapConstants.IN_PROCESS);
+                bulkRequestItemEntity.setBulkRequestStatus(ScsbConstants.IN_PROCESS);
                 BulkRequestItemEntity savedBulkRequestItemEntity = bulkRequestDetailsRepository.save(bulkRequestItemEntity);
 
-                String bulkRequestItemUrl = scsbUrl + RecapConstants.BULK_REQUEST_ITEM_URL;
+                String bulkRequestItemUrl = scsbUrl + ScsbConstants.BULK_REQUEST_ITEM_URL;
                 HttpEntity requestEntity = new HttpEntity<>(restHeaderService.getHttpHeaders());
                 UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(bulkRequestItemUrl).queryParam("bulkRequestId", savedBulkRequestItemEntity.getId());
                 new RestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, BulkRequestResponse.class);
@@ -113,7 +113,7 @@ public class BulkRequestService {
                 bulkRequestForm.setErrorMessage("Patron Barcode is incorrect");
             }
         } catch (IOException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return bulkRequestForm;
     }
@@ -136,7 +136,7 @@ public class BulkRequestService {
             }
             bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
         }catch (Exception e){
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bulkRequestForm;
     }
@@ -147,7 +147,7 @@ public class BulkRequestService {
             bulkRequestForm.setPageNumber(getPageNumberOnPageSizeChange(bulkRequestForm));
             bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
         } catch (ParseException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bulkRequestForm;
     }
@@ -181,7 +181,7 @@ public class BulkRequestService {
                     bulkSearchResultRow.setImsLocation(bulkRequestItemEntity.getImsLocationEntity().getImsLocationCode());
                     bulkSearchResultRows.add(bulkSearchResultRow);
                 } catch (Exception ex) {
-                    logger.error(RecapCommonConstants.LOG_ERROR, ex);
+                    logger.error(ScsbCommonConstants.LOG_ERROR, ex);
                 }
             }
             bulkRequestForm.setTotalRecordsCount(String.valueOf(bulkRequestItemEntities.getTotalElements()));

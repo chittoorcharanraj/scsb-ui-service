@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
 import org.recap.model.jpa.*;
 import org.recap.model.request.ItemRequestInformation;
@@ -97,7 +97,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
 
     @Test
     public void request(){
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REQUEST_URL)).thenReturn(Boolean.TRUE);
         boolean result = requestController.request(request);
         assertNotNull(result);
     }
@@ -124,7 +124,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
         Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
         RequestForm form = requestController.goToSearchRequest(requestForm,request);
@@ -137,7 +137,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = getUserDetails();
         InstitutionEntity institutionEntity = getRequestItemEntity().getInstitutionEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
         Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
         RequestForm form = requestController.goToSearchRequest(requestForm,request);
@@ -191,7 +191,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = getUserDetails();
         userDetailsForm.setSuperAdmin(Boolean.TRUE);
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(requestService.setDefaultsToCreateRequest(any())).thenReturn(requestForm);
         RequestForm form = requestController.loadCreateRequest(request);
         assertNotNull(form);
@@ -203,7 +203,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
         Mockito.doNothing().when(requestService).getInstitutionForSuperAdmin(any());
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         RequestForm form = requestController.loadSearchRequest(request);
         assertNotNull(form);
     }
@@ -230,7 +230,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         ResponseEntity responseEntity1 = new ResponseEntity<>(getItemResponseInformation(),HttpStatus.OK);
         OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
@@ -248,7 +248,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         RequestForm requestForm = getRequestForm();
         OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
@@ -267,7 +267,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         requestForm.setVolumeNumber(null);
         OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
@@ -286,7 +286,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         JSONObject json = getJsonObject();
         String message = json.toString();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(message);
         RequestForm form = requestController.createRequest(requestForm,request);
         assertNotNull(form);
@@ -297,7 +297,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         JSONObject json = getJsonObject1();
         String message = json.toString();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(message);
         RequestForm form = requestController.createRequest(requestForm,request);
         assertNotNull(form);
@@ -339,7 +339,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void resubmitRequest(){
         RequestForm requestForm = getRequestForm();
         Map<String,String> map = new HashMap<>();
-        map.put("1", RecapCommonConstants.SUCCESS);
+        map.put("1", ScsbCommonConstants.SUCCESS);
         ResponseEntity responseEntity = new ResponseEntity<>(map,HttpStatus.OK);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
@@ -355,7 +355,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void resubmitInvalidRequest(){
         RequestForm requestForm = getRequestForm();
         Map<String,String> map = new HashMap<>();
-        map.put(RecapCommonConstants.INVALID_REQUEST, "Invalid Request");
+        map.put(ScsbCommonConstants.INVALID_REQUEST, "Invalid Request");
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
@@ -370,7 +370,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void resubmitRequestFailed(){
         RequestForm requestForm = getRequestForm();
         Map<String,String> map = new HashMap<>();
-        map.put(RecapCommonConstants.FAILURE, "Resubmit Failed");
+        map.put(ScsbCommonConstants.FAILURE, "Resubmit Failed");
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
@@ -398,7 +398,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     @Test
     public void refreshStatus(){
         String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
-        Mockito.when(requestService.getRefreshedStatus(reqJson)).thenReturn(RecapCommonConstants.COMPLETE_STATUS);
+        Mockito.when(requestService.getRefreshedStatus(reqJson)).thenReturn(ScsbCommonConstants.COMPLETE_STATUS);
         String result = requestController.refreshStatus(reqJson);
         assertNotNull(result);
         assertEquals("Complete",result);
@@ -505,8 +505,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         replaceRequest.setEndRequestId("10");
         replaceRequest.setFromDate((new Date()).toString());
         replaceRequest.setToDate((new Date()).toString());
-        replaceRequest.setReplaceRequestByType(RecapCommonConstants.REQUEST_IDS);
-        replaceRequest.setRequestStatus(RecapConstants.EXCEPTION);
+        replaceRequest.setReplaceRequestByType(ScsbCommonConstants.REQUEST_IDS);
+        replaceRequest.setRequestStatus(ScsbConstants.EXCEPTION);
         String requestId = String.valueOf(requestForm.getRequestId());
         replaceRequest.setRequestIds(requestId);
         replaceRequest.setStartRequestId("1");

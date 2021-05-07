@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.dataexportinfo.DataExportResponse;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.security.UserManagementService;
@@ -42,7 +42,7 @@ public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
 
     @Test
     public void validateDataExportValidRequest(){
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(true);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(true);
         Mockito.when(request.getSession(false)).thenReturn(session);
         boolean validateDataExport=dataExportsRecentInfoController.validateDataExport(request);
         assertTrue(validateDataExport);
@@ -50,7 +50,7 @@ public class DataExportsRecentInfoControllerUT extends BaseTestCaseUT {
 
     @Test
     public void validateDataExportInValidRequest(){
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(false);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_DATAEXPORT_URL)).thenReturn(false);
         Mockito.when(request.getSession(false)).thenReturn(session);
         boolean validateDataExport=dataExportsRecentInfoController.validateDataExport(request);
         assertFalse(validateDataExport);

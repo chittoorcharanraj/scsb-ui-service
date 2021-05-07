@@ -1,7 +1,7 @@
 package org.recap.util;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.ReportsForm;
@@ -43,7 +43,7 @@ public class ReportsServiceUtil {
         reportsRequest.setAccessionDeaccessionToDate(reportsForm.getAccessionDeaccessionToDate());
         reportsRequest.setOwningInstitutions(reportsUtil.getInstitutions());
         reportsRequest.setCollectionGroupDesignations(reportsForm.getCollectionGroupDesignations());
-        return getReportsResponse(reportsRequest, RecapConstants.SCSB_REPORTS_ACCESSION_DEACCESSION_COUNTS_URL);
+        return getReportsResponse(reportsRequest, ScsbConstants.SCSB_REPORTS_ACCESSION_DEACCESSION_COUNTS_URL);
     }
 
     /**
@@ -62,11 +62,11 @@ public class ReportsServiceUtil {
             HttpHeaders headers =  HelperUtil.getSwaggerHeaders();
             HttpEntity<ReportsRequest> httpEntity = new HttpEntity<>(reportsRequest, headers);
 
-            ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + RecapConstants.SCSB_REPORTS_CGD_ITEM_COUNTS_URL, HttpMethod.POST, httpEntity, ReportsResponse.class);
+            ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.SCSB_REPORTS_CGD_ITEM_COUNTS_URL, HttpMethod.POST, httpEntity, ReportsResponse.class);
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
         }
@@ -85,7 +85,7 @@ public class ReportsServiceUtil {
         reportsRequest.setDeaccessionOwningInstitution(reportsForm.getDeaccessionOwnInst());
         reportsRequest.setPageNumber(reportsForm.getPageNumber());
         reportsRequest.setPageSize(reportsForm.getPageSize());
-        return getReportsResponse(reportsRequest, RecapConstants.SCSB_REPORTS_DEACCESSION_RESULTS_URL);
+        return getReportsResponse(reportsRequest, ScsbConstants.SCSB_REPORTS_DEACCESSION_RESULTS_URL);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ReportsServiceUtil {
         reportsRequest.setIncompletePageNumber(reportsForm.getIncompletePageNumber());
         reportsRequest.setIncompletePageSize(reportsForm.getIncompletePageSize());
         reportsRequest.setExport(reportsForm.isExport());
-        return getReportsResponse(reportsRequest, RecapConstants.SCSB_REPORTS_INCOMPLETE_RESULTS_URL);
+        return getReportsResponse(reportsRequest, ScsbConstants.SCSB_REPORTS_INCOMPLETE_RESULTS_URL);
     }
 
     private ReportsResponse getReportsResponse(ReportsRequest reportsRequest, String reportUrl) {
@@ -113,7 +113,7 @@ public class ReportsServiceUtil {
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
         }

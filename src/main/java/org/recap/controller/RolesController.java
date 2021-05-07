@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.PermissionEntity;
 import org.recap.model.jpa.RoleEntity;
 import org.recap.model.search.RolesForm;
@@ -69,12 +69,12 @@ public class RolesController extends AbstractController {
     @GetMapping("/checkPermission")
     public boolean roles(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL);
         if (authenticated) {
-            logger.info(RecapConstants.ROLES_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.ROLES_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.ROLES, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.ROLES, logger);
         }
     }
 
@@ -112,16 +112,16 @@ public class RolesController extends AbstractController {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
         logger.info("create Role calling with the following payload: {}", rolesForm);
         if (!specialCharacterCheck) {
-            rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
+            rolesForm.setErrorMessage(ScsbConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
         } else {
             HttpSession session = request.getSession(false);
-            String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+            String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
             RoleEntity roleEntity = saveNewRoleToDB(rolesForm, username);
             if (null != roleEntity) {
-                rolesForm.setMessage(rolesForm.getNewRoleName() + RecapConstants.ADDED_SUCCESSFULLY);
+                rolesForm.setMessage(rolesForm.getNewRoleName() + ScsbConstants.ADDED_SUCCESSFULLY);
             } else {
-                rolesForm.setErrorMessage(rolesForm.getNewRoleName() + RecapConstants.ALREADY_EXISTS);
+                rolesForm.setErrorMessage(rolesForm.getNewRoleName() + ScsbConstants.ALREADY_EXISTS);
             }
             rolesForm.setNewRoleName("");
             rolesForm.setNewRoleDescription("");
@@ -170,7 +170,7 @@ public class RolesController extends AbstractController {
         logger.info("edit Role calling: {}", roleName);
         RolesForm rolesForm = new RolesForm();
         HttpSession session = request.getSession(false);
-        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
         rolesForm.setRoleId(roleId);
         rolesForm.setEditRoleName(roleName);
         rolesForm.setEditRoleDescription(roleDescription);
@@ -184,9 +184,9 @@ public class RolesController extends AbstractController {
             roleEntityByRoleId.get().setLastUpdatedBy(username);
             RoleEntity roleEntity = saveRoleEntity(roleEntityByRoleId.get(), Arrays.asList(editPermissionNames));
             if (null != roleEntity) {
-                rolesForm.setMessage(rolesForm.getEditRoleName() + RecapConstants.EDITED_AND_SAVED);
+                rolesForm.setMessage(rolesForm.getEditRoleName() + ScsbConstants.EDITED_AND_SAVED);
             } else {
-                rolesForm.setErrorMessage(rolesForm.getEditRoleName() + RecapConstants.ALREADY_EXISTS);
+                rolesForm.setErrorMessage(rolesForm.getEditRoleName() + ScsbConstants.ALREADY_EXISTS);
             }
         }
         rolesForm.setPermissionNameList(getAllPermissionNames().getPermissionNameList());
@@ -247,12 +247,12 @@ public class RolesController extends AbstractController {
                 rolesForm.setRoleName("");
                 rolesForm.setPermissionNames("");
                 setRolesFormSearchResults(rolesForm);
-                rolesForm.setMessage(rolesForm.getRoleNameForDelete() + RecapConstants.DELETED_SUCCESSFULLY);
+                rolesForm.setMessage(rolesForm.getRoleNameForDelete() + ScsbConstants.DELETED_SUCCESSFULLY);
             } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         } else {
-            logger.error(RecapCommonConstants.LOG_ERROR + "{}", "Role is Null");
+            logger.error(ScsbCommonConstants.LOG_ERROR + "{}", "Role is Null");
         }
         rolesForm.setShowResults(true);
         return rolesForm;
@@ -343,11 +343,11 @@ public class RolesController extends AbstractController {
     public RolesForm setRolesFormSearchResults(RolesForm rolesForm) {
         List<RolesSearchResult> rolesSearchResults = new ArrayList<>();
         rolesForm.reset();
-        if (rolesForm.getRoleName().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN) || rolesForm.getPermissionNames().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN)) {
-            if (rolesForm.getRoleName().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN)) {
-                rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
+        if (rolesForm.getRoleName().equalsIgnoreCase(ScsbConstants.ROLES_SUPER_ADMIN) || rolesForm.getPermissionNames().equalsIgnoreCase(ScsbConstants.ROLES_SUPER_ADMIN)) {
+            if (rolesForm.getRoleName().equalsIgnoreCase(ScsbConstants.ROLES_SUPER_ADMIN)) {
+                rolesForm.setErrorMessage(ScsbConstants.INVALID_ROLE_NAME);
             } else {
-                rolesForm.setErrorMessage(RecapConstants.INVALID_PERMISSION);
+                rolesForm.setErrorMessage(ScsbConstants.INVALID_PERMISSION);
             }
 
         } else if (!StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
@@ -365,10 +365,10 @@ public class RolesController extends AbstractController {
                         rolesForm.setRolesSearchResults(rolesSearchResults);
                     }
                 } else {
-                    rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
+                    rolesForm.setErrorMessage(ScsbConstants.INVALID_ROLE_NAME);
                 }
             } else {
-                rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED);
+                rolesForm.setErrorMessage(ScsbConstants.SPECIAL_CHARACTERS_NOT_ALLOWED);
             }
             rolesForm.setPageSize(10);
         } else if (!StringUtils.isEmpty(rolesForm.getPermissionNames()) && StringUtils.isEmpty(rolesForm.getRoleName())) {
@@ -404,13 +404,13 @@ public class RolesController extends AbstractController {
                         rolesSearchResults.add(rolesSearchResult);
                         rolesForm.setRolesSearchResults(rolesSearchResults);
                     } else {
-                        rolesForm.setErrorMessage(RecapConstants.WRONG_PERMISSION);
+                        rolesForm.setErrorMessage(ScsbConstants.WRONG_PERMISSION);
                     }
                 } else {
-                    rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
+                    rolesForm.setErrorMessage(ScsbConstants.INVALID_ROLE_NAME);
                 }
             } else {
-                rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
+                rolesForm.setErrorMessage(ScsbConstants.INVALID_ROLE_NAME);
             }
             rolesForm.setPageSize(10);
         } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
@@ -439,7 +439,7 @@ public class RolesController extends AbstractController {
                 rolesForm.setTotalPageCount(roleEntity.getTotalPages());
             }
         } else {
-            rolesForm.setErrorMessage(RecapConstants.INVALID_PERMISSION);
+            rolesForm.setErrorMessage(ScsbConstants.INVALID_PERMISSION);
         }
     }
 
@@ -541,7 +541,7 @@ public class RolesController extends AbstractController {
             roleEntity1.setPermissions(rolesSet);
             roleEntity = rolesDetailsRepositorty.save(roleEntity1);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return roleEntity;
     }

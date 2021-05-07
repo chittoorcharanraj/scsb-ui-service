@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import com.csvreader.CsvWriter;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchResultRow;
 import org.slf4j.Logger;
@@ -56,7 +56,7 @@ public class CsvUtil {
                     }
                 }
             } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
+                logger.error(ScsbCommonConstants.LOG_ERROR,e);
             } finally {
                 if(csvOutput!=null) {
                     csvOutput.flush();
@@ -89,7 +89,7 @@ public class CsvUtil {
         csvOutput.write(searchResultRow.getOwningInstitution());
         csvOutput.write(searchResultRow.getCustomerCode());
         csvOutput.write(searchResultRow.getCollectionGroupDesignation());
-        csvOutput.write(searchResultRow.getUseRestriction().equalsIgnoreCase(RecapCommonConstants.NO_RESTRICTIONS) ? "" : searchResultRow.getUseRestriction());
+        csvOutput.write(searchResultRow.getUseRestriction().equalsIgnoreCase(ScsbCommonConstants.NO_RESTRICTIONS) ? "" : searchResultRow.getUseRestriction());
         csvOutput.write(searchResultRow.getBarcode());
         csvOutput.write(searchResultRow.getSummaryHoldings());
         csvOutput.endRecord();
@@ -116,7 +116,7 @@ public class CsvUtil {
         csvOutput.write(searchItemResultRow.getChronologyAndEnum());
         csvOutput.write(searchItemResultRow.getCustomerCode());
         csvOutput.write(searchItemResultRow.getCollectionGroupDesignation());
-        csvOutput.write(searchItemResultRow.getUseRestriction().equalsIgnoreCase(RecapCommonConstants.NO_RESTRICTIONS) ? "" : searchItemResultRow.getUseRestriction());
+        csvOutput.write(searchItemResultRow.getUseRestriction().equalsIgnoreCase(ScsbCommonConstants.NO_RESTRICTIONS) ? "" : searchItemResultRow.getUseRestriction());
         csvOutput.write(searchItemResultRow.getBarcode());
         csvOutput.endRecord();
     }

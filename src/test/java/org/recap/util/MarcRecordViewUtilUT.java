@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -64,7 +64,7 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
         bibliographicEntity.setDeleted(false);
-        bibliographicEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        bibliographicEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(sourceHoldingsContent.getBytes());
@@ -91,7 +91,7 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(false);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         itemEntity.setImsLocationId(1);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));

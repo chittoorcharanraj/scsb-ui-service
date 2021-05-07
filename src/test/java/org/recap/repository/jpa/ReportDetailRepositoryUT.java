@@ -2,8 +2,8 @@ package org.recap.repository.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.ReportDataEntity;
 import org.recap.model.jpa.ReportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +59,10 @@ public class ReportDetailRepositoryUT extends BaseTestCase {
         List<ReportDataEntity> reportDataEntities = new ArrayList<>();
 
         ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setFileName(RecapCommonConstants.MATCHING_ALGO_FULL_FILE_NAME);
+        reportEntity.setFileName(ScsbCommonConstants.MATCHING_ALGO_FULL_FILE_NAME);
         reportEntity.setCreatedDate(new Date());
-        reportEntity.setType(RecapConstants.MATCHING_TYPE);
-        reportEntity.setInstitutionName(RecapCommonConstants.ALL_INST);
+        reportEntity.setType(ScsbConstants.MATCHING_TYPE);
+        reportEntity.setInstitutionName(ScsbCommonConstants.ALL_INST);
 
         ReportDataEntity reportDataEntity1 = new ReportDataEntity();
         reportDataEntity1.setHeaderName("BibId");

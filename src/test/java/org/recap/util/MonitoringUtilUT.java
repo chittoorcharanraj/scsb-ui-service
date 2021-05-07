@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.config.MonitoringConfiguration;
 import org.recap.model.search.Monitoring;
 
@@ -29,12 +29,12 @@ public class MonitoringUtilUT extends BaseTestCaseUT {
     @Test
     public void getMonitoringProjects(){
         Map<String, String> map = new HashMap<>();
-        map.put(RecapConstants.SCSB_UI,"http://localhost:9080/test");
-        map.put(RecapConstants.SCSB_AUTH,"http://localhost:9080/test");
-        map.put(RecapConstants.SCSB_GATEWAY,"http://localhost:9080/test");
-        map.put(RecapConstants.SCSB_DOC,"http://localhost:9080/test");
-        map.put(RecapConstants.SCSB_CIRC,"http://localhost:9080/test");
-        map.put(RecapConstants.SCSB_BATCH,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_UI,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_AUTH,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_GATEWAY,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_DOC,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_CIRC,"http://localhost:9080/test");
+        map.put(ScsbConstants.SCSB_BATCH,"http://localhost:9080/test");
         Mockito.when(monitoringConfiguration.getUrl()).thenReturn(map);
         Mockito.when(monitoringConfiguration.getLogging()).thenReturn(logging);
         List<Monitoring> monitoringList = monitoringUtil.getMonitoringProjects();

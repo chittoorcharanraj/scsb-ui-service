@@ -1,6 +1,6 @@
 package org.recap.filter;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -14,13 +14,13 @@ import java.io.IOException;
 /**
  * Created by sheiks on 03/03/17.
  */
-public class ReCAPLogoutFilter extends GenericFilterBean {
+public class SCSBLogoutFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpSession session = ((HttpServletRequest)request).getSession();
-        Object attribute = session.getAttribute(RecapConstants.USER_TOKEN);
-        request.setAttribute(RecapConstants.USER_TOKEN,attribute);
+        Object attribute = session.getAttribute(ScsbConstants.USER_TOKEN);
+        request.setAttribute(ScsbConstants.USER_TOKEN,attribute);
         chain.doFilter(request,response);
     }
 }

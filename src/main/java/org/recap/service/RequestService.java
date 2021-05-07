@@ -6,8 +6,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.marc4j.marc.Record;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.DeliveryCodeEntity;
@@ -272,10 +272,10 @@ public class RequestService {
                 }
             }
 
-            jsonObject.put(RecapCommonConstants.STATUS, responseMap);
-            jsonObject.put(RecapCommonConstants.NOTES, responseMapForNotes);
+            jsonObject.put(ScsbCommonConstants.STATUS, responseMap);
+            jsonObject.put(ScsbCommonConstants.NOTES, responseMapForNotes);
         } catch (JSONException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return jsonObject.toString();
     }
@@ -291,7 +291,7 @@ public class RequestService {
         JSONObject jsonObject = new JSONObject();
         Boolean multipleItemBarcodes = false;
         Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
-        Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(RecapCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
             List<String> itemBarcodes = Arrays.asList(requestForm.getItemBarcodeInRequest().split(","));
             if (itemBarcodes.size() > 1) {
@@ -309,7 +309,7 @@ public class RequestService {
             for (String itemBarcode : itemBarcodes) {
                 String barcode = itemBarcode.trim();
                 if (StringUtils.isNotBlank(barcode)) {
-                    List<ItemEntity> itemEntities = getItemDetailsRepository().findByBarcodeAndCatalogingStatusAndIsDeletedFalse(barcode, RecapCommonConstants.COMPLETE_STATUS);
+                    List<ItemEntity> itemEntities = getItemDetailsRepository().findByBarcodeAndCatalogingStatusAndIsDeletedFalse(barcode, ScsbCommonConstants.COMPLETE_STATUS);
                     if (CollectionUtils.isNotEmpty(itemEntities)) {
                         for (ItemEntity itemEntity : itemEntities) {
                             OwnerCodeEntity ownerCodeEntity = getOwnerCodeDetailsRepository().findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode());
@@ -321,15 +321,15 @@ public class RequestService {
                                 if (isCirculationFreezeEnabled) {
                                     frozenBarcodes.add(barcode);
                                 } else {
-                                    userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-                                    if ((itemEntity.getCollectionGroupId().equals(RecapConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
-                                        jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
+                                    userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE);
+                                    if ((itemEntity.getCollectionGroupId().equals(ScsbConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
+                                        jsonObject.put(ScsbConstants.NO_PERMISSION_ERROR_MESSAGE, ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                                         return jsonObject.toString();
                                     } else if (!userDetailsForm.isRecapPermissionAllowed()) {
-                                        jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
+                                        jsonObject.put(ScsbConstants.NO_PERMISSION_ERROR_MESSAGE, ScsbConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
                                         return jsonObject.toString();
                                     } else {
-                                        if (null != itemEntity.getItemStatusEntity() && itemEntity.getItemStatusEntity().getStatusCode().equals(RecapCommonConstants.NOT_AVAILABLE)) {
+                                        if (null != itemEntity.getItemStatusEntity() && itemEntity.getItemStatusEntity().getStatusCode().equals(ScsbCommonConstants.NOT_AVAILABLE)) {
                                             notAvailableBarcodes.add(barcode);
                                         }
                                         Integer institutionId = itemEntity.getInstitutionEntity().getId();
@@ -362,51 +362,51 @@ public class RequestService {
                 }
             }
             if (CollectionUtils.isNotEmpty(itemTitles)) {
-                jsonObject.put(RecapConstants.REQUESTED_ITEM_TITLE, StringUtils.join(itemTitles, " || "));
+                jsonObject.put(ScsbConstants.REQUESTED_ITEM_TITLE, StringUtils.join(itemTitles, " || "));
             }
             if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
-                jsonObject.put(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
+                jsonObject.put(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
             }
             if (CollectionUtils.isNotEmpty(storageLocations)) {
-                jsonObject.put(RecapConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
+                jsonObject.put(ScsbConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
             }
             if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes)) {
-                requestForm.setRequestType(RecapCommonConstants.RECALL);
+                requestForm.setRequestType(ScsbCommonConstants.RECALL);
                 requestTypes.add(requestForm.getRequestType());
             }
-            if ((!multipleItemBarcodes && showEDD) && !(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
+            if ((!multipleItemBarcodes && showEDD) && !(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntities = getRequestTypeDetailsRepository().findAllExceptBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-            } else if (!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
+            } else if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntityList = getRequestTypeDetailsRepository().findAllExceptEDDAndBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntityList) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
             }
-            jsonObject.put(RecapConstants.REQUEST_TYPES, requestTypes);
-            jsonObject.put(RecapConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.iterator().next() : "");
-            jsonObject.put(RecapConstants.SHOW_EDD, showEDD);
-            jsonObject.put(RecapConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
+            jsonObject.put(ScsbConstants.REQUEST_TYPES, requestTypes);
+            jsonObject.put(ScsbConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.iterator().next() : "");
+            jsonObject.put(ScsbConstants.SHOW_EDD, showEDD);
+            jsonObject.put(ScsbConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
             if (CollectionUtils.isNotEmpty(frozenBarcodes)) {
-                jsonObject.put(RecapConstants.NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE, RecapConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(frozenBarcodes, ",") + " " + RecapConstants.OWNING_INST_CIRCULATION_FREEZE_ERROR);
+                jsonObject.put(ScsbConstants.NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE, ScsbConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(frozenBarcodes, ",") + " " + ScsbConstants.OWNING_INST_CIRCULATION_FREEZE_ERROR);
             }
             if (CollectionUtils.isNotEmpty(invalidBarcodes)) {
-                jsonObject.put(RecapConstants.ERROR_MESSAGE, RecapCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(invalidBarcodes, ","));
+                jsonObject.put(ScsbConstants.ERROR_MESSAGE, ScsbCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(invalidBarcodes, ","));
             }
             if (CollectionUtils.isNotEmpty(notAvailableBarcodes)) {
-                jsonObject.put(RecapConstants.NOT_AVAILABLE_ERROR_MESSAGE, RecapConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(notAvailableBarcodes, ","));
+                jsonObject.put(ScsbConstants.NOT_AVAILABLE_ERROR_MESSAGE, ScsbConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(notAvailableBarcodes, ","));
             }
             if (null != deliveryLocationsMap) {
-                jsonObject.put(RecapConstants.DELIVERY_LOCATION, deliveryLocationsMap);
+                jsonObject.put(ScsbConstants.DELIVERY_LOCATION, deliveryLocationsMap);
             }
         } else {
             String replaceReqInst = requestForm.getRequestingInstitution().replace(",", "");
             if (StringUtils.isBlank(replaceReqInst)) {
                 deliveryLocationsMap.put("", "");
-                jsonObject.put(RecapConstants.DELIVERY_LOCATION, deliveryLocationsMap);
+                jsonObject.put(ScsbConstants.DELIVERY_LOCATION, deliveryLocationsMap);
             }
         }
         return jsonObject.toString();
@@ -430,17 +430,17 @@ public class RequestService {
      */
     public RequestForm setFormDetailsForRequest(Model model, HttpServletRequest request, UserDetailsForm userDetailsForm) throws JSONException {
         RequestForm requestForm = setDefaultsToCreateRequest(userDetailsForm);
-        Object requestedBarcode = ((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_BARCODE);
+        Object requestedBarcode = ((BindingAwareModelMap) model).get(ScsbConstants.REQUESTED_BARCODE);
         if (requestedBarcode != null) {
             requestForm.setOnChange("true");
             requestForm.setItemBarcodeInRequest((String) requestedBarcode);
             String stringJson = populateItemForRequest(requestForm, request);
             if (stringJson != null) {
                 JSONObject jsonObject = new JSONObject(stringJson);
-                Object itemTitle = jsonObject.has(RecapConstants.REQUESTED_ITEM_TITLE) ? jsonObject.get(RecapConstants.REQUESTED_ITEM_TITLE) : null;
-                Object itemOwningInstitution = jsonObject.has(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? jsonObject.get(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
-                Object deliveryLocations = jsonObject.has(RecapConstants.DELIVERY_LOCATION) ? jsonObject.get(RecapConstants.DELIVERY_LOCATION) : null;
-                Object requestTypes = jsonObject.has(RecapConstants.REQUEST_TYPES) ? jsonObject.get(RecapConstants.REQUEST_TYPES) : null;
+                Object itemTitle = jsonObject.has(ScsbConstants.REQUESTED_ITEM_TITLE) ? jsonObject.get(ScsbConstants.REQUESTED_ITEM_TITLE) : null;
+                Object itemOwningInstitution = jsonObject.has(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? jsonObject.get(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
+                Object deliveryLocations = jsonObject.has(ScsbConstants.DELIVERY_LOCATION) ? jsonObject.get(ScsbConstants.DELIVERY_LOCATION) : null;
+                Object requestTypes = jsonObject.has(ScsbConstants.REQUEST_TYPES) ? jsonObject.get(ScsbConstants.REQUEST_TYPES) : null;
                 List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
                 List<String> requestTypeList = new ArrayList<>();
                 if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
@@ -458,7 +458,7 @@ public class RequestService {
                     }
                     requestForm.setDeliveryLocations(customerCodeEntities);
                 }
-                if (!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
+                if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
                     JSONArray requestTypeArray = (JSONArray) requestTypes;
                     for (int i = 0; i < requestTypeArray.length(); i++) {
                         requestTypeList.add(requestTypeArray.getString(i));
@@ -483,14 +483,14 @@ public class RequestService {
         Boolean addAllRequestType = false;
         Model model = new BindingAwareModelMap();
         // Object availability = true;
-        Object availability = ((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY);
+        Object availability = ((BindingAwareModelMap) model).get(ScsbConstants.REQUESTED_ITEM_AVAILABILITY);
         if (availability != null) {
             HashSet<String> str = (HashSet<String>) availability;
             for (String itemAvailability : str) {
-                if (RecapCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)) {
+                if (ScsbCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)) {
                     addOnlyRecall = true;
                 }
-                if (RecapCommonConstants.AVAILABLE.equalsIgnoreCase(itemAvailability)) {
+                if (ScsbCommonConstants.AVAILABLE.equalsIgnoreCase(itemAvailability)) {
                     addAllRequestType = true;
                 }
             }
@@ -502,7 +502,7 @@ public class RequestService {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
+            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!ScsbConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -511,7 +511,7 @@ public class RequestService {
                 requestForm.setDisableRequestingInstitution(true);
                 requestForm.setOnChange("true");
             }
-            if ((userDetailsForm.isRecapUser() || userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
+            if ((userDetailsForm.isRecapUser() || userDetailsForm.isSuperAdmin()) && (!ScsbConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -521,7 +521,7 @@ public class RequestService {
         }
 
         if (addOnlyRecall && !addAllRequestType) {
-            RequestTypeEntity requestTypeEntity = getRequestTypeDetailsRepository().findByRequestTypeCode(RecapCommonConstants.RECALL);
+            RequestTypeEntity requestTypeEntity = getRequestTypeDetailsRepository().findByRequestTypeCode(ScsbCommonConstants.RECALL);
             requestTypes.add(requestTypeEntity.getRequestTypeCode());
             requestForm.setRequestType(requestTypeEntity.getRequestTypeCode());
             requestForm.setRequestTypes(requestTypes);
@@ -530,11 +530,11 @@ public class RequestService {
             Iterable<RequestTypeEntity> requestTypeEntities = getRequestTypeDetailsRepository().findAll();
             for (Iterator iterator = requestTypeEntities.iterator(); iterator.hasNext(); ) {
                 RequestTypeEntity requestTypeEntity = (RequestTypeEntity) iterator.next();
-                if (!RecapCommonConstants.BORROW_DIRECT.equals(requestTypeEntity.getRequestTypeCode())) {
+                if (!ScsbCommonConstants.BORROW_DIRECT.equals(requestTypeEntity.getRequestTypeCode())) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
             }
-            requestForm.setRequestType(RecapCommonConstants.RETRIEVAL);
+            requestForm.setRequestType(ScsbCommonConstants.RETRIEVAL);
             requestForm.setRequestTypes(requestTypes);
         }
         return requestForm;

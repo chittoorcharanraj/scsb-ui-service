@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.service.RestHeaderService;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class UserAuthUtil {
     public Map<String, Object> doAuthentication(UsernamePasswordToken token) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<UsernamePasswordToken> requestEntity = new HttpEntity<>(token, getRestHeaderService().getHttpHeaders());
-        return restTemplate.postForObject(scsbShiro + RecapConstants.SCSB_SHIRO_AUTHENTICATE_URL, requestEntity, HashMap.class);
+        return restTemplate.postForObject(scsbShiro + ScsbConstants.SCSB_SHIRO_AUTHENTICATE_URL, requestEntity, HashMap.class);
     }
 
     /**
@@ -61,8 +61,8 @@ public class UserAuthUtil {
             HttpEntity<UsernamePasswordToken> requestEntity = new HttpEntity<>(token, getRestHeaderService().getHttpHeaders());
             statusResponse = restTemplate.postForObject(scsbShiro + serviceURL, requestEntity, Boolean.class);
         } catch (Exception e) {
-            if (serviceURL.contains(RecapConstants.LOGOUT))
-                logger.info(RecapConstants.LOG_USER_LOGOUT_SUCCESS + " :: {}", token != null ? token.getUsername() : null);
+            if (serviceURL.contains(ScsbConstants.LOGOUT))
+                logger.info(ScsbConstants.LOG_USER_LOGOUT_SUCCESS + " :: {}", token != null ? token.getUsername() : null);
         }
         return statusResponse;
     }
@@ -75,9 +75,9 @@ public class UserAuthUtil {
      */
     public UserDetailsForm getUserDetails(HttpSession session, String recapPermission) {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
-        userDetailsForm.setSuperAdmin((Boolean) session.getAttribute(RecapConstants.SUPER_ADMIN_USER));
-        userDetailsForm.setRecapUser((Boolean) session.getAttribute(RecapConstants.RECAP_USER));
-        userDetailsForm.setLoginInstitutionId((Integer) session.getAttribute(RecapConstants.USER_INSTITUTION));
+        userDetailsForm.setSuperAdmin((Boolean) session.getAttribute(ScsbConstants.SUPER_ADMIN_USER));
+        userDetailsForm.setRecapUser((Boolean) session.getAttribute(ScsbConstants.RECAP_USER));
+        userDetailsForm.setLoginInstitutionId((Integer) session.getAttribute(ScsbConstants.USER_INSTITUTION));
         userDetailsForm.setRecapPermissionAllowed((Boolean) session.getAttribute(recapPermission));
         return userDetailsForm;
     }
@@ -91,7 +91,7 @@ public class UserAuthUtil {
      * <code>false</code> if not
      */
     public boolean isAuthenticated(HttpSession httpSession, String roleUrl) {
-        return this.authorizedUser(roleUrl, (UsernamePasswordToken) httpSession.getAttribute(RecapConstants.USER_TOKEN));
+        return this.authorizedUser(roleUrl, (UsernamePasswordToken) httpSession.getAttribute(ScsbConstants.USER_TOKEN));
     }
 
     /**

@@ -3,8 +3,8 @@ package org.recap.util;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.spring.SwaggerAPIProvider;
@@ -63,7 +63,7 @@ public class HelperUtil {
     public static String getInstitutionFromRequest(HttpServletRequest request) {
         String institution = request.getParameter("institution");
         if (StringUtils.isBlank(institution)) {
-            institution = (String) request.getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
+            institution = (String) request.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
         }
         return institution;
     }
@@ -78,12 +78,12 @@ public class HelperUtil {
         String casLogoutUrl;
         PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
         String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, "auth.type");
-        if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
-            casLogoutUrl = propertyValueProvider.getProperty(RecapConstants.SCSB_UI_URL) + "home"; // Todo : Need to get the corresponding logout url from NYPL
+        if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
+            casLogoutUrl = propertyValueProvider.getProperty(ScsbConstants.SCSB_UI_URL) + "home"; // Todo : Need to get the corresponding logout url from NYPL
         } else {
-            String urlProperty = RecapConstants.AUTH + RecapConstants.SERVICE_LOGOUT;
+            String urlProperty = ScsbConstants.AUTH + ScsbConstants.SERVICE_LOGOUT;
             String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, urlProperty);
-            String redirectUri = propertyValueProvider.getProperty(RecapConstants.LOGOUT_REDIRECT_URI);
+            String redirectUri = propertyValueProvider.getProperty(ScsbConstants.LOGOUT_REDIRECT_URI);
             casLogoutUrl = url + "" + redirectUri;
         }
         return casLogoutUrl;
@@ -98,7 +98,7 @@ public class HelperUtil {
         if (null != attribute) {
             try {
                 UserAuthUtil userAuthUtil = HelperUtil.getBean(UserAuthUtil.class);
-                userAuthUtil.authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) attribute);
+                userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) attribute);
             } catch (Exception e) {
                 logger.error("Logout", e);
             }
@@ -112,11 +112,11 @@ public class HelperUtil {
      * @return the boolean
      */
     public static boolean isAnonymousUser(Authentication auth) {
-        if (StringUtils.equals(auth.getName(), RecapConstants.ANONYMOUS_USER)) {
+        if (StringUtils.equals(auth.getName(), ScsbConstants.ANONYMOUS_USER)) {
             Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
             for (Iterator<? extends GrantedAuthority> iterator = authorities.iterator(); iterator.hasNext(); ) {
                 GrantedAuthority grantedAuthority = iterator.next();
-                if (StringUtils.equals(grantedAuthority.getAuthority(), RecapConstants.ROLE_ANONYMOUS)) {
+                if (StringUtils.equals(grantedAuthority.getAuthority(), ScsbConstants.ROLE_ANONYMOUS)) {
                     return true;
                 }
             }
@@ -126,7 +126,7 @@ public class HelperUtil {
 
     public static HttpHeaders getSwaggerHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(RecapCommonConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
+        headers.set(ScsbCommonConstants.API_KEY, SwaggerAPIProvider.getInstance().getSwaggerApiKey());
         return headers;
     }
 

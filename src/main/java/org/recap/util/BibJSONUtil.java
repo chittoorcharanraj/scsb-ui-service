@@ -3,8 +3,8 @@ package org.recap.util;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
@@ -78,7 +78,7 @@ public class BibJSONUtil extends MarcUtil {
         List<String> isbnNumbers = new ArrayList<>();
         List<String> isbnNumberList = getMultiDataFieldValues(record,"020", null, null, "a");
         for(String isbnNumber : isbnNumberList){
-            isbnNumbers.add(isbnNumber.replaceAll(RecapConstants.OCLC_NUMBER_PATTERN, ""));
+            isbnNumbers.add(isbnNumber.replaceAll(ScsbConstants.OCLC_NUMBER_PATTERN, ""));
         }
         return isbnNumbers;
     }
@@ -93,7 +93,7 @@ public class BibJSONUtil extends MarcUtil {
         List<String> issnNumbers = new ArrayList<>();
         List<String> issnNumberList = getMultiDataFieldValues(record,"022", null, null, "a");
         for(String issnNumber : issnNumberList){
-            issnNumbers.add(issnNumber.replaceAll(RecapConstants.OCLC_NUMBER_PATTERN, ""));
+            issnNumbers.add(issnNumber.replaceAll(ScsbConstants.OCLC_NUMBER_PATTERN, ""));
         }
         return issnNumbers;
     }
@@ -110,11 +110,11 @@ public class BibJSONUtil extends MarcUtil {
         if ((leaderFieldValue!=null) && StringUtils.isNotBlank(leaderFieldValue) && leaderFieldValue.length() > 7) {
             char materialTypeChar = leaderFieldValue.charAt(7);
             if ('m' == materialTypeChar) {
-                leaderMaterialType = RecapCommonConstants.MONOGRAPH;
+                leaderMaterialType = ScsbCommonConstants.MONOGRAPH;
             } else if ('s' == materialTypeChar) {
-                leaderMaterialType = RecapCommonConstants.SERIAL;
+                leaderMaterialType = ScsbCommonConstants.SERIAL;
             } else {
-                leaderMaterialType = RecapCommonConstants.OTHER;
+                leaderMaterialType = ScsbCommonConstants.OTHER;
             }
         }
         return leaderMaterialType;

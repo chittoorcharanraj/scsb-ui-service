@@ -1,15 +1,14 @@
 package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.JobEntity;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
 import org.recap.model.search.ScheduleJobsForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.JobDetailsRepository;
-import org.recap.security.UserManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class ScheduleJobsController extends AbstractController {
         String errorMessage = null;
         HttpSession session = request.getSession(false);
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE);
         if (userDetailsForm.isSuperAdmin()) {
             List<JobEntity> jobEntities = getJobDetailsRepository().findAll();
             scheduleJobsForm.setJobEntities(jobEntities);
@@ -95,17 +94,17 @@ public class ScheduleJobsController extends AbstractController {
             scheduleJobRequest.setScheduleType(scheduleJobsForm.getScheduleType());
             HttpEntity<ScheduleJobRequest> httpEntity = new HttpEntity<>(scheduleJobRequest, getRestHeaderService().getHttpHeaders());
 
-            ResponseEntity<ScheduleJobResponse> responseEntity = getRestTemplate().exchange(getScsbUrl() + RecapCommonConstants.URL_SCHEDULE_JOBS, HttpMethod.POST, httpEntity, ScheduleJobResponse.class);
+            ResponseEntity<ScheduleJobResponse> responseEntity = getRestTemplate().exchange(getScsbUrl() + ScsbCommonConstants.URL_SCHEDULE_JOBS, HttpMethod.POST, httpEntity, ScheduleJobResponse.class);
             scheduleJobResponse = responseEntity.getBody();
             String message = scheduleJobResponse.getMessage();
-            if (StringUtils.containsIgnoreCase(message, RecapCommonConstants.SUCCESS)) {
+            if (StringUtils.containsIgnoreCase(message, ScsbCommonConstants.SUCCESS)) {
                 JobEntity jobEntity = jobDetailsRepository.findByJobName(scheduleJobsForm.getJobName());
                 if (null != jobEntity) {
-                    if (RecapConstants.UNSCHEDULE.equals(scheduleJobsForm.getScheduleType())) {
-                        jobEntity.setStatus(RecapConstants.UNSCHEDULED);
+                    if (ScsbConstants.UNSCHEDULE.equals(scheduleJobsForm.getScheduleType())) {
+                        jobEntity.setStatus(ScsbConstants.UNSCHEDULED);
                         jobEntity.setNextRunTime(null);
                     } else {
-                        jobEntity.setStatus(RecapConstants.SCHEDULED);
+                        jobEntity.setStatus(ScsbConstants.SCHEDULED);
                         jobEntity.setCronExpression(scheduleJobsForm.getCronExpression());
                         jobEntity.setNextRunTime(scheduleJobResponse.getNextRunTime());
                     }
@@ -116,7 +115,7 @@ public class ScheduleJobsController extends AbstractController {
                 scheduleJobsForm.setErrorMessage(scheduleJobResponse.getMessage());
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
             scheduleJobsForm.setErrorMessage(e.getMessage());
         }
         return scheduleJobsForm;

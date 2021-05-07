@@ -2,8 +2,8 @@ package org.recap.controller;
 
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.request.DownloadReports;
@@ -61,12 +61,12 @@ public class BulkRequestController extends AbstractController {
     @GetMapping("/checkPermission")
     public boolean bulkRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_BULK_REQUEST_URL);
         if (authenticated) {
-            logger.info(RecapConstants.BULKREQUEST_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.BULKREQUEST_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.BULK_REQUEST_CHECK, logger);
         }
     }
 
@@ -93,17 +93,17 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         bulkRequestForm.setRequestNotes(notes);
-        logger.info(RecapConstants.CREATE_BULKREQUEST_CALLED);
+        logger.info(ScsbConstants.CREATE_BULKREQUEST_CALLED);
         HashMap<String, String> resStatus = new HashMap<>();
         try {
             BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
             if (res.getErrorMessage() == null)
-                resStatus.put(RecapConstants.STATUS, RecapConstants.CREATED);
+                resStatus.put(ScsbConstants.STATUS, ScsbConstants.CREATED);
             else
-                resStatus.put(RecapConstants.STATUS, res.getErrorMessage());
+                resStatus.put(ScsbConstants.STATUS, res.getErrorMessage());
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
-            resStatus.put(RecapConstants.STATUS, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            resStatus.put(ScsbConstants.STATUS, e.getMessage());
         }
         JSONObject recvObj = new JSONObject(resStatus);
         return recvObj;
@@ -151,8 +151,8 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setPatronBarcodeSearch(patronBarcodeInRequest);
         bulkRequestService.processSearchRequest(bulkRequestForm);
         loadSearchRequestPage(bulkRequestForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
-        return new ModelAndView(RecapConstants.BULK_REQUEST, RecapConstants.BULK_REQUEST_FORM, bulkRequestForm);
+        model.addAttribute(ScsbCommonConstants.TEMPLATE, ScsbConstants.BULK_REQUEST);
+        return new ModelAndView(ScsbConstants.BULK_REQUEST, ScsbConstants.BULK_REQUEST_FORM, bulkRequestForm);
     }
 
     @PostMapping("/bulkRequest/loadCreateRequestForSamePatron")
@@ -194,8 +194,8 @@ public class BulkRequestController extends AbstractController {
 
     private ModelAndView processBulkRequest(BulkRequestForm bulkRequestForm, Model model) {
         bulkRequestService.processDeliveryLocations(bulkRequestForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
-        return new ModelAndView(RecapConstants.BULK_REQUEST, RecapConstants.BULK_REQUEST_FORM, bulkRequestForm);
+        model.addAttribute(ScsbCommonConstants.TEMPLATE, ScsbConstants.BULK_REQUEST);
+        return new ModelAndView(ScsbConstants.BULK_REQUEST, ScsbConstants.BULK_REQUEST_FORM, bulkRequestForm);
     }
 
 

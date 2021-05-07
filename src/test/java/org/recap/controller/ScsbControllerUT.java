@@ -3,7 +3,6 @@ package org.recap.controller;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.*;
 import org.recap.model.search.RequestForm;
@@ -16,21 +15,21 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-public class RecapControllerUT extends BaseTestCaseUT {
+public class ScsbControllerUT extends BaseTestCaseUT {
     @Mock
-    RecapController recapController;
+    ScsbController scsbController;
     @Test
     public void setSearchResultRow(){
         RequestItemEntity requestItemEntity = getRequestItemEntity();
-        Mockito.doCallRealMethod().when(recapController).setSearchResultRow(requestItemEntity);
-        SearchResultRow searchResultRow = recapController.setSearchResultRow(requestItemEntity);
+        Mockito.doCallRealMethod().when(scsbController).setSearchResultRow(requestItemEntity);
+        SearchResultRow searchResultRow = scsbController.setSearchResultRow(requestItemEntity);
         assertNotNull(searchResultRow);
     }
     @Test
     public void disableRequestSearchInstitutionDropDown(){
         RequestForm requestForm = getRequestForm();
-        Mockito.doCallRealMethod().when(recapController).disableRequestSearchInstitutionDropDown(requestForm);
-        recapController.disableRequestSearchInstitutionDropDown(requestForm);
+        Mockito.doCallRealMethod().when(scsbController).disableRequestSearchInstitutionDropDown(requestForm);
+        scsbController.disableRequestSearchInstitutionDropDown(requestForm);
     }
 
     private RequestItemEntity getRequestItemEntity(){

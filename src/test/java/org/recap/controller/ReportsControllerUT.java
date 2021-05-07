@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
@@ -61,24 +61,24 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void reports(){
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(Boolean.TRUE);
         boolean response = reportsController.reports(request);
         assertTrue(response);
     }
     @Test
     public void reportsFailed(){
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(Boolean.FALSE);
         boolean response = reportsController.reports(request);
         assertFalse(response);
     }
     @Test
     public void reportCountsForPartner() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapCommonConstants.REPORTS_REQUEST);
+        reportsForm.setRequestType(ScsbCommonConstants.REPORTS_REQUEST);
         reportsForm.setRequestFromDate("11/01/2016");
         reportsForm.setRequestToDate("12/01/2016");
-        reportsForm.setShowBy(RecapCommonConstants.REPORTS_PARTNERS);
+        reportsForm.setShowBy(ScsbCommonConstants.REPORTS_PARTNERS);
         Mockito.when(reportsUtil.populatePartnersCountForRequest(any(), any(), any())).thenReturn(reportsForm);
         ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
@@ -86,10 +86,10 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void reportCountsForRequestType() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapCommonConstants.REPORTS_REQUEST);
+        reportsForm.setRequestType(ScsbCommonConstants.REPORTS_REQUEST);
         reportsForm.setRequestFromDate("11/01/2016");
         reportsForm.setRequestToDate("12/01/2016");
-        reportsForm.setShowBy(RecapCommonConstants.REPORTS_REQUEST_TYPE);
+        reportsForm.setShowBy(ScsbCommonConstants.REPORTS_REQUEST_TYPE);
         Mockito.when(reportsUtil.populateRequestTypeInformation(any(), any(), any())).thenReturn(reportsForm);
         ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
@@ -97,7 +97,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void reportCountsForAccession() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION);
+        reportsForm.setRequestType(ScsbCommonConstants.REPORTS_ACCESSION_DEACCESSION);
         Mockito.when(reportsUtil.populateAccessionDeaccessionItemCounts(any())).thenReturn(reportsForm);
         ReportsForm form = reportsController.reportCounts(reportsForm,request);
         assertNotNull(form);
@@ -127,7 +127,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchFirst() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
         ReportsForm form = reportsController.searchFirst(reportsForm);
         assertNotNull(form);
@@ -135,14 +135,14 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchFirstRequest() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REQUEST);
+        reportsForm.setRequestType(ScsbConstants.REQUEST);
         ReportsForm form = reportsController.searchFirst(reportsForm);
         assertNotNull(form);
     }
     @Test
     public void searchFirstEmptyList() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Collections.EMPTY_LIST);
         ReportsForm form = reportsController.searchFirst(reportsForm);
         assertNotNull(form);
@@ -150,7 +150,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchPrevious() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
         ReportsForm form = reportsController.searchPrevious(reportsForm);
         assertNotNull(form);
@@ -158,14 +158,14 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchPreviousRequest() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REQUEST);
+        reportsForm.setRequestType(ScsbConstants.REQUEST);
         ReportsForm form = reportsController.searchPrevious(reportsForm);
         assertNotNull(form);
     }
     @Test
     public void searchNext() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
         ReportsForm form = reportsController.searchNext(reportsForm);
         assertNotNull(form);
@@ -173,14 +173,14 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchNextRequest() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REQUEST);
+        reportsForm.setRequestType(ScsbConstants.REQUEST);
         ReportsForm form = reportsController.searchNext(reportsForm);
         assertNotNull(form);
     }
     @Test
     public void searchLast() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
         ReportsForm form = reportsController.searchLast(reportsForm);
         assertNotNull(form);
@@ -188,14 +188,14 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchLastRequest() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REQUEST);
+        reportsForm.setRequestType(ScsbConstants.REQUEST);
         ReportsForm form = reportsController.searchLast(reportsForm);
         assertNotNull(form);
     }
     @Test
     public void incompleteReportPageSizeChange() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REPORTS_INCOMPLETE_RECORDS);
+        reportsForm.setRequestType(ScsbConstants.REPORTS_INCOMPLETE_RECORDS);
         Mockito.when(reportsUtil.incompleteRecordsReportFieldsInformation(any())).thenReturn(Arrays.asList(new IncompleteReportResultsRow()));
         ReportsForm form = reportsController.incompleteReportPageSizeChange(reportsForm);
         assertNotNull(form);
@@ -203,7 +203,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Test
     public void incompleteReportPageSizeChangeRequest() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
-        reportsForm.setRequestType(RecapConstants.REQUEST);
+        reportsForm.setRequestType(ScsbConstants.REQUEST);
         ReportsForm form = reportsController.incompleteReportPageSizeChange(reportsForm);
         assertNotNull(form);
     }

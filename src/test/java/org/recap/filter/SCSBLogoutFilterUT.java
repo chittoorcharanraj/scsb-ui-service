@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by hemalathas on 30/3/17.
  */
-public class ReCAPLogoutFilterUT extends BaseTestCaseUT {
+public class SCSBLogoutFilterUT extends BaseTestCaseUT {
 
     @Mock
     HttpServletRequest request;
@@ -30,7 +30,7 @@ public class ReCAPLogoutFilterUT extends BaseTestCaseUT {
     FilterChain filterChain;
 
     @InjectMocks
-    ReCAPLogoutFilter reCAPLogoutFilter;
+    SCSBLogoutFilter SCSBLogoutFilter;
 
     @Mock
     HttpSession httpSession;
@@ -38,7 +38,7 @@ public class ReCAPLogoutFilterUT extends BaseTestCaseUT {
     @Test
     public void testdoFilter() throws IOException, ServletException {
         Mockito.when(((HttpServletRequest)request).getSession()).thenReturn(httpSession);
-        reCAPLogoutFilter.doFilter(request,servletResponse,filterChain);
+        SCSBLogoutFilter.doFilter(request,servletResponse,filterChain);
         assertTrue(true);
     }
 

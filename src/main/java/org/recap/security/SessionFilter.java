@@ -1,7 +1,7 @@
 package org.recap.security;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
@@ -47,10 +47,10 @@ public class SessionFilter implements Filter{
             if(null != authentication && !HelperUtil.isAnonymousUser(authentication)) {
                 HttpServletRequest request = (HttpServletRequest) req;
                 HttpServletResponse response = (HttpServletResponse) res;
-                Cookie cookieUserName = new Cookie(RecapConstants.USER_NAME, authentication.getName());
+                Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, authentication.getName());
                 HelperUtil.setCookieProperties(cookieUserName);
                 response.addCookie(cookieUserName);
-                Cookie cookie = new Cookie(RecapConstants.IS_USER_AUTHENTICATED, "Y");
+                Cookie cookie = new Cookie(ScsbConstants.IS_USER_AUTHENTICATED, "Y");
                 HelperUtil.setCookieProperties(cookie);
                 response.addCookie(cookie);
 
@@ -60,14 +60,14 @@ public class SessionFilter implements Filter{
 
                 String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
 
-                Cookie institutionCodeCookies = new Cookie(RecapConstants.LOGGED_IN_INSTITUTION, institutionCode);
+                Cookie institutionCodeCookies = new Cookie(ScsbConstants.LOGGED_IN_INSTITUTION, institutionCode);
                 HelperUtil.setCookieProperties(institutionCodeCookies);
                 response.addCookie(institutionCodeCookies);
 
                 HttpSession session=request.getSession(false);
-                UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN);
+                UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN);
                 if(usernamePasswordToken != null) {
-                    getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL, usernamePasswordToken);
+                    getUserAuthUtil().authorizedUser(ScsbConstants.SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL, usernamePasswordToken);
                 }
 
             }

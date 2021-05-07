@@ -7,8 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
 import org.recap.model.jpa.*;
 import org.recap.model.reports.TransactionReport;
@@ -71,7 +71,7 @@ import java.util.stream.Collectors;
 @Setter
 @CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/request")
-public class RequestController extends RecapController {
+public class RequestController extends ScsbController {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
     @Autowired
@@ -111,12 +111,12 @@ public class RequestController extends RecapController {
     @GetMapping("/checkPermission")
     public boolean request(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REQUEST_URL);
         if (authenticated) {
-            logger.info(RecapConstants.REQUEST_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.REQUEST_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.REQUEST, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.REQUEST, logger);
         }
     }
 
@@ -131,7 +131,7 @@ public class RequestController extends RecapController {
         try {
             requestForm = setSearch(requestForm);
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
         return requestForm;
@@ -146,13 +146,13 @@ public class RequestController extends RecapController {
     @PostMapping("/goToSearchRequest")
     public RequestForm goToSearchRequest(@RequestBody RequestForm requestForm, HttpServletRequest request) {
         try {
-            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE);
             requestForm.resetPageNumber();
             setFormValues(requestForm, userDetails);
             requestForm.setStatus("");
             requestForm = searchAndSetResults(requestForm);
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
         return requestForm;
@@ -226,7 +226,7 @@ public class RequestController extends RecapController {
     @GetMapping("/loadCreateRequest")
     public RequestForm loadCreateRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
         return requestForm;
     }
@@ -239,7 +239,7 @@ public class RequestController extends RecapController {
     @GetMapping("/loadSearchRequest")
     public RequestForm loadSearchRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
         return requestForm;
@@ -259,8 +259,8 @@ public class RequestController extends RecapController {
         try {
             return requestService.populateItemForRequest(requestForm, request);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
-            return jsonObject.put(RecapConstants.ERROR_MESSAGE, e.getMessage()).toString();
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            return jsonObject.put(ScsbConstants.ERROR_MESSAGE, e.getMessage()).toString();
         }
     }
 
@@ -276,16 +276,16 @@ public class RequestController extends RecapController {
 
         try {
             HttpSession session = request.getSession(false);
-            String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+            String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
             String stringJson = populateItem(requestForm, request);
             if (stringJson != null) {
                 JSONObject responseJsonObject = new JSONObject(stringJson);
-                Object errorMessage = responseJsonObject.has(RecapConstants.ERROR_MESSAGE) ? responseJsonObject.get(RecapConstants.ERROR_MESSAGE) : null;
-                Object noPermissionErrorMessage = responseJsonObject.has(RecapConstants.NO_PERMISSION_ERROR_MESSAGE) ? responseJsonObject.get(RecapConstants.NO_PERMISSION_ERROR_MESSAGE) : null;
-                Object itemTitle = responseJsonObject.has(RecapConstants.REQUESTED_ITEM_TITLE) ? responseJsonObject.get(RecapConstants.REQUESTED_ITEM_TITLE) : null;
-                Object itemOwningInstitution = responseJsonObject.has(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? responseJsonObject.get(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
-                Object deliveryLocations = responseJsonObject.has(RecapConstants.DELIVERY_LOCATION) ? responseJsonObject.get(RecapConstants.DELIVERY_LOCATION) : null;
-                Object requestTypes = responseJsonObject.has(RecapConstants.REQUEST_TYPES) ? responseJsonObject.get(RecapConstants.REQUEST_TYPES) : null;
+                Object errorMessage = responseJsonObject.has(ScsbConstants.ERROR_MESSAGE) ? responseJsonObject.get(ScsbConstants.ERROR_MESSAGE) : null;
+                Object noPermissionErrorMessage = responseJsonObject.has(ScsbConstants.NO_PERMISSION_ERROR_MESSAGE) ? responseJsonObject.get(ScsbConstants.NO_PERMISSION_ERROR_MESSAGE) : null;
+                Object itemTitle = responseJsonObject.has(ScsbConstants.REQUESTED_ITEM_TITLE) ? responseJsonObject.get(ScsbConstants.REQUESTED_ITEM_TITLE) : null;
+                Object itemOwningInstitution = responseJsonObject.has(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION) ? responseJsonObject.get(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION) : null;
+                Object deliveryLocations = responseJsonObject.has(ScsbConstants.DELIVERY_LOCATION) ? responseJsonObject.get(ScsbConstants.DELIVERY_LOCATION) : null;
+                Object requestTypes = responseJsonObject.has(ScsbConstants.REQUEST_TYPES) ? responseJsonObject.get(ScsbConstants.REQUEST_TYPES) : null;
                 List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
                 List<String> requestTypeList = new ArrayList<>();
                 if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
@@ -303,7 +303,7 @@ public class RequestController extends RecapController {
                     }
                     requestForm.setDeliveryLocations(customerCodeEntities);
                 }
-                if (!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
+                if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
                     JSONArray requestTypeArray = (JSONArray) requestTypes;
                     for (int i = 0; i < requestTypeArray.length(); i++) {
                         requestTypeList.add(requestTypeArray.getString(i));
@@ -321,7 +321,7 @@ public class RequestController extends RecapController {
                 }
             }
 
-            String requestItemUrl = getScsbUrl() + RecapConstants.REQUEST_ITEM_URL;
+            String requestItemUrl = getScsbUrl() + ScsbConstants.REQUEST_ITEM_URL;
 
             ItemRequestInformation itemRequestInformation = getItemRequestInformation();
             itemRequestInformation.setUsername(username);
@@ -362,12 +362,12 @@ public class RequestController extends RecapController {
                 requestForm.setShowRequestErrorMsg(true);
             }
         } catch (HttpClientErrorException httpException) {
-            logger.error(RecapCommonConstants.LOG_ERROR, httpException);
+            logger.error(ScsbCommonConstants.LOG_ERROR, httpException);
             String responseBodyAsString = httpException.getResponseBodyAsString();
             requestForm.setErrorMessage(responseBodyAsString);
             requestForm.setShowRequestErrorMsg(true);
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             requestForm.setErrorMessage(exception.getMessage());
             requestForm.setShowRequestErrorMsg(true);
         }
@@ -396,20 +396,20 @@ public class RequestController extends RecapController {
         String requestNotes = null;
         try {
             HttpEntity requestEntity = new HttpEntity<>(getRestHeaderService().getHttpHeaders());
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getScsbUrl() + RecapConstants.URL_REQUEST_CANCEL).queryParam(RecapCommonConstants.REQUEST_ID, requestForm.getRequestId());
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getScsbUrl() + ScsbConstants.URL_REQUEST_CANCEL).queryParam(ScsbCommonConstants.REQUEST_ID, requestForm.getRequestId());
             HttpEntity<CancelRequestResponse> responseEntity = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, CancelRequestResponse.class);
             CancelRequestResponse cancelRequestResponse = responseEntity.getBody();
-            jsonObject.put(RecapCommonConstants.MESSAGE, cancelRequestResponse.getScreenMessage());
-            jsonObject.put(RecapCommonConstants.STATUS, cancelRequestResponse.isSuccess());
+            jsonObject.put(ScsbCommonConstants.MESSAGE, cancelRequestResponse.getScreenMessage());
+            jsonObject.put(ScsbCommonConstants.STATUS, cancelRequestResponse.isSuccess());
             Optional<RequestItemEntity> requestItemEntity = requestItemDetailsRepository.findById(requestForm.getRequestId());
             if (requestItemEntity.isPresent()) {
                 requestStatus = requestItemEntity.get().getRequestStatusEntity().getRequestStatusDescription();
                 requestNotes = requestItemEntity.get().getNotes();
             }
-            jsonObject.put(RecapCommonConstants.REQUEST_STATUS, requestStatus);
-            jsonObject.put(RecapConstants.REQUEST_NOTES, requestNotes);
+            jsonObject.put(ScsbCommonConstants.REQUEST_STATUS, requestStatus);
+            jsonObject.put(ScsbConstants.REQUEST_NOTES, requestNotes);
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
         return jsonObject.toString();
@@ -423,26 +423,26 @@ public class RequestController extends RecapController {
         JSONObject jsonObject = new JSONObject();
         try {
             ReplaceRequest replaceRequest = new ReplaceRequest();
-            replaceRequest.setReplaceRequestByType(RecapCommonConstants.REQUEST_IDS);
-            replaceRequest.setRequestStatus(RecapConstants.EXCEPTION);
+            replaceRequest.setReplaceRequestByType(ScsbCommonConstants.REQUEST_IDS);
+            replaceRequest.setRequestStatus(ScsbConstants.EXCEPTION);
             String requestId = String.valueOf(requestForm.getRequestId());
             replaceRequest.setRequestIds(requestId);
             HttpEntity request = new HttpEntity<>(replaceRequest, getRestHeaderService().getHttpHeaders());
-            Map resultMap = getRestTemplate().postForObject(getScsbUrl() + RecapConstants.URL_REQUEST_RESUBMIT, request, Map.class);
-            jsonObject.put(RecapCommonConstants.BARCODE, requestForm.getItemBarcodeHidden());
+            Map resultMap = getRestTemplate().postForObject(getScsbUrl() + ScsbConstants.URL_REQUEST_RESUBMIT, request, Map.class);
+            jsonObject.put(ScsbCommonConstants.BARCODE, requestForm.getItemBarcodeHidden());
             if (resultMap.containsKey(requestId)) {
                 String message = (String) resultMap.get(requestId);
-                jsonObject.put(RecapCommonConstants.MESSAGE, resultMap.get(requestId));
-                jsonObject.put(RecapCommonConstants.STATUS, StringUtils.isNotBlank(message) && message.contains(RecapCommonConstants.SUCCESS));
-            } else if (resultMap.containsKey(RecapCommonConstants.INVALID_REQUEST)) {
-                jsonObject.put(RecapCommonConstants.MESSAGE, resultMap.get(RecapCommonConstants.INVALID_REQUEST));
-                jsonObject.put(RecapCommonConstants.STATUS, false);
-            } else if (resultMap.containsKey(RecapCommonConstants.FAILURE)) {
-                jsonObject.put(RecapCommonConstants.MESSAGE, resultMap.get(RecapCommonConstants.FAILURE));
-                jsonObject.put(RecapCommonConstants.STATUS, false);
+                jsonObject.put(ScsbCommonConstants.MESSAGE, resultMap.get(requestId));
+                jsonObject.put(ScsbCommonConstants.STATUS, StringUtils.isNotBlank(message) && message.contains(ScsbCommonConstants.SUCCESS));
+            } else if (resultMap.containsKey(ScsbCommonConstants.INVALID_REQUEST)) {
+                jsonObject.put(ScsbCommonConstants.MESSAGE, resultMap.get(ScsbCommonConstants.INVALID_REQUEST));
+                jsonObject.put(ScsbCommonConstants.STATUS, false);
+            } else if (resultMap.containsKey(ScsbCommonConstants.FAILURE)) {
+                jsonObject.put(ScsbCommonConstants.MESSAGE, resultMap.get(ScsbCommonConstants.FAILURE));
+                jsonObject.put(ScsbCommonConstants.STATUS, false);
             }
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
         logger.info(jsonObject.toString());
@@ -456,7 +456,7 @@ public class RequestController extends RecapController {
             requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
             searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
         } finally {
             if (CollectionUtils.isNotEmpty(searchResultRows)) {
                 requestForm.setSearchResultRows(searchResultRows);
@@ -464,7 +464,7 @@ public class RequestController extends RecapController {
                 requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
             } else {
                 requestForm.setSearchResultRows(Collections.emptyList());
-                requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+                requestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             }
         }
         requestForm.setShowResults(true);
@@ -483,7 +483,7 @@ public class RequestController extends RecapController {
                         populateRequestResults(searchResultRows, requestItemEntity);
                     }
                 } catch (Exception e) {
-                    logger.error(RecapCommonConstants.LOG_ERROR, e);
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
             }
             return searchResultRows;
@@ -522,7 +522,7 @@ public class RequestController extends RecapController {
                 pageNumber = totalPagesCount - 1;
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return pageNumber;
     }
@@ -573,7 +573,7 @@ public class RequestController extends RecapController {
     @GetMapping("/exportExceptionReports")
     public ResponseEntity<RequestForm> exportExceptionReports(@RequestParam("institutionCode") String institution, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
         RequestForm requestForm = new RequestForm();
-        return exceptionRports(institution, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_TRUE);
+        return exceptionRports(institution, fromDate, toDate, requestForm, ScsbConstants.IS_EXPORT_TRUE);
     }
 
     /**
@@ -582,7 +582,7 @@ public class RequestController extends RecapController {
     @GetMapping("/exportExceptionReportsWithDateRange")
     public ResponseEntity<RequestForm> exportExceptionReportsWithDateRange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
         RequestForm requestForm = new RequestForm();
-        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, ScsbConstants.IS_EXPORT_FALSE);
     }
 
     /**
@@ -592,7 +592,7 @@ public class RequestController extends RecapController {
     public ResponseEntity<RequestForm> pageSizeChange(@RequestParam("institutionCode") String institutionCode, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, @RequestParam("pageSize") String pageSize) {
         RequestForm requestForm = new RequestForm();
         requestForm.setPageSize(Integer.parseInt(pageSize));
-        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, ScsbConstants.IS_EXPORT_FALSE);
     }
 
     /**
@@ -603,7 +603,7 @@ public class RequestController extends RecapController {
         RequestForm requestForm = new RequestForm();
         requestForm.setPageNumber(Integer.parseInt(pageNumber));
         requestForm.setPageSize(Integer.parseInt(pageSize));
-        return exceptionRports(institutionCode, fromDate, toDate, requestForm, RecapConstants.IS_EXPORT_FALSE);
+        return exceptionRports(institutionCode, fromDate, toDate, requestForm, ScsbConstants.IS_EXPORT_FALSE);
     }
 
     private ResponseEntity<RequestForm> exceptionRports(String institutionCode, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
@@ -623,7 +623,7 @@ public class RequestController extends RecapController {
                 searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
             }
         } catch (Exception e) {
-            logger.info(RecapConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
+            logger.info(ScsbConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(searchResultRows)) {
             if (!isExport) {
@@ -633,7 +633,7 @@ public class RequestController extends RecapController {
             requestForm.setSearchResultRows(searchResultRows);
         } else {
             requestForm.setSearchResultRows(Collections.emptyList());
-            requestForm.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+            requestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }
         requestForm.setShowResults(true);
         return new ResponseEntity<>(requestForm, HttpStatus.OK);
@@ -672,27 +672,27 @@ public class RequestController extends RecapController {
         Map<String, Date> dateMap = null;
         try {
             dateMap = dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
-            if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.COUNT))) {
+            if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.COUNT))) {
                 transactionReportsList = getRequestServiceUtil().getTransactionReportCount(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
-            } else if((transactionReports.getTrasactionCallType().equalsIgnoreCase(RecapConstants.REPORTS))){
+            } else if((transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.REPORTS))){
                 transactionReportsList =  getRequestServiceUtil().getTransactionReports(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             } else {
                 transactionReportsList =  getRequestServiceUtil().getTransactionReportsExport(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             }
         } catch (Exception e) {
-            logger.info(RecapConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
+            logger.info(ScsbConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(transactionReportsList)) {
             transactionReports.setTransactionReportList(transactionReportsList);
             transactionReports.setTotalPageCount(findTotatlPageCount(transactionReports));
         } else {
-            transactionReports.setMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+            transactionReports.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }
         return transactionReports;
     }
     private Map<String,Date> dateFormatter(String fromDate, String toDate) throws Exception{
         Map<String,Date> dateMap = new HashMap<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
         Date requestFromDate = simpleDateFormat.parse(fromDate);
         Date requestToDate = simpleDateFormat.parse(toDate);
         Date fromDateAfter = reportsController.getFromDate(requestFromDate);

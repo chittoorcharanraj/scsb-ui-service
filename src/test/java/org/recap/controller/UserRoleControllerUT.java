@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RoleEntity;
 import org.recap.model.jpa.UsersEntity;
@@ -18,14 +18,11 @@ import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
-import java.util.function.Function;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +55,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     @Test
     public void showUserRoles() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
         boolean view = userRoleController.showUserRoles(request);
         assertTrue(view);
     }
@@ -66,7 +63,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     @Test
     public void showUserRolesFalse() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.FALSE);
         boolean view = userRoleController.showUserRoles(request);
         assertFalse(view);
     }
@@ -83,7 +80,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     public void searchUserRoleException() {
         UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();
-        Mockito.when(session.getAttribute(RecapConstants.USER_ID)).thenThrow(new NullPointerException());
+        Mockito.when(session.getAttribute(ScsbConstants.USER_ID)).thenThrow(new NullPointerException());
         UserRoleForm userRole = userRoleController.searchUserRole(userRoleForm, request);
         assertNotNull(userRole);
     }
@@ -202,10 +199,10 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         userDetailsForm.setLoginInstitutionId(1);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(request.getSession()).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.USER_ID)).thenReturn(3);
-        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(true);
-        Mockito.when(userAuthUtil.isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(session.getAttribute(ScsbConstants.USER_ID)).thenReturn(3);
+        Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(true);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(userRoleService.getInstitutions(userDetailsForm.isSuperAdmin(), userDetailsForm.getLoginInstitutionId())).thenReturn(institution);
         Mockito.when(userManagementService.getSuperAdminRoleId()).thenReturn(1);
         Mockito.when(userRoleService.searchUsers(any(), anyBoolean())).thenReturn(usersEntityPage);
@@ -224,7 +221,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         Integer userId = 1;
         boolean superAdmin = true;
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(true);
+        Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(true);
         ReflectionTestUtils.invokeMethod(userRoleController,"searchAndSetResult",
                 request,userRoleForm,superAdmin,userId);
     }
@@ -237,7 +234,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         Integer userId = 1;
         boolean superAdmin = true;
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(true);
+        Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(true);
         ReflectionTestUtils.invokeMethod(userRoleController,"searchAndSetResult",
                 request,userRoleForm,superAdmin,userId);
     }
@@ -250,7 +247,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         Integer userId = 1;
         boolean superAdmin = true;
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(true);
+        Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(true);
         ReflectionTestUtils.invokeMethod(userRoleController,"searchAndSetResult",
                 request,userRoleForm,superAdmin,userId);
     }
@@ -261,7 +258,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         Page<UsersEntity> usersEntityPage = new PageImpl<>(getUsersEntity());
         String message = "test";
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.SUPER_ADMIN_USER)).thenReturn(true);
+        Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(true);
         ReflectionTestUtils.invokeMethod(userRoleController,"getUsersInformation",
                 request,userRoleForm,userId,usersEntityPage,message);
     }

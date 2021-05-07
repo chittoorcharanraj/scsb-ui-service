@@ -6,7 +6,7 @@ import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by sheiks on 25/01/17.
  */
-public abstract class ReCAPAbstractUrlBasedTicketValidator implements TicketValidator {
+public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValidator {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -54,7 +54,7 @@ public abstract class ReCAPAbstractUrlBasedTicketValidator implements TicketVali
      *
      * @param casServerUrlPrefix the location of the CAS server.
      */
-    protected ReCAPAbstractUrlBasedTicketValidator(final String casServerUrlPrefix) {
+    protected SCSBAbstractUrlBasedTicketValidator(final String casServerUrlPrefix) {
         this.casServerUrlPrefix = casServerUrlPrefix;
         CommonUtils.assertNotNull(this.casServerUrlPrefix, "casServerUrlPrefix cannot be null.");
     }
@@ -144,7 +144,7 @@ public abstract class ReCAPAbstractUrlBasedTicketValidator implements TicketVali
         try {
             return URLEncoder.encode(url, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
             return url;
         }
     }

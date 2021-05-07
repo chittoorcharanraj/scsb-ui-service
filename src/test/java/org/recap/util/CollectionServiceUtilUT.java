@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionRequest;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
@@ -98,7 +98,7 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
         BibliographicMarcForm bibliographicMarcForm = getBibliographicMarcForm();
         bibliographicMarcForm.setCgdChangeNotes("Notes for deaccession");
         Map<String,String> map = new HashMap<>();
-        map.put("3254652", RecapCommonConstants.SUCCESS);
+        map.put("3254652", ScsbCommonConstants.SUCCESS);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(collectionServiceUtil.getRestTemplate()).thenReturn(restTemplate);
         doReturn(map).when(restTemplate).postForObject(
@@ -112,7 +112,7 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
         BibliographicMarcForm bibliographicMarcForm = getBibliographicMarcForm();
         bibliographicMarcForm.setCgdChangeNotes("Notes for deaccession");
         Map<String,String> map = new HashMap<>();
-        map.put("3254652", RecapCommonConstants.REQUESTED_ITEM_DEACCESSIONED);
+        map.put("3254652", ScsbCommonConstants.REQUESTED_ITEM_DEACCESSIONED);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(collectionServiceUtil.getRestTemplate()).thenReturn(restTemplate);
         doReturn(map).when(restTemplate).postForObject(
@@ -126,7 +126,7 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
         BibliographicMarcForm bibliographicMarcForm = getBibliographicMarcForm();
         bibliographicMarcForm.setCgdChangeNotes("Notes for deaccession");
         Map<String,String> map = new HashMap<>();
-        map.put("3254652", RecapCommonConstants.LAS_REJECTED);
+        map.put("3254652", ScsbCommonConstants.LAS_REJECTED);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(collectionServiceUtil.getRestTemplate()).thenReturn(restTemplate);
         doReturn(map).when(restTemplate).postForObject(
@@ -140,7 +140,7 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
         BibliographicMarcForm bibliographicMarcForm = getBibliographicMarcForm();
         bibliographicMarcForm.setCgdChangeNotes("Notes for deaccession");
         Map<String,String> map = new HashMap<>();
-        map.put("3254652", RecapCommonConstants.FAILURE);
+        map.put("3254652", ScsbCommonConstants.FAILURE);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(collectionServiceUtil.getRestTemplate()).thenReturn(restTemplate);
         doReturn(map).when(restTemplate).postForObject(

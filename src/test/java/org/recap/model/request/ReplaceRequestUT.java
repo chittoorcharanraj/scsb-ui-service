@@ -2,8 +2,8 @@ package org.recap.model.request;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.RequestForm;
 
 import java.util.Arrays;
@@ -21,8 +21,8 @@ public class ReplaceRequestUT extends BaseTestCase {
         replaceRequest.setEndRequestId("10");
         replaceRequest.setFromDate((new Date()).toString());
         replaceRequest.setToDate((new Date()).toString());
-        replaceRequest.setReplaceRequestByType(RecapCommonConstants.REQUEST_IDS);
-        replaceRequest.setRequestStatus(RecapConstants.EXCEPTION);
+        replaceRequest.setReplaceRequestByType(ScsbCommonConstants.REQUEST_IDS);
+        replaceRequest.setRequestStatus(ScsbConstants.EXCEPTION);
         String requestId = String.valueOf(requestForm.getRequestId());
         replaceRequest.setRequestIds(requestId);
         replaceRequest.setStartRequestId("1");

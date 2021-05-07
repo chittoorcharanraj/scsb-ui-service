@@ -2,16 +2,14 @@ package org.recap.security;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 
 import java.net.URL;
-import java.net.URLStreamHandlerFactory;
 
-public class ReCAPAbstractCasProtocolUrlBasedTicketValidatorUT extends BaseTestCase {
+public class SCSBAbstractCasProtocolUrlBasedTicketValidatorUT extends BaseTestCase {
 
     @Mock
-    ReCAPAbstractCasProtocolUrlBasedTicketValidator reCAPAbstractCasProtocolUrlBasedTicketValidator;
+    SCSBAbstractCasProtocolUrlBasedTicketValidator SCSBAbstractCasProtocolUrlBasedTicketValidator;
 
 
     @Test

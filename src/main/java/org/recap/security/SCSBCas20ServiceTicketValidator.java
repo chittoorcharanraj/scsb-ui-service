@@ -28,7 +28,7 @@ import java.util.LinkedList;
 /**
  * Created by sheiks on 18/01/17.
  */
-public class ReCAPCas20ServiceTicketValidator extends ReCAPAbstractCasProtocolUrlBasedTicketValidator {
+public class SCSBCas20ServiceTicketValidator extends SCSBAbstractCasProtocolUrlBasedTicketValidator {
 
     /** The CAS 2.0 protocol proxy callback url. */
     private String proxyCallbackUrl;
@@ -45,7 +45,7 @@ public class ReCAPCas20ServiceTicketValidator extends ReCAPAbstractCasProtocolUr
      *
      * @param casServerUrlPrefix the CAS Server URL prefix.
      */
-    public ReCAPCas20ServiceTicketValidator(final String casServerUrlPrefix) {
+    public SCSBCas20ServiceTicketValidator(final String casServerUrlPrefix) {
         super(casServerUrlPrefix);
         this.proxyRetriever = new Cas20ProxyRetriever(casServerUrlPrefix, getEncoding(), getURLConnectionFactory());
     }

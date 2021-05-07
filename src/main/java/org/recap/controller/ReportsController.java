@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.facets.FacetsForm;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -74,12 +74,12 @@ public class ReportsController extends AbstractController {
     @GetMapping("/checkPermission")
     public boolean reports(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REPORT_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REPORT_URL);
         if (authenticated) {
-            logger.info(RecapConstants.REPORTS_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.REPORTS_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.REPORTS, logger);
         }
 
     }
@@ -94,18 +94,18 @@ public class ReportsController extends AbstractController {
     @PostMapping("/submit")
     public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm,HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(false);
-        if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST)) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
+        if (reportsForm.getRequestType().equalsIgnoreCase(ScsbCommonConstants.REPORTS_REQUEST)) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());
             Date requestToDate = simpleDateFormat.parse(reportsForm.getRequestToDate());
             Date fromDate = getFromDate(requestFromDate);
             Date toDate = getToDate(requestToDate);
-            if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_PARTNERS)) {
+            if (reportsForm.getShowBy().equalsIgnoreCase(ScsbCommonConstants.REPORTS_PARTNERS)) {
                 reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
-            } else if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST_TYPE)) {
+            } else if (reportsForm.getShowBy().equalsIgnoreCase(ScsbCommonConstants.REPORTS_REQUEST_TYPE)) {
                 reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
             }
-        } else if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION)) {
+        } else if (reportsForm.getRequestType().equalsIgnoreCase(ScsbCommonConstants.REPORTS_ACCESSION_DEACCESSION)) {
             reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
 
         } else if ("CollectionGroupDesignation".equalsIgnoreCase(reportsForm.getRequestType())) {
@@ -148,7 +148,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/first")
     public ReportsForm searchFirst(@RequestBody ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+        if ((ScsbConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(0);
             return getIncompleteRecords(reportsForm);
         } else {
@@ -166,7 +166,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/previous")
     public ReportsForm searchPrevious(@RequestBody ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+        if ((ScsbConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(reportsForm.getIncompletePageNumber() - 1);
             return getIncompleteRecords(reportsForm);
         } else {
@@ -185,7 +185,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/next")
     public ReportsForm searchNext(@RequestBody ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+        if ((ScsbConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(reportsForm.getIncompletePageNumber() + 1);
             return getIncompleteRecords(reportsForm);
         } else {
@@ -204,7 +204,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/last")
     public ReportsForm searchLast(@RequestBody ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+        if ((ScsbConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(reportsForm.getIncompleteTotalPageCount() - 1);
             return getIncompleteRecords(reportsForm);
         } else {
@@ -263,13 +263,13 @@ public class ReportsController extends AbstractController {
     public DownloadReports exportIncompleteRecords(@RequestBody ReportsForm reportsForm) throws Exception {
         DownloadReports downloadReports = new DownloadReports();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        String fileNameWithExtension = RecapConstants.REPORTS_INCOMPLETE_EXPORT_FILE_NAME + reportsForm.getIncompleteRequestingInstitution() + "_" + dateFormat.format(new Date()) + ".csv";
+        String fileNameWithExtension = ScsbConstants.REPORTS_INCOMPLETE_EXPORT_FILE_NAME + reportsForm.getIncompleteRequestingInstitution() + "_" + dateFormat.format(new Date()) + ".csv";
         reportsForm.setExport(true);
         List<IncompleteReportResultsRow> incompleteReportResultsRows = reportsUtil.incompleteRecordsReportFieldsInformation(reportsForm);
         IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
         incompleteReportResultsRows.add(incompleteReportResultsRow);
         File csvFile = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows, fileNameWithExtension);
-        byte[] fileContent = HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.REPORTS);
+        byte[] fileContent = HelperUtil.getFileContent(csvFile, fileNameWithExtension, ScsbCommonConstants.REPORTS);
         downloadReports.setContent(fileContent);
         downloadReports.setFileName(fileNameWithExtension);
         return downloadReports;
@@ -284,7 +284,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/incompleteReportPageSizeChange")
     public ReportsForm incompleteReportPageSizeChange(@RequestBody ReportsForm reportsForm) throws Exception {
-        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+        if ((ScsbConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(0);
             return getIncompleteRecords(reportsForm);
         } else {
@@ -297,7 +297,7 @@ public class ReportsController extends AbstractController {
         List<IncompleteReportResultsRow> incompleteReportResultsRows = getReportsUtil().incompleteRecordsReportFieldsInformation(reportsForm);
         if (incompleteReportResultsRows.isEmpty()) {
             reportsForm.setShowIncompleteResults(false);
-            reportsForm.setErrorMessage(RecapConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
+            reportsForm.setErrorMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
         } else {
             reportsForm.setShowIncompleteResults(true);
             reportsForm.setShowIncompletePagination(true);

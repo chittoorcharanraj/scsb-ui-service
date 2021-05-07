@@ -5,8 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
 import org.recap.model.search.BibDataField;
 import org.recap.model.search.BibliographicMarcForm;
@@ -43,15 +43,15 @@ public class MarcRecordViewUtil {
      */
     public BibliographicMarcForm buildBibliographicMarcForm(Integer bibId, Integer itemId, UserDetailsForm userDetailsForm) {
         BibliographicMarcForm bibliographicMarcForm = new BibliographicMarcForm();
-        bibliographicMarcForm.setCollectionAction(RecapCommonConstants.UPDATE_CGD);
-        BibliographicEntity bibliographicEntity = bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, RecapCommonConstants.COMPLETE_STATUS);
+        bibliographicMarcForm.setCollectionAction(ScsbCommonConstants.UPDATE_CGD);
+        BibliographicEntity bibliographicEntity = bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS);
         if (null == bibliographicEntity) {
-            bibliographicMarcForm.setErrorMessage(RecapConstants.RECORD_NOT_AVAILABLE);
+            bibliographicMarcForm.setErrorMessage(ScsbConstants.RECORD_NOT_AVAILABLE);
         } else {
             InstitutionEntity institutionEntity = bibliographicEntity.getInstitutionEntity();
             bibliographicMarcForm.setAllowEdit(true);
             if(userDetailsForm!=null &&  !userDetailsForm.isSuperAdmin() && !userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId())) {
-                bibliographicMarcForm.setErrorMessage(RecapCommonConstants.ACCESS_RESTRICTED);
+                bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.ACCESS_RESTRICTED);
                 bibliographicMarcForm.setAllowEdit(false);
             }
                 bibliographicMarcForm.setBibId(bibliographicEntity.getId());
@@ -64,9 +64,9 @@ public class MarcRecordViewUtil {
                 if (null != institutionEntity) {
                     bibliographicMarcForm.setOwningInstitution(institutionEntity.getInstitutionCode());
                 }
-                List<ItemEntity> nonDeletedItemEntities = bibliographicDetailsRepository.getNonDeletedItemEntities(bibliographicEntity.getOwningInstitutionId(), bibliographicEntity.getOwningInstitutionBibId(), RecapCommonConstants.COMPLETE_STATUS);
+                List<ItemEntity> nonDeletedItemEntities = bibliographicDetailsRepository.getNonDeletedItemEntities(bibliographicEntity.getOwningInstitutionId(), bibliographicEntity.getOwningInstitutionBibId(), ScsbCommonConstants.COMPLETE_STATUS);
                 if (CollectionUtils.isNotEmpty(nonDeletedItemEntities)) {
-                    if (nonDeletedItemEntities.size() == 1 && RecapCommonConstants.MONOGRAPH.equals(bibliographicMarcForm.getLeaderMaterialType())) {
+                    if (nonDeletedItemEntities.size() == 1 && ScsbCommonConstants.MONOGRAPH.equals(bibliographicMarcForm.getLeaderMaterialType())) {
                         CollectionGroupEntity collectionGroupEntity = nonDeletedItemEntities.get(0).getCollectionGroupEntity();
                         if (null != collectionGroupEntity) {
                             bibliographicMarcForm.setMonographCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
@@ -89,15 +89,15 @@ public class MarcRecordViewUtil {
                                 if (null != collectionGroupEntity) {
                                     bibliographicMarcForm.setCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
                                     bibliographicMarcForm.setNewCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
-                                    if (RecapCommonConstants.SHARED_CGD.equals(bibliographicMarcForm.getCollectionGroupDesignation())) {
+                                    if (ScsbCommonConstants.SHARED_CGD.equals(bibliographicMarcForm.getCollectionGroupDesignation())) {
                                         bibliographicMarcForm.setShared(Boolean.TRUE);
                                     }
                                 }
                                 if (StringUtils.isNotBlank(bibliographicMarcForm.getAvailability())) {
-                                    if (RecapCommonConstants.AVAILABLE.equals(bibliographicMarcForm.getAvailability())) {
-                                        bibliographicMarcForm.setDeaccessionType(RecapCommonConstants.PERMANENT_WITHDRAWAL_DIRECT);
-                                    } else if (RecapCommonConstants.NOT_AVAILABLE.equals(bibliographicMarcForm.getAvailability())) {
-                                        bibliographicMarcForm.setDeaccessionType(RecapCommonConstants.PERMANENT_WITHDRAWAL_INDIRECT);
+                                    if (ScsbCommonConstants.AVAILABLE.equals(bibliographicMarcForm.getAvailability())) {
+                                        bibliographicMarcForm.setDeaccessionType(ScsbCommonConstants.PERMANENT_WITHDRAWAL_DIRECT);
+                                    } else if (ScsbCommonConstants.NOT_AVAILABLE.equals(bibliographicMarcForm.getAvailability())) {
+                                        bibliographicMarcForm.setDeaccessionType(ScsbCommonConstants.PERMANENT_WITHDRAWAL_INDIRECT);
                                     }
                                 }
                                 List<DeliveryCodeEntity> deliveryLocations = getDeliveryLocationsList(bibliographicMarcForm.getCustomerCode(), itemEntity.getOwningInstitutionId());
@@ -105,7 +105,7 @@ public class MarcRecordViewUtil {
                             }
                         }
                         if (null == bibliographicMarcForm.getItemId()) {
-                            bibliographicMarcForm.setErrorMessage(RecapConstants.RECORD_NOT_AVAILABLE);
+                            bibliographicMarcForm.setErrorMessage(ScsbConstants.RECORD_NOT_AVAILABLE);
                         }
                     }
                 }
@@ -165,7 +165,7 @@ public class MarcRecordViewUtil {
         List<DeliveryCodeEntity> deliveryLocations = new ArrayList<>();
         if (null != ownerCodeEntity) {
             List<DeliveryCodeEntity> deliveryCodeEntities = new ArrayList<>();
-            List<Object[]> deliveryCodeObjects = ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(ownerCodeEntity.getId(), RecapConstants.PWD_DELIVERY_RESTRICT_TYPE);
+            List<Object[]> deliveryCodeObjects = ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(ownerCodeEntity.getId(), ScsbConstants.PWD_DELIVERY_RESTRICT_TYPE);
             prepareDeliveryCodeEntities(deliveryCodeEntities, deliveryCodeObjects);
             Collections.sort(deliveryCodeEntities);
             return deliveryCodeEntities;

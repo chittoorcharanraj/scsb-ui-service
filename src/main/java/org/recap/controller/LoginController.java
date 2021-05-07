@@ -2,8 +2,8 @@ package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
@@ -54,9 +54,9 @@ public class LoginController extends AbstractController {
     public String loginScreen(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
-            return RecapConstants.REDIRECT_SEARCH;
+            return ScsbConstants.REDIRECT_SEARCH;
         }
-        return RecapConstants.FORWARD_INDEX;
+        return ScsbConstants.FORWARD_INDEX;
     }
 
     /**
@@ -67,7 +67,7 @@ public class LoginController extends AbstractController {
      */
     @GetMapping(value = "/home")
     public String home(HttpServletRequest request) {
-        return RecapConstants.FORWARD_INDEX;
+        return ScsbConstants.FORWARD_INDEX;
     }
 
     /**
@@ -84,7 +84,7 @@ public class LoginController extends AbstractController {
             String username = auth.getName();
             String institutionFromRequest = request.getParameter("institution");
             String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest, "auth.type");
-            if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
+            if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 OAuth2Authentication oauth = (OAuth2Authentication) auth;
                 String tokenString = ((OAuth2AuthenticationDetails) oauth.getDetails()).getTokenValue();
                 OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenString);
@@ -92,26 +92,26 @@ public class LoginController extends AbstractController {
                 Map<String, Object> additionalInformation = accessToken.getAdditionalInformation();
                 if (null != additionalInformation) {
                     username = (String) additionalInformation.get("sub");
-                    Cookie cookieUserName = new Cookie(RecapConstants.USER_NAME, username);
+                    Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
                     HelperUtil.setCookieProperties(cookieUserName);
                     response.addCookie(cookieUserName);
                 }
             }
-            UsernamePasswordToken token = new UsernamePasswordToken(username + RecapConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
+            UsernamePasswordToken token = new UsernamePasswordToken(username + ScsbConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
-            if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
-                String errorMessage = (String) resultMap.get(RecapConstants.USER_AUTH_ERRORMSG);
-                logger.error("User: {}, {} {}", token.getUsername(), RecapCommonConstants.LOG_ERROR, errorMessage);
-                return RecapConstants.REDIRECT_USER;
+            if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
+                String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
+                logger.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+                return ScsbConstants.REDIRECT_USER;
             }
             setSessionValues(session, resultMap, token);
 
         } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
             logger.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
-            return RecapConstants.REDIRECT_HOME;
+            return ScsbConstants.REDIRECT_HOME;
         }
-        return RecapConstants.REDIRECT_SEARCH;
+        return ScsbConstants.REDIRECT_SEARCH;
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
@@ -142,46 +142,46 @@ public class LoginController extends AbstractController {
         HttpSession session = null;
         try {
             session = request.getSession(false);
-            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+            getUserAuthUtil().authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN));
         } finally {
             if (session != null) {
                 session.invalidate();
             }
         }
-        return RecapConstants.REDIRECT_HOME;
+        return ScsbConstants.REDIRECT_HOME;
     }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {
         session.setAttribute("userName", authMap.get("userName"));
-        session.setAttribute(RecapConstants.USER_ID, authMap.get(RecapConstants.USER_ID));
-        session.setAttribute(RecapConstants.USER_INSTITUTION, authMap.get(RecapConstants.USER_INSTITUTION));
-        session.setAttribute(RecapConstants.SUPER_ADMIN_USER, authMap.get(RecapConstants.SUPER_ADMIN_USER));
-        session.setAttribute(RecapConstants.RECAP_USER, authMap.get(RecapConstants.RECAP_USER));
-        session.setAttribute(RecapConstants.REQUEST_PRIVILEGE, authMap.get(RecapConstants.REQUEST_PRIVILEGE));
-        session.setAttribute(RecapConstants.COLLECTION_PRIVILEGE, authMap.get(RecapConstants.COLLECTION_PRIVILEGE));
-        session.setAttribute(RecapConstants.REPORTS_PRIVILEGE, authMap.get(RecapConstants.REPORTS_PRIVILEGE));
-        session.setAttribute(RecapConstants.SEARCH_PRIVILEGE, authMap.get(RecapConstants.SEARCH_PRIVILEGE));
-        session.setAttribute(RecapConstants.USER_ROLE_PRIVILEGE, authMap.get(RecapConstants.USER_ROLE_PRIVILEGE));
-        session.setAttribute(RecapConstants.REQUEST_ALL_PRIVILEGE, authMap.get(RecapConstants.REQUEST_ALL_PRIVILEGE));
-        session.setAttribute(RecapConstants.REQUEST_ITEM_PRIVILEGE, authMap.get(RecapConstants.REQUEST_ITEM_PRIVILEGE));
-        session.setAttribute(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE, authMap.get(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE));
-        session.setAttribute(RecapConstants.DEACCESSION_PRIVILEGE, authMap.get(RecapConstants.DEACCESSION_PRIVILEGE));
-        session.setAttribute(RecapCommonConstants.BULK_REQUEST_PRIVILEGE, authMap.get(RecapCommonConstants.BULK_REQUEST_PRIVILEGE));
-        session.setAttribute(RecapCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, authMap.get(RecapCommonConstants.RESUBMIT_REQUEST_PRIVILEGE));
-        session.setAttribute(RecapConstants.MONITORING, authMap.get(RecapConstants.MONITORING));
-        session.setAttribute(RecapConstants.LOGGING, authMap.get(RecapConstants.LOGGING));
-        session.setAttribute(RecapConstants.DATA_EXPORT, authMap.get(RecapConstants.DATA_EXPORT));
-        Object isSuperAdmin = session.getAttribute(RecapConstants.SUPER_ADMIN_USER);
+        session.setAttribute(ScsbConstants.USER_ID, authMap.get(ScsbConstants.USER_ID));
+        session.setAttribute(ScsbConstants.USER_INSTITUTION, authMap.get(ScsbConstants.USER_INSTITUTION));
+        session.setAttribute(ScsbConstants.SUPER_ADMIN_USER, authMap.get(ScsbConstants.SUPER_ADMIN_USER));
+        session.setAttribute(ScsbConstants.RECAP_USER, authMap.get(ScsbConstants.RECAP_USER));
+        session.setAttribute(ScsbConstants.REQUEST_PRIVILEGE, authMap.get(ScsbConstants.REQUEST_PRIVILEGE));
+        session.setAttribute(ScsbConstants.COLLECTION_PRIVILEGE, authMap.get(ScsbConstants.COLLECTION_PRIVILEGE));
+        session.setAttribute(ScsbConstants.REPORTS_PRIVILEGE, authMap.get(ScsbConstants.REPORTS_PRIVILEGE));
+        session.setAttribute(ScsbConstants.SEARCH_PRIVILEGE, authMap.get(ScsbConstants.SEARCH_PRIVILEGE));
+        session.setAttribute(ScsbConstants.USER_ROLE_PRIVILEGE, authMap.get(ScsbConstants.USER_ROLE_PRIVILEGE));
+        session.setAttribute(ScsbConstants.REQUEST_ALL_PRIVILEGE, authMap.get(ScsbConstants.REQUEST_ALL_PRIVILEGE));
+        session.setAttribute(ScsbConstants.REQUEST_ITEM_PRIVILEGE, authMap.get(ScsbConstants.REQUEST_ITEM_PRIVILEGE));
+        session.setAttribute(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE, authMap.get(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE));
+        session.setAttribute(ScsbConstants.DEACCESSION_PRIVILEGE, authMap.get(ScsbConstants.DEACCESSION_PRIVILEGE));
+        session.setAttribute(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE, authMap.get(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE));
+        session.setAttribute(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, authMap.get(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE));
+        session.setAttribute(ScsbConstants.MONITORING, authMap.get(ScsbConstants.MONITORING));
+        session.setAttribute(ScsbConstants.LOGGING, authMap.get(ScsbConstants.LOGGING));
+        session.setAttribute(ScsbConstants.DATA_EXPORT, authMap.get(ScsbConstants.DATA_EXPORT));
+        Object isSuperAdmin = session.getAttribute(ScsbConstants.SUPER_ADMIN_USER);
         if ((boolean) isSuperAdmin) {
-            session.setAttribute(RecapConstants.ROLE_FOR_SUPER_ADMIN, true);
+            session.setAttribute(ScsbConstants.ROLE_FOR_SUPER_ADMIN, true);
         } else {
-            session.setAttribute(RecapConstants.ROLE_FOR_SUPER_ADMIN, false);
+            session.setAttribute(ScsbConstants.ROLE_FOR_SUPER_ADMIN, false);
         }
     }
 
     private void setSessionValues(HttpSession session, Map<String, Object> resultMap, UsernamePasswordToken token) {
-        session.setAttribute(RecapConstants.USER_TOKEN, token);
-        session.setAttribute(RecapConstants.USER_AUTH, resultMap);
+        session.setAttribute(ScsbConstants.USER_TOKEN, token);
+        session.setAttribute(ScsbConstants.USER_AUTH, resultMap);
         setValuesInSession(session, resultMap);
     }
 }

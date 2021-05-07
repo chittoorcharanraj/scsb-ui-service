@@ -1,12 +1,9 @@
 package org.recap.security;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
-import org.recap.spring.PropertyValueProvider;
+import org.recap.ScsbConstants;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -34,7 +31,7 @@ import java.io.IOException;
 /**
  * Created by sheiks on 25/01/17.
  */
-public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
+public class SCSBExceptionTranslationFilter extends GenericFilterBean {
 
     private CASPropertyProvider casPropertyProvider;
 
@@ -54,7 +51,7 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
      * @param casPropertyProvider      the cas property provider
      * @param authenticationEntryPoint the authentication entry point
      */
-    public ReCAPExceptionTranslationFilter(CASPropertyProvider casPropertyProvider, AuthenticationEntryPoint authenticationEntryPoint) {
+    public SCSBExceptionTranslationFilter(CASPropertyProvider casPropertyProvider, AuthenticationEntryPoint authenticationEntryPoint) {
         this(authenticationEntryPoint, new HttpSessionRequestCache());
         this.casPropertyProvider = casPropertyProvider;
     }
@@ -65,8 +62,8 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
      * @param authenticationEntryPoint the authentication entry point
      * @param requestCache             the request cache
      */
-    public ReCAPExceptionTranslationFilter(AuthenticationEntryPoint authenticationEntryPoint,
-                                      RequestCache requestCache) {
+    public SCSBExceptionTranslationFilter(AuthenticationEntryPoint authenticationEntryPoint,
+                                          RequestCache requestCache) {
         Assert.notNull(authenticationEntryPoint,
                 "authenticationEntryPoint cannot be null");
         Assert.notNull(requestCache, "requestCache cannot be null");
@@ -201,10 +198,10 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
         String institution = HelperUtil.getInstitutionFromRequest(request);
         if (StringUtils.isNotBlank(institution)) {
             String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, "auth.type");
-            if(StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
+            if(StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else {
-                String urlProperty =  RecapConstants.AUTH + RecapConstants.SERVICE_LOGIN;
+                String urlProperty =  ScsbConstants.AUTH + ScsbConstants.SERVICE_LOGIN;
                 String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
 
                 //Calling cas entry point based on institution type.

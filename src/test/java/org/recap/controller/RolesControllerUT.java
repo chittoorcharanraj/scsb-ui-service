@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.PermissionEntity;
 import org.recap.model.jpa.RoleEntity;
 import org.recap.model.search.RolesForm;
@@ -57,14 +57,14 @@ public class RolesControllerUT extends BaseTestCaseUT {
     @Test
     public void testRoles() {
         when(request.getSession(false)).thenReturn(session);
-        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.TRUE);
+        when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.TRUE);
         boolean response = rolesController.roles(request);
         assertNotNull(response);
     }
     @Test
     public void testRolesFailure() {
         when(request.getSession(false)).thenReturn(session);
-        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.FALSE);
+        when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.FALSE);
         boolean response = rolesController.roles(request);
         assertNotNull(response);
     }
@@ -194,7 +194,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
         rolesForm.setNewRoleName("Admin");
         rolesForm.setNewPermissionNames("Admin,SuperAdmin");
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
+        Mockito.when(session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("test");
         Mockito.when(permissionsRepository.findByPermissionName(any())).thenReturn(getPermissionEntity());
         Mockito.when(rolesDetailsRepositorty.save(any())).thenReturn(getRoleEntity());
         RolesForm form = rolesController.newRole(rolesForm,request);
@@ -206,7 +206,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
         rolesForm.setNewRoleName("Admin");
         rolesForm.setNewPermissionNames("Admin,SuperAdmin");
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
+        Mockito.when(session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("test");
         Mockito.when(permissionsRepository.findByPermissionName(any())).thenReturn(getPermissionEntity());
         Mockito.when(rolesDetailsRepositorty.save(any())).thenThrow(new NullPointerException());
         RolesForm form = rolesController.newRole(rolesForm,request);
@@ -237,7 +237,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
         rolesForm.setEditRoleName("Admin");
         String[] permissionName ={"CreateUser"};
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute(RecapConstants.USER_NAME)).thenReturn("SuperAdmin");
+        when(session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("SuperAdmin");
         Mockito.when(rolesDetailsRepositorty.findById(any())).thenReturn(Optional.of(getRoleEntity()));
         rolesForm.setEditPermissionName(Arrays.asList(permissionName));
         rolesForm.setEditRoleDescription("test desc");
@@ -253,7 +253,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
         rolesForm.setEditRoleName("Admin");
         String[] permissionName ={"CreateUser"};
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute(RecapConstants.USER_NAME)).thenReturn("SuperAdmin");
+        when(session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("SuperAdmin");
         Mockito.when(rolesDetailsRepositorty.findById(any())).thenReturn(Optional.of(getRoleEntity()));
         rolesForm.setEditPermissionName(Arrays.asList(permissionName));
         rolesForm.setEditRoleDescription("test desc");
