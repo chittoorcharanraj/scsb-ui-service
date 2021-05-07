@@ -1,14 +1,12 @@
 package org.recap.controller;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.security.UserManagementService;
 import org.recap.util.MonitoringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -57,7 +54,7 @@ public class MonitoringController extends AbstractController {
     @GetMapping("/monitoring")
     public boolean monitoring(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_MONITORING_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_MONITORING_URL);
         if (authenticated) {
             return true;
         }
@@ -66,7 +63,7 @@ public class MonitoringController extends AbstractController {
 
     @GetMapping("/logging")
     public boolean logging(HttpServletRequest request) {
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_LOGGING_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_LOGGING_URL);
         HttpSession session = request.getSession(false);
         if (authenticated) {
             return true;

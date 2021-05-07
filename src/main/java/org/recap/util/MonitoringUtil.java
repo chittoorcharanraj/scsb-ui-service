@@ -1,6 +1,6 @@
 package org.recap.util;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.config.MonitoringConfiguration;
 import org.recap.model.search.Monitoring;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ public class MonitoringUtil {
      */
     public List<Monitoring> getMonitoringProjects() {
         List<Monitoring> projects = new ArrayList<>();
-        projects.add(build(RecapConstants.SCSB_UI));
-        projects.add(build(RecapConstants.SCSB_AUTH));
-        projects.add(build(RecapConstants.SCSB_GATEWAY));
-        projects.add(build(RecapConstants.SCSB_DOC));
-        projects.add(build(RecapConstants.SCSB_CIRC));
-        projects.add(build(RecapConstants.SCSB_BATCH));
+        projects.add(build(ScsbConstants.SCSB_UI));
+        projects.add(build(ScsbConstants.SCSB_AUTH));
+        projects.add(build(ScsbConstants.SCSB_GATEWAY));
+        projects.add(build(ScsbConstants.SCSB_DOC));
+        projects.add(build(ScsbConstants.SCSB_CIRC));
+        projects.add(build(ScsbConstants.SCSB_BATCH));
         return projects;
     }
 

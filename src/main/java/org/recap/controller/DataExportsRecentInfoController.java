@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.dataexportinfo.DataExportResponse;
 import org.recap.model.dataexportinfo.S3RecentDataExportInfoList;
 import org.recap.model.jpa.InstitutionEntity;
@@ -52,11 +52,11 @@ public class DataExportsRecentInfoController {
     @GetMapping("/checkPermission")
     public boolean validateDataExport(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_DATAEXPORT_URL);
+        boolean authenticated = userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_DATAEXPORT_URL);
         if (authenticated) {
-            return RecapConstants.TRUE;
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.SEARCH, logger);
         }
     }
 
@@ -68,12 +68,12 @@ public class DataExportsRecentInfoController {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = HelperUtil.getSwaggerHeaders();
             HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-            ResponseEntity<S3RecentDataExportInfoList> responseEntity = restTemplate.exchange(scsbEtlUrl + RecapConstants.SCSB_DATA_EXPORT_RECENT_INFO_URL, HttpMethod.GET, httpEntity, S3RecentDataExportInfoList.class);
+            ResponseEntity<S3RecentDataExportInfoList> responseEntity = restTemplate.exchange(scsbEtlUrl + ScsbConstants.SCSB_DATA_EXPORT_RECENT_INFO_URL, HttpMethod.GET, httpEntity, S3RecentDataExportInfoList.class);
             if (responseEntity.getBody() != null && responseEntity.getStatusCode().is2xxSuccessful()) {
                 s3RecentDataExportInfoList = responseEntity.getBody();
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
         }
         return s3RecentDataExportInfoList;
     }
@@ -95,14 +95,14 @@ public class DataExportsRecentInfoController {
         setInputMapValues(inputMap, institutionCodes, requestingInstitutionCode, fetchType, outputFormat, date, collectionGroupIds, transmissionType, emailToAddress, imsDepositoryCodes, userName);
         try {
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(HelperUtil.getSwaggerHeaders());
-            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + RecapConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}&userName={userName}", HttpMethod.GET, httpEntity, String.class, inputMap);
+            ResponseEntity<String> responseEntity = new RestTemplate().exchange(scsbUrl + ScsbConstants.SCSB_DATA_DUMP_URL + "?institutionCodes={institutionCodes}&requestingInstitutionCode={requestingInstitutionCode}&imsDepositoryCodes={imsDepositoryCodes}&fetchType={fetchType}&outputFormat={outputFormat}&date={date}&collectionGroupIds={collectionGroupIds}&transmissionType={transmissionType}&emailToAddress={emailToAddress}&userName={userName}", HttpMethod.GET, httpEntity, String.class, inputMap);
             if (responseEntity.getBody() != null && responseEntity.getStatusCode().is2xxSuccessful()) {
                 dataExportResponse.setMessage(responseEntity.getBody());
             } else {
                 dataExportResponse.setErrorMessage(responseEntity.getBody());
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
             dataExportResponse.setErrorMessage(e.getMessage());
         }
         return dataExportResponse;

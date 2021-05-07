@@ -7,21 +7,21 @@ import org.recap.BaseTestCaseUT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class RecapErrorPageControllerUT extends BaseTestCaseUT {
+public class ScsbErrorPageControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
-    RecapErrorPageController recapErrorPageController;
+    ScsbErrorPageController scsbErrorPageController;
 
     @Test
     public void testErrorPage(){
-        String response = recapErrorPageController.recapErrorPage();
+        String response = scsbErrorPageController.recapErrorPage();
         assertNotNull(response);
         assertEquals(response,"error");
     }
 
     @Test
     public void getErrorPath(){
-        recapErrorPageController.getErrorPath();
+        scsbErrorPageController.getErrorPath();
     }
 
 }

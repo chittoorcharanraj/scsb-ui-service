@@ -1,7 +1,7 @@
 package org.recap.security;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.RoleEntity;
 import org.recap.repository.jpa.RolesDetailsRepositorty;
 import org.recap.util.UserAuthUtil;
@@ -35,14 +35,14 @@ public class UserManagementService {
      */
     public boolean unAuthorizedUser(HttpSession session, String moduleName, Logger logger) {
         try {
-            logger.debug("{} authorization Rejected for : {}", moduleName, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
-          userAuthUtil.authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+            logger.debug("{} authorization Rejected for : {}", moduleName, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN));
+          userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN));
         } finally {
             if (session != null) {
                 session.invalidate();
             }
         }
-        return RecapConstants.FALSE;
+        return ScsbConstants.FALSE;
     }
 
     /**
@@ -51,7 +51,7 @@ public class UserManagementService {
      * @return the integer
      */
     public Integer getSuperAdminRoleId(){
-        RoleEntity roleEntity=rolesDetailsRepositorty.findByRoleName(RecapConstants.ROLES_SUPER_ADMIN);
+        RoleEntity roleEntity=rolesDetailsRepositorty.findByRoleName(ScsbConstants.ROLES_SUPER_ADMIN);
         return roleEntity.getId();
     }
 }

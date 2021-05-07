@@ -3,9 +3,8 @@ package org.recap.security;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.when;
-
-public class ReCAPHttpSessionEventPublisherUT extends BaseTestCase {
+public class SCSBHttpSessionEventPublisherUT extends BaseTestCase {
     @Mock
     HttpServletRequest request;
     @Mock
@@ -30,7 +25,7 @@ public class ReCAPHttpSessionEventPublisherUT extends BaseTestCase {
     @Mock
     HttpSession session;
     @Autowired
-    ReCAPHttpSessionEventPublisher reCAPHttpSessionEventPublisher;
+    SCSBHttpSessionEventPublisher SCSBHttpSessionEventPublisher;
     @Mock
     UserAuthUtil userAuthUtil;
     @Mock
@@ -43,8 +38,7 @@ public class ReCAPHttpSessionEventPublisherUT extends BaseTestCase {
 
     Map<String, Object> attributes = new HashMap<>();
 
-    Object value = "recap";
-    String attribute = RecapConstants.USER_TOKEN;
+    String attribute = ScsbConstants.USER_TOKEN;
     @Test
     public void testSessionDestroyed() throws Exception{
        /*attributes.put("1","token");

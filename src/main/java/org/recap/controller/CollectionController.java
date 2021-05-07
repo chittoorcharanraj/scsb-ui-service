@@ -3,11 +3,10 @@ package org.recap.controller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.MarcException;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.DeliveryCodeEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.search.CollectionForm;
@@ -37,7 +36,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * Created by rajeshbabuk on 12/10/16.
@@ -103,12 +101,12 @@ public class CollectionController extends AbstractController {
     @RequestMapping(value = "/checkPermission", method = RequestMethod.GET)
     public boolean collection(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL);
         if (authenticated) {
-            logger.info(RecapConstants.COLLECTION_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.COLLECTION_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.COLLECTION, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.COLLECTION, logger);
         }
     }
 
@@ -134,8 +132,8 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/openMarcView")
     public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws MarcException {
-        logger.info(RecapConstants.COLLECTION_OMV_CALLED);
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+        logger.info(ScsbConstants.COLLECTION_OMV_CALLED);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
         collectionFormUpdated.setAllowCGDandDeaccession(checkIsCGDandDeaccessionRestricted(collectionForm.getBarcode(),request));
@@ -151,13 +149,13 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/collectionUpdate")
     public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
-        logger.info(RecapConstants.COLLECTION_UPDATE_CALLED);
+        logger.info(ScsbConstants.COLLECTION_UPDATE_CALLED);
         HttpSession session = request.getSession(false);
-        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
         collectionForm.setUsername(username);
-        if (RecapCommonConstants.UPDATE_CGD.equalsIgnoreCase(collectionForm.getCollectionAction())) {
+        if (ScsbCommonConstants.UPDATE_CGD.equalsIgnoreCase(collectionForm.getCollectionAction())) {
             getCollectionServiceUtil().updateCGDForItem(collectionForm);
-        } else if (RecapCommonConstants.DEACCESSION.equalsIgnoreCase(collectionForm.getCollectionAction())) {
+        } else if (ScsbCommonConstants.DEACCESSION.equalsIgnoreCase(collectionForm.getCollectionAction())) {
             getCollectionServiceUtil().deAccessionItem(collectionForm);
         }
         collectionForm.setAllowEdit(true);
@@ -173,47 +171,47 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/checkCrossInstitutionBorrowed")
     public CollectionForm checkCrossInstitutionBorrowed(@RequestBody CollectionForm collectionForm) {
-        logger.info(RecapConstants.COLLECTION_CCIB_CALLED);
+        logger.info(ScsbConstants.COLLECTION_CCIB_CALLED);
         String itemBarcode = collectionForm.getBarcode();
         String warningMessage = null;
         List<ItemEntity> itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);
         int owningInstitutionId = !itemEntities.isEmpty() ? itemEntities.get(0).getOwningInstitutionId() : 0;
         List<DeliveryCodeEntity> deliveryLocations = marcRecordViewUtil.getDeliveryLocationsList(collectionForm.getCustomerCode(), owningInstitutionId);
         collectionForm.setDeliveryLocations(deliveryLocations);
-        RequestItemEntity activeRetrievalRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED);
-        RequestItemEntity activeRecallRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, RecapCommonConstants.REQUEST_STATUS_RECALLED);
+        RequestItemEntity activeRetrievalRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED);
+        RequestItemEntity activeRecallRequest = getRequestItemDetailsRepository().findByItemBarcodeAndRequestStaCode(itemBarcode, ScsbCommonConstants.REQUEST_STATUS_RECALLED);
         if (null != activeRetrievalRequest && null != activeRecallRequest) {
-            warningMessage = RecapConstants.WARNING_MESSAGE_REQUEST_BORROWED_ITEM;
+            warningMessage = ScsbConstants.WARNING_MESSAGE_REQUEST_BORROWED_ITEM;
         } else if (null != activeRetrievalRequest && null == activeRecallRequest) {
             String itemOwningInstitution = activeRetrievalRequest.getItemEntity().getInstitutionEntity().getInstitutionCode();
             String retrievalRequestingInstitution = activeRetrievalRequest.getInstitutionEntity().getInstitutionCode();
             if (!itemOwningInstitution.equalsIgnoreCase(retrievalRequestingInstitution)) {
-                warningMessage = RecapConstants.WARNING_MESSAGE_RETRIEVAL_CROSS_BORROWED_ITEM;
+                warningMessage = ScsbConstants.WARNING_MESSAGE_RETRIEVAL_CROSS_BORROWED_ITEM;
             } else {
-                warningMessage = RecapConstants.WARNING_MESSAGE_RETRIEVAL_BORROWED_ITEM;
+                warningMessage = ScsbConstants.WARNING_MESSAGE_RETRIEVAL_BORROWED_ITEM;
             }
         } else if (null == activeRetrievalRequest && null != activeRecallRequest) {
             String itemOwningInstitution = activeRecallRequest.getItemEntity().getInstitutionEntity().getInstitutionCode();
             String recallRequestingInstitution = activeRecallRequest.getInstitutionEntity().getInstitutionCode();
             if (!itemOwningInstitution.equalsIgnoreCase(recallRequestingInstitution)) {
-                warningMessage = RecapConstants.WARNING_MESSAGE_RECALL_CROSS_BORROWED_ITEM;
+                warningMessage = ScsbConstants.WARNING_MESSAGE_RECALL_CROSS_BORROWED_ITEM;
             } else {
-                warningMessage = RecapConstants.WARNING_MESSAGE_RECALL_BORROWED_ITEM;
+                warningMessage = ScsbConstants.WARNING_MESSAGE_RECALL_BORROWED_ITEM;
             }
         }
 
         if (StringUtils.isNotBlank(warningMessage)) {
-            if (RecapCommonConstants.UPDATE_CGD.equalsIgnoreCase(collectionForm.getCollectionAction())) {
+            if (ScsbCommonConstants.UPDATE_CGD.equalsIgnoreCase(collectionForm.getCollectionAction())) {
                 collectionForm.setWarningMessage(warningMessage);
-            } else if (RecapCommonConstants.DEACCESSION.equalsIgnoreCase(collectionForm.getCollectionAction())) {
-                collectionForm.setWarningMessage(warningMessage + " " + RecapConstants.WARNING_MESSAGE_DEACCESSION_REQUEST_BORROWED_ITEM);
+            } else if (ScsbCommonConstants.DEACCESSION.equalsIgnoreCase(collectionForm.getCollectionAction())) {
+                collectionForm.setWarningMessage(warningMessage + " " + ScsbConstants.WARNING_MESSAGE_DEACCESSION_REQUEST_BORROWED_ITEM);
             }
         }
         return collectionForm;
     }
     private boolean checkIsCGDandDeaccessionRestricted (String barcode,HttpServletRequest request){
         HttpSession session = request.getSession(false);
-        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
         String userCode = userDetailsRepository.findInstitutionCodeByUserName(username);
         String itemCode = itemDetailsRepository.findInstitutionCodeByBarcode(barcode);
         List<String> userRoles = userDetailsRepository.getUserRoles(username);
@@ -225,9 +223,9 @@ public class CollectionController extends AbstractController {
 
     private String limitedBarcodes(CollectionForm collectionForm) {
         String[] barcodeArray = collectionForm.getItemBarcodes().split(",");
-        if (barcodeArray.length > RecapCommonConstants.BARCODE_LIMIT) {
-            String[] limitBarcodeArray = Arrays.copyOfRange(barcodeArray, 0, RecapCommonConstants.BARCODE_LIMIT);
-            collectionForm.setIgnoredBarcodesErrorMessage(RecapConstants.BARCODE_LIMIT_ERROR + " - " + StringUtils.join(Arrays.copyOfRange(barcodeArray, RecapCommonConstants.BARCODE_LIMIT, barcodeArray.length), ","));
+        if (barcodeArray.length > ScsbCommonConstants.BARCODE_LIMIT) {
+            String[] limitBarcodeArray = Arrays.copyOfRange(barcodeArray, 0, ScsbCommonConstants.BARCODE_LIMIT);
+            collectionForm.setIgnoredBarcodesErrorMessage(ScsbConstants.BARCODE_LIMIT_ERROR + " - " + StringUtils.join(Arrays.copyOfRange(barcodeArray, ScsbCommonConstants.BARCODE_LIMIT, barcodeArray.length), ","));
             return StringUtils.join(limitBarcodeArray, ",");
         }
         return StringUtils.join(barcodeArray, ",");
@@ -249,7 +247,7 @@ public class CollectionController extends AbstractController {
     private CollectionForm buildResultRows(CollectionForm collectionForm) {
         if (StringUtils.isNotBlank(collectionForm.getItemBarcodes())) {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-            searchRecordsRequest.setFieldName(RecapCommonConstants.BARCODE);
+            searchRecordsRequest.setFieldName(ScsbCommonConstants.BARCODE);
             searchRecordsRequest.setFieldValue(limitedBarcodes(collectionForm));
 
             SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
@@ -260,7 +258,7 @@ public class CollectionController extends AbstractController {
                 collectionForm.setSelectAll(false);
             }
         } else {
-            collectionForm.setErrorMessage(RecapCommonConstants.NO_RESULTS_FOUND);
+            collectionForm.setErrorMessage(ScsbCommonConstants.NO_RESULTS_FOUND);
         }
         collectionForm.setShowResults(true);
         return collectionForm;
@@ -269,7 +267,7 @@ public class CollectionController extends AbstractController {
     private CollectionForm buildMissingBarcodes(CollectionForm collectionForm) {
         Set<String> missingBarcodes = getMissingBarcodes(collectionForm);
         if (CollectionUtils.isNotEmpty(missingBarcodes)) {
-            collectionForm.setBarcodesNotFoundErrorMessage(RecapCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(missingBarcodes, ","));
+            collectionForm.setBarcodesNotFoundErrorMessage(ScsbCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(missingBarcodes, ","));
         }
         return collectionForm;
     }
@@ -277,8 +275,8 @@ public class CollectionController extends AbstractController {
     private Set<String> getMissingBarcodes(CollectionForm collectionForm) {
         if (StringUtils.isNotBlank(collectionForm.getItemBarcodes())) {
             String[] barcodeArray = collectionForm.getItemBarcodes().split(",");
-            if (barcodeArray.length > RecapCommonConstants.BARCODE_LIMIT) {
-                barcodeArray = Arrays.copyOfRange(barcodeArray, 0, RecapCommonConstants.BARCODE_LIMIT);
+            if (barcodeArray.length > ScsbCommonConstants.BARCODE_LIMIT) {
+                barcodeArray = Arrays.copyOfRange(barcodeArray, 0, ScsbCommonConstants.BARCODE_LIMIT);
             }
             Set<String> missingBarcodes = new HashSet<>(Arrays.asList(barcodeArray));
             for (SearchResultRow searchResultRow : collectionForm.getSearchResultRows()) {

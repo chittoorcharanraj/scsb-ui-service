@@ -5,8 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
@@ -99,7 +99,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchRecords() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
         boolean result = searchRecordsController.searchRecords(request);
         assertTrue(result);
     }
@@ -107,7 +107,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
     @Test
     public void searchRecordsFailure() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.FALSE);
         boolean result = searchRecordsController.searchRecords(request);
         assertFalse(result);
     }
@@ -179,7 +179,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
     @Test
     public void isItemField() {
         SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
-        searchRecordsRequest.setFieldName(RecapCommonConstants.CALL_NUMBER);
+        searchRecordsRequest.setFieldName(ScsbCommonConstants.CALL_NUMBER);
         ReflectionTestUtils.invokeMethod(searchRecordsController, "isItemField", searchRecordsRequest);
     }
 

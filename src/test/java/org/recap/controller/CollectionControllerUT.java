@@ -6,8 +6,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
 import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.search.BibDataField;
@@ -70,7 +70,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     @Test
     public void collection() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.TRUE);
         boolean result = collectionController.collection(request);
         assertTrue(result);
     }
@@ -78,7 +78,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     @Test
     public void collectionFailure() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.FALSE);
         boolean result = collectionController.collection(request);
         assertFalse(result);
     }
@@ -101,7 +101,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         BibliographicMarcForm bibliographicMarcForm = getBibilographicMarcForm();
         UserDetailsForm userDetailsForm = getUserDetailsForm();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(request.getSession(false), ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(marcRecordViewUtil.buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm)).thenReturn(bibliographicMarcForm);
         CollectionForm form = collectionController.openMarcView(collectionForm, request);
         assertNotNull(form);
@@ -112,7 +112,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         CollectionForm collectionForm = new CollectionForm();
         collectionForm.setCollectionAction("Update CGD");
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("test");
         Mockito.doNothing().when(collectionServiceUtil).updateCGDForItem(collectionForm);
         CollectionForm form = collectionController.collectionUpdate(collectionForm, request);
         assertNotNull(form);
@@ -123,7 +123,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         CollectionForm collectionForm = new CollectionForm();
         collectionForm.setCollectionAction("Deaccession");
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when((String) session.getAttribute(RecapConstants.USER_NAME)).thenReturn("test");
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("test");
         CollectionForm form = collectionController.collectionUpdate(collectionForm, request);
         assertNotNull(form);
     }
@@ -145,7 +145,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         collectionForm.setCollectionAction("Update CGD");
         RequestItemEntity requestItemEntity = getRequestItemEntity();
         Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
-        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
+        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
 
@@ -159,7 +159,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         institutionEntity.setInstitutionCode("HD");
         requestItemEntity.getItemEntity().setInstitutionEntity(institutionEntity);
         Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
-        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
+        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
 
@@ -170,7 +170,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         collectionForm.setCollectionAction("Update CGD");
         RequestItemEntity requestItemEntity = getRequestItemEntity();
         Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
-        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
+        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), ScsbCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
 
@@ -184,7 +184,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         institutionEntity.setInstitutionCode("HD");
         requestItemEntity.getItemEntity().setInstitutionEntity(institutionEntity);
         Mockito.when(marcRecordViewUtil.getDeliveryLocationsList(any(), any())).thenReturn(Arrays.asList(getDeliveryCodeEntity()));
-        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), RecapCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
+        Mockito.when(requestItemDetailsRepository.findByItemBarcodeAndRequestStaCode(collectionForm.getBarcode(), ScsbCommonConstants.REQUEST_STATUS_RECALLED)).thenReturn(requestItemEntity);
         collectionController.checkCrossInstitutionBorrowed(collectionForm);
     }
 

@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.usermanagement.UserForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -47,8 +47,8 @@ public class HomeControllerUT extends BaseTestCaseUT {
         userForm.setUsername("SuperAdmin");
         userForm.setInstitution("1");
         userForm.setPassword("12345");
-        UsernamePasswordToken token = new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        session.setAttribute(RecapConstants.REQUEST_PRIVILEGE,token);
+        UsernamePasswordToken token = new UsernamePasswordToken(userForm.getUsername()+ ScsbConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
+        session.setAttribute(ScsbConstants.REQUEST_PRIVILEGE,token);
     }
     @Test
     public void loadInstitutions(){
@@ -66,7 +66,7 @@ public class HomeControllerUT extends BaseTestCaseUT {
         Object obj = new Object();
         Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
         Mockito.when(session.getAttribute(anyString())).thenReturn(obj);
         homeController.login(request);
     }
@@ -75,7 +75,7 @@ public class HomeControllerUT extends BaseTestCaseUT {
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
         homeController.login(request);
     }
     private InstitutionEntity getInstitutionEntity() {

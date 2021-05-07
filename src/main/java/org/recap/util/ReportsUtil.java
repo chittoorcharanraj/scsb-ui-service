@@ -2,11 +2,10 @@ package org.recap.util;
 
 import com.csvreader.CsvWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.reports.ReportsResponse;
-import org.recap.model.reports.TransactionReport;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
@@ -60,12 +59,12 @@ public class ReportsUtil {
             for (InstitutionEntity institutionEntity : institutionEntities) {
                 ReportsInstitutionForm reportsInstitutionForm = new ReportsInstitutionForm();
                 reportsInstitutionForm.setInstitution(institutionEntity.getInstitutionCode());
-                reportsInstitutionForm.setPhysicalPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-                reportsInstitutionForm.setPhysicalSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-                reportsInstitutionForm.setPhysicalPartnerSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-                reportsInstitutionForm.setEddPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-                reportsInstitutionForm.setEddSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-                reportsInstitutionForm.setEddPartnerSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsInstitutionForm.setPhysicalPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,ScsbCommonConstants.REQUEST_STATUS_INITIAL_LOAD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setPhysicalSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_SHARED, ScsbConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,ScsbCommonConstants.REQUEST_STATUS_INITIAL_LOAD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setPhysicalPartnerSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_SHARED, ScsbConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,ScsbCommonConstants.REQUEST_STATUS_INITIAL_LOAD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setEddPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_EDD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.EDD)));
+                reportsInstitutionForm.setEddSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_SHARED, ScsbConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_EDD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.EDD)));
+                reportsInstitutionForm.setEddPartnerSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(ScsbConstants.CGD_SHARED, ScsbConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_EDD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.EDD)));
                 reportsForm.getReportsInstitutionFormList().add(reportsInstitutionForm);
             }
             reportsForm.setShowPartners(true);
@@ -90,9 +89,9 @@ public class ReportsUtil {
             for (InstitutionEntity institutionEntity : institutionEntities) {
                 ReportsInstitutionForm reportsInstitutionForm = new ReportsInstitutionForm();
                 reportsInstitutionForm.setInstitution(institutionEntity.getInstitutionCode());
-                reportsInstitutionForm.setRetrievalRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-                reportsInstitutionForm.setRecallRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RECALLED,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED,RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RECALL)));
-                reportsInstitutionForm.setEddRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsInstitutionForm.setRetrievalRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,ScsbCommonConstants.REQUEST_STATUS_INITIAL_LOAD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setRecallRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,institutionEntity.getId(), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_RECALLED,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED,ScsbCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(ScsbCommonConstants.REQUEST_TYPE_RECALL)));
+                reportsInstitutionForm.setEddRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(ScsbCommonConstants.REQUEST_STATUS_EDD,ScsbCommonConstants.REQUEST_STATUS_REFILED,ScsbCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(ScsbCommonConstants.EDD)));
                 reportsForm.getReportsInstitutionFormList().add(reportsInstitutionForm);
             }
             reportsForm.setShowRecallTable(true);
@@ -187,7 +186,7 @@ public class ReportsUtil {
                     }
                 }
             } catch (Exception e) {
-                logger.error(RecapCommonConstants.LOG_ERROR,e);
+                logger.error(ScsbCommonConstants.LOG_ERROR,e);
             }
             finally {
                 if(csvOutput!=null) {

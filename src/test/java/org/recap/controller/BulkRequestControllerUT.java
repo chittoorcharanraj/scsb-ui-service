@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -67,7 +67,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
-        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.TRUE);
+        when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.TRUE);
         boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
     }
@@ -76,7 +76,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
-        when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.FALSE);
+        when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.FALSE);
         boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
     }

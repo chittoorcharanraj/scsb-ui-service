@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.service.RestHeaderService;
 import org.springframework.web.client.RestTemplate;
@@ -47,22 +47,22 @@ public class UserAuthUtilUT extends BaseTestCaseUT {
     @Test
     public void testdoAuthentication() {
         Mockito.when(session.getAttribute(Mockito.anyString())).thenReturn(true);
-        Mockito.when(session.getAttribute(RecapConstants.USER_INSTITUTION)).thenReturn(1);
+        Mockito.when(session.getAttribute(ScsbConstants.USER_INSTITUTION)).thenReturn(1);
         UserDetailsForm userDetailsForm=userAuthUtil.getUserDetails(session,"");
         assertTrue(userDetailsForm.isRecapUser());
     }
 
     @Test
     public void testLoginAndAuthorizationExceptionLogOut() {
-        boolean authorized = userAuthUtil.authorizedUser(RecapConstants.LOGOUT, token);
+        boolean authorized = userAuthUtil.authorizedUser(ScsbConstants.LOGOUT, token);
         assertFalse(authorized);
     }
 
     @Test
     public void testLoginAndAuthorException() {
         Mockito.when(httpServletRequest.getSession(false)).thenReturn(httpSession);
-        Mockito.when(httpSession.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(token);
-        boolean authorized = userAuthUtil.isAuthenticated(httpServletRequest,RecapConstants.SCSB_SHIRO_COLLECTION_URL);
+        Mockito.when(httpSession.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(token);
+        boolean authorized = userAuthUtil.isAuthenticated(httpServletRequest, ScsbConstants.SCSB_SHIRO_COLLECTION_URL);
         assertFalse(authorized);
     }
 

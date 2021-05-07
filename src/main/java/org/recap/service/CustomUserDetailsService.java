@@ -1,6 +1,6 @@
 package org.recap.service;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.security.AppUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +50,14 @@ public class CustomUserDetailsService implements AuthenticationUserDetailsServic
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         if (admins != null && admins.contains(lowercaseLogin)) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(RecapConstants.ADMIN));
+            grantedAuthorities.add(new SimpleGrantedAuthority(ScsbConstants.ADMIN));
         } else {
             grantedAuthorities.add(new GrantedAuthority() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public String getAuthority() {
-                    return RecapConstants.USER;
+                    return ScsbConstants.USER;
                 }
             });
         }

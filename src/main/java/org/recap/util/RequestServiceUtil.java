@@ -1,7 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
@@ -69,7 +69,7 @@ public class RequestServiceUtil {
         }
         Pageable pageable = PageRequest.of(requestForm.getPageNumber(), requestForm.getPageSize(), Sort.Direction.DESC, "id");
         Page<RequestItemEntity> requestItemEntities = null;
-        requestItemEntities = (status.equals(RecapConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode,imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status,imsLocationId, institutionEntity.getId());
+        requestItemEntities = (status.equals(ScsbConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode,imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status,imsLocationId, institutionEntity.getId());
 
         return requestItemEntities;
     }
@@ -79,7 +79,7 @@ public class RequestServiceUtil {
      */
     public List<RequestItemEntity> exportExceptionReports(String institutionCode, Date fromDate, Date toDate) {
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionCode);
-        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
+        List<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndAll(ScsbConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
         return requestItemEntities;
     }
 
@@ -87,9 +87,9 @@ public class RequestServiceUtil {
      * @return page requestItemEntities
      */
     public Page<RequestItemEntity> exportExceptionReportsWithDate(String institutionCode, Date fromDate, Date toDate, Integer pageNumber, Integer size) throws ParseException {
-        Pageable pageable = PageRequest.of(pageNumber, size, Sort.Direction.DESC, RecapConstants.ID);
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.Direction.DESC, ScsbConstants.ID);
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionCode);
-        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable, RecapConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
+        Page<RequestItemEntity> requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndDateRange(pageable, ScsbConstants.REPORTS_EXCEPTION, institutionEntity.getId(), fromDate, toDate);
         return requestItemEntities;
     }
     /**

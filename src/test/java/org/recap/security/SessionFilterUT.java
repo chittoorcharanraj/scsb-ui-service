@@ -11,7 +11,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
@@ -76,8 +76,8 @@ public class SessionFilterUT extends BaseTestCaseUT{
         Mockito.when(request.getSession()).thenReturn(httpSession);
         Mockito.when(httpSession.getId()).thenReturn("1");
         Mockito.when(request.getSession(false)).thenReturn(httpSession);
-        Mockito.when(httpSession.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(usernamePasswordToken);
-        Mockito.when(userAuthUtil.authorizedUser(RecapConstants.SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL, usernamePasswordToken)).thenReturn(true);
+        Mockito.when(httpSession.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(usernamePasswordToken);
+        Mockito.when(userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL, usernamePasswordToken)).thenReturn(true);
         sessionFilter.doFilter(request, response, filterChain);
         assertTrue(true);
     }

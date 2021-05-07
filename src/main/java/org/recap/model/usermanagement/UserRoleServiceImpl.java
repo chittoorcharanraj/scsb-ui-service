@@ -1,6 +1,6 @@
 package org.recap.model.usermanagement;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.PermissionEntity;
 import org.recap.model.jpa.RoleEntity;
@@ -114,10 +114,10 @@ public class UserRoleServiceImpl implements UserRoleService {
             UsersEntity byLoginIdAndInstitutionEntity = userDetailsRepository.findByLoginIdAndInstitutionId(networkLoginId, institutionId);
             if (byLoginIdAndInstitutionEntity == null) {
                 saveUsersEntity = userDetailsRepository.saveAndFlush(usersEntity);
-                userRoleForm.setMessage(networkLoginId + RecapConstants.ADDED_SUCCESSFULLY);
+                userRoleForm.setMessage(networkLoginId + ScsbConstants.ADDED_SUCCESSFULLY);
             } else {
                 userRoleForm.setShowCreateError(true);
-                userRoleForm.setErrorMessage(networkLoginId + RecapConstants.ALREADY_EXISTS);
+                userRoleForm.setErrorMessage(networkLoginId + ScsbConstants.ALREADY_EXISTS);
             }
         }
         return saveUsersEntity;
@@ -155,14 +155,14 @@ public class UserRoleServiceImpl implements UserRoleService {
             if (byUserIdUserEntity.isPresent()) {
                 if (byUserIdUserEntity.get().getInstitutionId().equals(institutionId)) {
                     savedUsersEntity = userDetailsRepository.saveAndFlush(usersEntity);
-                    userRoleForm.setMessage(networkLoginId + RecapConstants.EDITED_SUCCESSFULLY);
+                    userRoleForm.setMessage(networkLoginId + ScsbConstants.EDITED_SUCCESSFULLY);
                 } else {
                     UsersEntity byLoginIdAndInstitutionIdUserEntity = userDetailsRepository.findByLoginIdAndInstitutionId(networkLoginId, institutionId);
                     if (byLoginIdAndInstitutionIdUserEntity == null) {
                         savedUsersEntity = userDetailsRepository.saveAndFlush(usersEntity);
-                        userRoleForm.setMessage(networkLoginId + RecapConstants.ADDED_SUCCESSFULLY);
+                        userRoleForm.setMessage(networkLoginId + ScsbConstants.ADDED_SUCCESSFULLY);
                     } else {
-                        userRoleForm.setErrorMessage(networkLoginId + RecapConstants.ALREADY_EXISTS);
+                        userRoleForm.setErrorMessage(networkLoginId + ScsbConstants.ALREADY_EXISTS);
                     }
                 }
             }
@@ -212,7 +212,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     private Pageable getPageable(UserRoleForm userRoleForm) {
-        return PageRequest.of(userRoleForm.getPageNumber(), userRoleForm.getPageSize(), Sort.Direction.ASC, RecapConstants.USER_ID);
+        return PageRequest.of(userRoleForm.getPageNumber(), userRoleForm.getPageSize(), Sort.Direction.ASC, ScsbConstants.USER_ID);
     }
 
 }

@@ -1,12 +1,10 @@
 package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.recap.BaseTestCase;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserForm;
 import org.recap.util.UserAuthUtil;
 
@@ -33,8 +31,8 @@ public class AuthenticationControllerUT  extends BaseTestCase {
         userForm.setUsername("kholi");
         userForm.setInstitution("3");
         userForm.setPassword("12345");
-        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ RecapConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
-        when(session.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(token);
+        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ ScsbConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
+        when(session.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(token);
         String roleURL = "http://localhost:9091/role/search";
         AuthenticationController authenticationController = new AuthenticationController();
 

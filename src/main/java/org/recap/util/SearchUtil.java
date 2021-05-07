@@ -1,8 +1,8 @@
 package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.slf4j.Logger;
@@ -39,11 +39,11 @@ public class SearchUtil {
             HttpHeaders headers = HelperUtil.getSwaggerHeaders();
             HttpEntity<SearchRecordsRequest> httpEntity = new HttpEntity<>(searchRecordsRequest, headers);
 
-            ResponseEntity<SearchRecordsResponse> responseEntity = restTemplate.exchange(scsbUrl + RecapConstants.SCSB_SEARCH_SERVICE_URL, HttpMethod.POST, httpEntity, SearchRecordsResponse.class);
+            ResponseEntity<SearchRecordsResponse> responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.SCSB_SEARCH_SERVICE_URL, HttpMethod.POST, httpEntity, SearchRecordsResponse.class);
             searchRecordsResponse = responseEntity.getBody();
             return searchRecordsResponse;
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
             return searchRecordsResponse;
         }
     }
@@ -64,7 +64,7 @@ public class SearchUtil {
             searchRecordsResponse.setTotalBibRecordsCount(String.valueOf(0));
             searchRecordsResponse.setTotalItemRecordsCount(String.valueOf(0));
             if (searchRecordsResponse.getErrorMessage() == null) {
-                searchRecordsResponse.setErrorMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+                searchRecordsResponse.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             }
         }
         return searchRecordsResponse;

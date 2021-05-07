@@ -3,7 +3,7 @@ package org.recap.util;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.recap.BaseTestCase;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
@@ -80,7 +80,7 @@ public class MarcRecordViewUtilIT extends BaseTestCase {
         bibliographicEntity.setOwningInstitutionId(1);
         bibliographicEntity.setOwningInstitutionBibId(String.valueOf(random.nextInt()));
         bibliographicEntity.setDeleted(false);
-        bibliographicEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        bibliographicEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
 
         HoldingsEntity holdingsEntity = new HoldingsEntity();
         holdingsEntity.setContent(sourceHoldingsContent.getBytes());
@@ -107,7 +107,7 @@ public class MarcRecordViewUtilIT extends BaseTestCase {
         itemEntity.setItemAvailabilityStatusId(1);
         itemEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         itemEntity.setDeleted(false);
-        itemEntity.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
+        itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         itemEntity.setImsLocationId(1);
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));

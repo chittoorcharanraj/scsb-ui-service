@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -59,7 +59,7 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
     @Test
     public void monitoring() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_MONITORING_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_MONITORING_URL)).thenReturn(Boolean.TRUE);
         boolean result = monitoringController.monitoring(request);
         assertTrue(result);
     }
@@ -67,7 +67,7 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
     @Test
     public void monitoringFailure() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_MONITORING_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_MONITORING_URL)).thenReturn(Boolean.FALSE);
         boolean result = monitoringController.monitoring(request);
         assertFalse(result);
     }
@@ -75,7 +75,7 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
     @Test
     public void logging() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_LOGGING_URL)).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_LOGGING_URL)).thenReturn(Boolean.TRUE);
         boolean result = monitoringController.logging(request);
         assertTrue(result);
     }
@@ -83,7 +83,7 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
     @Test
     public void loggingFailure() {
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, RecapConstants.SCSB_SHIRO_LOGGING_URL)).thenReturn(Boolean.FALSE);
+        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_LOGGING_URL)).thenReturn(Boolean.FALSE);
         boolean result = monitoringController.logging(request);
         assertFalse(result);
     }

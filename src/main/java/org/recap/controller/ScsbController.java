@@ -3,12 +3,9 @@ package org.recap.controller;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
-
-public class RecapController extends AbstractController {
+public class ScsbController extends AbstractController {
 
     public SearchResultRow setSearchResultRow(RequestItemEntity requestItemEntity) {
         SearchResultRow searchResultRow = new SearchResultRow();

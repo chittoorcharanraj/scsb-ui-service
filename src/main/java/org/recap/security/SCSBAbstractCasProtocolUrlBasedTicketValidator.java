@@ -7,14 +7,14 @@ import java.net.URL;
 /**
  * Created by sheiks on 25/01/17.
  */
-public abstract class ReCAPAbstractCasProtocolUrlBasedTicketValidator extends ReCAPAbstractUrlBasedTicketValidator {
+public abstract class SCSBAbstractCasProtocolUrlBasedTicketValidator extends SCSBAbstractUrlBasedTicketValidator {
 
     /**
      * Instantiates a new ReCAPAbstractCasProtocolUrlBasedTicketValidator.
      *
      * @param casServerUrlPrefix the cas server url prefix
      */
-    protected ReCAPAbstractCasProtocolUrlBasedTicketValidator(final String casServerUrlPrefix) {
+    protected SCSBAbstractCasProtocolUrlBasedTicketValidator(final String casServerUrlPrefix) {
         super(casServerUrlPrefix);
     }
 

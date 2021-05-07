@@ -2,8 +2,8 @@ package org.recap.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
@@ -46,7 +46,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/search")
 @CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
-public class SearchRecordsController extends RecapController {
+public class SearchRecordsController extends ScsbController {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchRecordsController.class);
     @Autowired
@@ -80,12 +80,12 @@ public class SearchRecordsController extends RecapController {
     @GetMapping("/checkPermission")
     public boolean searchRecords(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL);
         if (authenticated) {
-            logger.info(RecapConstants.SEARCH_TAB_CLICKED);
-            return RecapConstants.TRUE;
+            logger.info(ScsbConstants.SEARCH_TAB_CLICKED);
+            return ScsbConstants.TRUE;
         } else {
-            return userManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
+            return userManagementService.unAuthorizedUser(session, ScsbConstants.SEARCH, logger);
         }
     }
 
@@ -163,7 +163,7 @@ public class SearchRecordsController extends RecapController {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = "ExportRecords_" + dateFormat.format(new Date()) + ".csv";
         File csvFile = csvUtil.writeSearchResultsToCsv(searchRecordsRequest.getSearchResultRows(), fileNameWithExtension);
-        return HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.SEARCH);
+        return HelperUtil.getFileContent(csvFile, fileNameWithExtension, ScsbCommonConstants.SEARCH);
     }
 
     /**
@@ -193,8 +193,8 @@ public class SearchRecordsController extends RecapController {
 
     private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
         return (StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
-                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.BARCODE) ||
-                searchRecordsRequest.getFieldName().equalsIgnoreCase(RecapCommonConstants.CALL_NUMBER)));
+                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.BARCODE) ||
+                searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.CALL_NUMBER)));
     }
 
     private void processRequest(SearchRecordsRequest searchRecordsRequest, UserDetailsForm userDetailsForm, RedirectAttributes redirectAttributes) {
@@ -212,20 +212,20 @@ public class SearchRecordsController extends RecapController {
         Set<String> itemAvailability = new HashSet<>();
         for (SearchResultRow searchResultRow : searchResultRows) {
             if (searchResultRow.isSelected()) {
-                if (RecapCommonConstants.PRIVATE.equals(searchResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
-                    searchRecordsRequest.setErrorMessage(RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
+                if (ScsbCommonConstants.PRIVATE.equals(searchResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
+                    searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                 } else if (!userDetailsForm.isRecapPermissionAllowed()) {
-                    searchRecordsRequest.setErrorMessage(RecapConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
+                    searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
                 } else {
                     processBarcodesForSearchResultRow(barcodes, itemTitles, itemOwningInstitutions, searchResultRow, itemAvailability);
                 }
             } else if (!CollectionUtils.isEmpty(searchResultRow.getSearchItemResultRows())) {
                 for (SearchItemResultRow searchItemResultRow : searchResultRow.getSearchItemResultRows()) {
                     if (searchItemResultRow.isSelectedItem()) {
-                        if (RecapCommonConstants.PRIVATE.equals(searchItemResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
-                            searchRecordsRequest.setErrorMessage(RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
+                        if (ScsbCommonConstants.PRIVATE.equals(searchItemResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
+                            searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                         } else if (!userDetailsForm.isRecapPermissionAllowed()) {
-                            searchRecordsRequest.setErrorMessage(RecapConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
+                            searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
                         } else {
                             processBarcodeForSearchItemResultRow(barcodes, itemTitles, itemOwningInstitutions, searchItemResultRow, searchResultRow, itemAvailability);
                         }
@@ -233,10 +233,10 @@ public class SearchRecordsController extends RecapController {
                 }
             }
         }
-        redirectAttributes.addFlashAttribute(RecapConstants.REQUESTED_BARCODE, StringUtils.join(barcodes, ","));
-        redirectAttributes.addFlashAttribute(RecapConstants.REQUESTED_ITEM_TITLE, StringUtils.join(itemTitles, " || "));
-        redirectAttributes.addFlashAttribute(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
-        redirectAttributes.addFlashAttribute(RecapConstants.REQUESTED_ITEM_AVAILABILITY, itemAvailability);
+        redirectAttributes.addFlashAttribute(ScsbConstants.REQUESTED_BARCODE, StringUtils.join(barcodes, ","));
+        redirectAttributes.addFlashAttribute(ScsbConstants.REQUESTED_ITEM_TITLE, StringUtils.join(itemTitles, " || "));
+        redirectAttributes.addFlashAttribute(ScsbConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
+        redirectAttributes.addFlashAttribute(ScsbConstants.REQUESTED_ITEM_AVAILABILITY, itemAvailability);
     }
 
     private void processBarcodeForSearchItemResultRow(Set<String> barcodes, Set<String> titles, Set<String> itemInstitutions, SearchItemResultRow searchItemResultRow, SearchResultRow searchResultRow, Set<String> itemAvailabilty) {

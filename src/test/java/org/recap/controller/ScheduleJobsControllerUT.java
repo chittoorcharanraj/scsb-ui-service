@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.JobEntity;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
@@ -66,7 +66,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = getUserDetailsForm();
         userDetailsForm.setSuperAdmin(false);
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         ScheduleJobsForm jobsForm = scheduleJobsController.displayJobs(request);
         assertNotNull(jobsForm);
     }
@@ -75,7 +75,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = getUserDetailsForm();
         JobEntity jobEntity = getJobEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
+        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(jobDetailsRepository.findAll()).thenReturn(Arrays.asList(jobEntity));
         ScheduleJobsForm jobsForm = scheduleJobsController.displayJobs(request);
         assertNotNull(jobsForm);
@@ -99,7 +99,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     @Test
     public void scheduleJobUNSCHEDULE(){
         ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
-        scheduleJobsForm.setScheduleType(RecapConstants.UNSCHEDULE);
+        scheduleJobsForm.setScheduleType(ScsbConstants.UNSCHEDULE);
         ScheduleJobResponse scheduleJobResponse = getScheduleJobResponse();
         when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
         when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
@@ -116,7 +116,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     @Test
     public void scheduleJobFailure(){
         ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
-        scheduleJobsForm.setScheduleType(RecapConstants.UNSCHEDULE);
+        scheduleJobsForm.setScheduleType(ScsbConstants.UNSCHEDULE);
         ScheduleJobResponse scheduleJobResponse = getScheduleJobResponse();
         scheduleJobResponse.setMessage("Failure");
         when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
@@ -133,7 +133,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     @Test
     public void scheduleJobException(){
         ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
-        scheduleJobsForm.setScheduleType(RecapConstants.UNSCHEDULE);
+        scheduleJobsForm.setScheduleType(ScsbConstants.UNSCHEDULE);
         ScheduleJobResponse scheduleJobResponse = getScheduleJobResponse();
         scheduleJobResponse.setMessage("Failure");
         when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);

@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
@@ -59,7 +59,7 @@ public class HomeController extends AbstractController {
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
-        instList.put(RecapConstants.HTC, RecapConstants.HTC);
+        instList.put(ScsbConstants.HTC, ScsbConstants.HTC);
         return instList;
     }
 
@@ -84,27 +84,27 @@ public class HomeController extends AbstractController {
         Map<String, Object> resultMap = new HashMap<>();
         boolean isAuthenticated = false;
         try {
-            isAuthenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
-            resultMap.put(RecapConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REQUEST_PRIVILEGE));
-            resultMap.put(RecapConstants.SEARCH_PRIVILEGE, request.getSession().getAttribute(RecapConstants.SEARCH_PRIVILEGE));
-            resultMap.put(RecapConstants.COLLECTION_PRIVILEGE, request.getSession().getAttribute(RecapConstants.COLLECTION_PRIVILEGE));
-            resultMap.put(RecapConstants.DEACCESSION_PRIVILEGE, request.getSession().getAttribute(RecapConstants.DEACCESSION_PRIVILEGE));
-            resultMap.put(RecapConstants.REQUEST_ALL_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REQUEST_ALL_PRIVILEGE));
-            resultMap.put(RecapCommonConstants.BULK_REQUEST_PRIVILEGE, request.getSession().getAttribute(RecapCommonConstants.BULK_REQUEST_PRIVILEGE));
-            resultMap.put(RecapConstants.REPORTS_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REPORTS_PRIVILEGE));
-            resultMap.put(RecapConstants.ROLE_FOR_SUPER_ADMIN, request.getSession().getAttribute(RecapConstants.ROLE_FOR_SUPER_ADMIN));
-            resultMap.put(RecapConstants.USER_ROLE_PRIVILEGE, request.getSession().getAttribute(RecapConstants.USER_ROLE_PRIVILEGE));
-            resultMap.put(RecapConstants.SUPER_ADMIN_USER, request.getSession().getAttribute(RecapConstants.SUPER_ADMIN_USER));
-            resultMap.put(RecapConstants.MONITORING, request.getSession().getAttribute(RecapConstants.MONITORING));
-            resultMap.put(RecapConstants.LOGGING, request.getSession().getAttribute(RecapConstants.LOGGING));
-            resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
-            resultMap.put(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE, request.getSession().getAttribute(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE));
-            resultMap.put(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(RecapConstants.RESUBMIT_REQUEST_PRIVILEGE));
-            resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
+            isAuthenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL);
+            resultMap.put(ScsbConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.REQUEST_PRIVILEGE));
+            resultMap.put(ScsbConstants.SEARCH_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.SEARCH_PRIVILEGE));
+            resultMap.put(ScsbConstants.COLLECTION_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.COLLECTION_PRIVILEGE));
+            resultMap.put(ScsbConstants.DEACCESSION_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.DEACCESSION_PRIVILEGE));
+            resultMap.put(ScsbConstants.REQUEST_ALL_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.REQUEST_ALL_PRIVILEGE));
+            resultMap.put(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE, request.getSession().getAttribute(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE));
+            resultMap.put(ScsbConstants.REPORTS_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.REPORTS_PRIVILEGE));
+            resultMap.put(ScsbConstants.ROLE_FOR_SUPER_ADMIN, request.getSession().getAttribute(ScsbConstants.ROLE_FOR_SUPER_ADMIN));
+            resultMap.put(ScsbConstants.USER_ROLE_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.USER_ROLE_PRIVILEGE));
+            resultMap.put(ScsbConstants.SUPER_ADMIN_USER, request.getSession().getAttribute(ScsbConstants.SUPER_ADMIN_USER));
+            resultMap.put(ScsbConstants.MONITORING, request.getSession().getAttribute(ScsbConstants.MONITORING));
+            resultMap.put(ScsbConstants.LOGGING, request.getSession().getAttribute(ScsbConstants.LOGGING));
+            resultMap.put(ScsbConstants.DATA_EXPORT, request.getSession().getAttribute(ScsbConstants.DATA_EXPORT));
+            resultMap.put(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE));
+            resultMap.put(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE));
+            resultMap.put(ScsbConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
             logger.info("Exception Occurred while User Validation :: {}", e.getMessage());
-            isAuthenticated = userManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
-            resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
+            isAuthenticated = userManagementService.unAuthorizedUser(session, ScsbConstants.LOGIN_USER, logger);
+            resultMap.put(ScsbConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;
     }

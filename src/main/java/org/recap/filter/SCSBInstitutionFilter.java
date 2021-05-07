@@ -1,7 +1,7 @@
 package org.recap.filter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ import java.io.IOException;
 /**
  * Created by sheiks on 23/01/17.
  */
-public class ReCAPInstitutionFilter extends OncePerRequestFilter {
+public class SCSBInstitutionFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(ReCAPInstitutionFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(SCSBInstitutionFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,9 +35,9 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
             Cookie[] cookies = request.getCookies();
             cookiesOuter:
             for (Cookie cookie : cookies) {
-                if (StringUtils.equals(cookie.getName(), RecapConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
+                if (StringUtils.equals(cookie.getName(), ScsbConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
                     for (Cookie innerCookies : cookies) {
-                        if (StringUtils.equals(innerCookies.getName(), RecapConstants.LOGGED_IN_INSTITUTION)) {
+                        if (StringUtils.equals(innerCookies.getName(), ScsbConstants.LOGGED_IN_INSTITUTION)) {
                             institutionCode = innerCookies.getValue();
                             cookie.setValue(null);
                             cookie.setMaxAge(0);
@@ -79,7 +79,7 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
     private void forwardChaining(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, UserInstitutionCache userInstitutionCache, String requestedSessionId) throws IOException, ServletException {
         String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
         if (StringUtils.isNotBlank(institutionCode)) {
-            request.setAttribute(RecapConstants.RECAP_INSTITUTION_CODE, institutionCode);
+            request.setAttribute(ScsbConstants.SCSB_INSTITUTION_CODE, institutionCode);
         }
         filterChain.doFilter(request, response);
     }

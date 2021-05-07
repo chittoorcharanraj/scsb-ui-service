@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.recap.RecapCommonConstants;
-import org.recap.RecapConstants;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
 import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.FileUploadEntity;
@@ -68,7 +68,7 @@ public class AdminController {
         try {
             fileuploadResponse = loadInitialData(file);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -79,7 +79,7 @@ public class AdminController {
         try {
             fileuploadResponse = loadIMSData(file);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -107,7 +107,7 @@ public class AdminController {
             loadLocationData(institutionEntity, locationNodeList);
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -143,19 +143,19 @@ public class AdminController {
             fileUpload.setUpdatedDate(new Date());
             try {
                 fileUploadService.uploadFile(fileUpload);
-                fileuploadResponse.put("Upload XML File Status", RecapConstants.SUCCESSED);
+                fileuploadResponse.put("Upload XML File Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put("Upload XML File Status", RecapConstants.FAILED);
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                fileuploadResponse.put("Upload XML File Status", ScsbConstants.FAILED);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
             NodeList configNodeList = document.getElementsByTagName("entry");
             loadConfigData(institutionEntity, configNodeList);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR, e);
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
 
         for (Map.Entry<String, String> entry : fileuploadResponse.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase(RecapConstants.FAILED)) {
+            if (entry.getValue().equalsIgnoreCase(ScsbConstants.FAILED)) {
                 status = false;
                 break;
             }
@@ -163,13 +163,13 @@ public class AdminController {
         if (status) {
             try {
                 fileUploadService.updateFileUploadEntity(institutionEntity.getInstitutionName(), "Test", "COMPLETED", new Date(), "Testing comments");
-                fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.SUCCESSED);
+                fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.FAILED);
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.FAILED);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         } else {
-            fileuploadResponse.put(RecapConstants.ON_BOARD_INSTITUTION_STATUS, RecapConstants.FAILED);
+            fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.FAILED);
         }
         return fileuploadResponse;
     }
@@ -186,10 +186,10 @@ public class AdminController {
                 institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
                 try {
                     institutionDetailsRepository.save(institutionEntity);
-                    fileuploadResponse.put("Institution Added Status", RecapConstants.SUCCESSED);
+                    fileuploadResponse.put("Institution Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("Institution Added Status", RecapConstants.FAILED);
-                    logger.error(RecapCommonConstants.LOG_ERROR, e);
+                    fileuploadResponse.put("Institution Added Status", ScsbConstants.FAILED);
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
 
             }
@@ -212,14 +212,14 @@ public class AdminController {
                 scsbProprtiesEntity.setActive("Y");
                 scsbProprtiesEntity.setCreatedDate(new Date());
                 scsbProprtiesEntity.setLastUpdatedDate(new Date());
-                scsbProprtiesEntity.setCreatedBy(RecapConstants.ADMIN_TEXT);
-                scsbProprtiesEntity.setLastUpdatedBy(RecapConstants.ADMIN_TEXT);
+                scsbProprtiesEntity.setCreatedBy(ScsbConstants.ADMIN_TEXT);
+                scsbProprtiesEntity.setLastUpdatedBy(ScsbConstants.ADMIN_TEXT);
                 try {
                     scsbPropertiesDetailRepository.saveAndFlush(scsbProprtiesEntity);
-                    fileuploadResponse.put("SCSB Properties Added Status", RecapConstants.SUCCESSED);
+                    fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("SCSB Properties Added Status", RecapConstants.FAILED);
-                    logger.error(RecapCommonConstants.LOG_ERROR, e);
+                    fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.FAILED);
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
             }
         }
@@ -234,18 +234,18 @@ public class AdminController {
 
                 locationEntity.setLocationCode(eElement.getElementsByTagName("IMS-LocationCode").item(0).getTextContent());
                 locationEntity.setLocationName(eElement.getElementsByTagName("IMS-LocationName").item(0).getTextContent());
-                locationEntity.setDescription(eElement.getElementsByTagName(RecapConstants.DESCRIPTION).item(0).getTextContent());
+                locationEntity.setDescription(eElement.getElementsByTagName(ScsbConstants.DESCRIPTION).item(0).getTextContent());
                 locationEntity.setActive("Y");
-                locationEntity.setCreatedBy(RecapConstants.ADMIN_TEXT);
+                locationEntity.setCreatedBy(ScsbConstants.ADMIN_TEXT);
                 locationEntity.setCreatedDate(new Date());
-                locationEntity.setLastUpdatedBy(RecapConstants.ADMIN_TEXT);
+                locationEntity.setLastUpdatedBy(ScsbConstants.ADMIN_TEXT);
                 locationEntity.setLastUpdatedDate(new Date());
                 try {
                     locationDetailsRepository.saveAndFlush(locationEntity);
-                    fileuploadResponse.put("Locations Added Status", RecapConstants.SUCCESSED);
+                    fileuploadResponse.put("Locations Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
-                    fileuploadResponse.put("Locations Added Status", RecapConstants.FAILED);
-                    logger.error(RecapCommonConstants.LOG_ERROR, e);
+                    fileuploadResponse.put("Locations Added Status", ScsbConstants.FAILED);
+                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
                 if (locationNode.hasChildNodes()) {
                     NodeList nodeList = locationNode.getChildNodes();
@@ -294,10 +294,10 @@ public class AdminController {
        //     ownerCodeEntity.setPickupLocation(eElement.getElementsByTagName("CircdeskLocation").item(0).getTextContent());
             try {
                 ownerCodeDetailsRepository.saveAndFlush(ownerCodeEntity);
-                fileuploadResponse.put("Customer Code Added Status", RecapConstants.SUCCESSED);
+                fileuploadResponse.put("Customer Code Added Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put("Customer Code Added Status", RecapConstants.FAILED);
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                fileuploadResponse.put("Customer Code Added Status", ScsbConstants.FAILED);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
     }
@@ -312,10 +312,10 @@ public class AdminController {
             bulkCustomerCodeEntity.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
             try {
                 bulkCustomerCodeDetailsRepository.saveAndFlush(bulkCustomerCodeEntity);
-                fileuploadResponse.put(" Bulk Customer Code Added Status", RecapConstants.SUCCESSED);
+                fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
-                fileuploadResponse.put(" Bulk Customer Code Added Status", RecapConstants.FAILED);
-                logger.error(RecapCommonConstants.LOG_ERROR, e);
+                fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.FAILED);
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
     }

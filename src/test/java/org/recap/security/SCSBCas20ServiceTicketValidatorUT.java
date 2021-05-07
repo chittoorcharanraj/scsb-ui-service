@@ -19,10 +19,10 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class ReCAPCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
+public class SCSBCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
 
     @Mock
-    ReCAPCas20ServiceTicketValidator reCAPCas20ServiceTicketValidator;
+    SCSBCas20ServiceTicketValidator reCAPCas20ServiceTicketValidator;
 
     @Mock
     ProxyGrantingTicketStorage proxyGrantingTicketStorage;
@@ -125,7 +125,7 @@ public class ReCAPCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
     }
     @Test
     public void getProxyRetriever(){
-        ReCAPCas20ServiceTicketValidator reCAPCas20ServiceTicketValidator = new ReCAPCas20ServiceTicketValidator("http://localhost:9980/testurl");
+        SCSBCas20ServiceTicketValidator reCAPCas20ServiceTicketValidator = new SCSBCas20ServiceTicketValidator("http://localhost:9980/testurl");
         ProxyRetriever proxyRetriever = reCAPCas20ServiceTicketValidator.getProxyRetriever();
         assertNotNull(proxyRetriever);
     }

@@ -9,7 +9,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HelperUtil.class,Cookie[].class})
-public class ReCAPInstitutionFilterUT extends BaseTestCaseUT {
+public class SCSBInstitutionFilterUT extends BaseTestCaseUT {
 
    @InjectMocks
-    ReCAPInstitutionFilter reCAPInstitutionFilter;
+   SCSBInstitutionFilter SCSBInstitutionFilter;
 
     @Mock
     HttpServletRequest request;
@@ -57,11 +57,11 @@ public class ReCAPInstitutionFilterUT extends BaseTestCaseUT {
         Mockito.when(request.getSession()).thenReturn(value);
         Mockito.when(value.getId()).thenReturn("1");
         Cookie mockCookie = Mockito.mock(Cookie.class);
-        Mockito.when(mockCookie.getName()).thenReturn(RecapConstants.IS_USER_AUTHENTICATED).thenReturn(RecapConstants.LOGGED_IN_INSTITUTION);
+        Mockito.when(mockCookie.getName()).thenReturn(ScsbConstants.IS_USER_AUTHENTICATED).thenReturn(ScsbConstants.LOGGED_IN_INSTITUTION);
         Mockito.when(mockCookie.getValue()).thenReturn("Y");
         Mockito.when(request.getCookies()).thenReturn(new Cookie[]{mockCookie});
         Mockito.when(request.getRequestURI()).thenReturn("/home");
-        reCAPInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        SCSBInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
         assertTrue(true);
     }
 
@@ -73,12 +73,12 @@ public class ReCAPInstitutionFilterUT extends BaseTestCaseUT {
         Mockito.when(request.getSession()).thenReturn(value);
         Mockito.when(value.getId()).thenReturn("1");
         Cookie mockCookie = Mockito.mock(Cookie.class);
-        Mockito.when(mockCookie.getName()).thenReturn(RecapConstants.IS_USER_AUTHENTICATED).thenReturn(RecapConstants.LOGGED_IN_INSTITUTION);
+        Mockito.when(mockCookie.getName()).thenReturn(ScsbConstants.IS_USER_AUTHENTICATED).thenReturn(ScsbConstants.LOGGED_IN_INSTITUTION);
         Mockito.when(mockCookie.getValue()).thenReturn("Y");
         Mockito.when(request.getCookies()).thenReturn(new Cookie[]{mockCookie});
         Mockito.when(request.getRequestURI()).thenReturn("/home");
         Mockito.doThrow(IOException.class).when(httpServletResponse).sendRedirect(Mockito.anyString());
-        reCAPInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        SCSBInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
         assertTrue(true);
     }
 
@@ -92,10 +92,10 @@ public class ReCAPInstitutionFilterUT extends BaseTestCaseUT {
         Mockito.when(request.getSession()).thenReturn(value);
         Mockito.when(value.getId()).thenReturn("1");
         Cookie mockCookie = Mockito.mock(Cookie.class);
-        Mockito.when(mockCookie.getName()).thenReturn(RecapConstants.IS_USER_AUTHENTICATED).thenReturn(RecapConstants.LOGGED_IN_INSTITUTION);
+        Mockito.when(mockCookie.getName()).thenReturn(ScsbConstants.IS_USER_AUTHENTICATED).thenReturn(ScsbConstants.LOGGED_IN_INSTITUTION);
         Mockito.when(mockCookie.getValue()).thenReturn("Y");
         Mockito.when(request.getCookies()).thenReturn(new Cookie[]{mockCookie});
-        reCAPInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        SCSBInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
         assertTrue(true);
     }
 
@@ -106,10 +106,10 @@ public class ReCAPInstitutionFilterUT extends BaseTestCaseUT {
         Mockito.when(request.getSession()).thenReturn(value);
         Mockito.when(value.getId()).thenReturn("1");
         Cookie mockCookie = Mockito.mock(Cookie.class);
-        Mockito.when(mockCookie.getName()).thenReturn(RecapConstants.IS_USER_AUTHENTICATED).thenReturn(RecapConstants.LOGGED_IN_INSTITUTION);
+        Mockito.when(mockCookie.getName()).thenReturn(ScsbConstants.IS_USER_AUTHENTICATED).thenReturn(ScsbConstants.LOGGED_IN_INSTITUTION);
         Mockito.when(request.getCookies()).thenReturn(new Cookie[]{mockCookie});
         Mockito.when(request.getRequestURI()).thenReturn("/home");
-        reCAPInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        SCSBInstitutionFilter.doFilterInternal(request,httpServletResponse,filterChain);
         assertTrue(true);
     }
 

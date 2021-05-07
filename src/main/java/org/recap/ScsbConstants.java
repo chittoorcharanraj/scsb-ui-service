@@ -3,7 +3,7 @@ package org.recap;
 /**
  * Created by SheikS on 6/20/2016.
  */
-public class RecapConstants {
+public class ScsbConstants {
 
     //Report Types
     public static final String MATCHING_TYPE = "Matching";
@@ -138,7 +138,7 @@ public class RecapConstants {
     public static final String USER = "ROLE_USER";
     public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
     public static final String ANONYMOUS_USER = "anonymousUser";
-    public static final String RECAP_INSTITUTION_CODE = "RECAP_INSTITUTION_CODE";
+    public static final String SCSB_INSTITUTION_CODE = "RECAP_INSTITUTION_CODE";
     public static final String CAS = "cas.";
     public static final String SERVICE_LOGIN = ".service.login";
     public static final String SERVICE_LOGOUT = ".service.logout";
@@ -234,7 +234,7 @@ public class RecapConstants {
 
     public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
 
-    private RecapConstants() {
+    private ScsbConstants() {
         //Do nothing
     }
 }

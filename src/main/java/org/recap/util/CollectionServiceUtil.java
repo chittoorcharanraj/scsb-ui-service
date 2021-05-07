@@ -2,8 +2,8 @@ package org.recap.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.recap.RecapConstants;
-import org.recap.RecapCommonConstants;
+import org.recap.ScsbConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionItem;
 import org.recap.model.deaccession.DeAccessionRequest;
 import org.recap.model.search.BibliographicMarcForm;
@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -117,25 +116,25 @@ public class CollectionServiceUtil {
         try {
             HttpEntity requestEntity = new HttpEntity<>(getRestHeaderService().getHttpHeaders());
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getScsbUrl() + RecapConstants.SCSB_UPDATE_CGD_URL)
-                    .queryParam(RecapCommonConstants.CGD_UPDATE_ITEM_BARCODE, bibliographicMarcForm.getBarcode())
-                    .queryParam(RecapConstants.OWNING_INSTITUTION, bibliographicMarcForm.getOwningInstitution())
-                    .queryParam(RecapCommonConstants.OLD_CGD, bibliographicMarcForm.getCollectionGroupDesignation())
-                    .queryParam(RecapCommonConstants.NEW_CGD, bibliographicMarcForm.getNewCollectionGroupDesignation())
-                    .queryParam(RecapCommonConstants.CGD_CHANGE_NOTES, bibliographicMarcForm.getCgdChangeNotes())
-                    .queryParam(RecapCommonConstants.USER_NAME, bibliographicMarcForm.getUsername());
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getScsbUrl() + ScsbConstants.SCSB_UPDATE_CGD_URL)
+                    .queryParam(ScsbCommonConstants.CGD_UPDATE_ITEM_BARCODE, bibliographicMarcForm.getBarcode())
+                    .queryParam(ScsbConstants.OWNING_INSTITUTION, bibliographicMarcForm.getOwningInstitution())
+                    .queryParam(ScsbCommonConstants.OLD_CGD, bibliographicMarcForm.getCollectionGroupDesignation())
+                    .queryParam(ScsbCommonConstants.NEW_CGD, bibliographicMarcForm.getNewCollectionGroupDesignation())
+                    .queryParam(ScsbCommonConstants.CGD_CHANGE_NOTES, bibliographicMarcForm.getCgdChangeNotes())
+                    .queryParam(ScsbCommonConstants.USER_NAME, bibliographicMarcForm.getUsername());
 
             ResponseEntity<String> responseEntity = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, requestEntity, String.class);
             statusResponse = responseEntity.getBody();
-            if (RecapCommonConstants.SUCCESS.equals(statusResponse)) {
+            if (ScsbCommonConstants.SUCCESS.equals(statusResponse)) {
                 bibliographicMarcForm.setSubmitted(true);
-                bibliographicMarcForm.setMessage(RecapCommonConstants.CGD_UPDATE_SUCCESSFUL);
+                bibliographicMarcForm.setMessage(ScsbCommonConstants.CGD_UPDATE_SUCCESSFUL);
             } else {
-                bibliographicMarcForm.setErrorMessage(RecapCommonConstants.CGD_UPDATE_FAILED + "-" + statusResponse.replace(RecapCommonConstants.FAILURE + "-", ""));
+                bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + statusResponse.replace(ScsbCommonConstants.FAILURE + "-", ""));
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
-            bibliographicMarcForm.setErrorMessage(RecapCommonConstants.CGD_UPDATE_FAILED + "-" + e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + e.getMessage());
         }
     }
 
@@ -168,7 +167,7 @@ public class CollectionServiceUtil {
             deAccessionRequest.setNotes(bibliographicMarcForm.getDeaccessionNotes());
             String jsonString = objectMapper.writeValueAsString(deAccessionRequest);
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, getRestHeaderService().getHttpHeaders());
-            Map<String, String> resultMap = getRestTemplate().postForObject(getScsbUrl() + RecapConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class);
+            Map<String, String> resultMap = getRestTemplate().postForObject(getScsbUrl() + ScsbConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class);
             for (Map.Entry<String, String> entry : new HashSet<>(resultMap.entrySet())) {
                 String trimmedBarcode = entry.getKey().replaceAll(", $", "").trim();
                 if (!trimmedBarcode.equals(entry.getKey())) {
@@ -178,25 +177,25 @@ public class CollectionServiceUtil {
             }
             String resultMessage = resultMap.get(itemBarcode);
             if (StringUtils.isNotBlank(resultMessage)) {
-                if (resultMessage.contains(RecapCommonConstants.SUCCESS)) {
+                if (resultMessage.contains(ScsbCommonConstants.SUCCESS)) {
                     bibliographicMarcForm.setSubmitted(true);
-                    bibliographicMarcForm.setMessage(RecapCommonConstants.DEACCESSION_SUCCESSFUL);
-                } else if (resultMessage.contains(RecapCommonConstants.REQUESTED_ITEM_DEACCESSIONED)) {
+                    bibliographicMarcForm.setMessage(ScsbCommonConstants.DEACCESSION_SUCCESSFUL);
+                } else if (resultMessage.contains(ScsbCommonConstants.REQUESTED_ITEM_DEACCESSIONED)) {
                     bibliographicMarcForm.setSubmitted(true);
-                    String failureMessage = resultMessage.replace(RecapCommonConstants.FAILURE + " -", "");
-                    bibliographicMarcForm.setErrorMessage(RecapCommonConstants.DEACCESSION_FAILED + " - " + failureMessage);
-                } else if ((resultMessage.contains(RecapCommonConstants.LAS_REJECTED) || resultMessage.contains(RecapCommonConstants.LAS_SERVER_NOT_REACHABLE)) && StringUtils.isNotBlank(bibliographicMarcForm.getWarningMessage())) {
+                    String failureMessage = resultMessage.replace(ScsbCommonConstants.FAILURE + " -", "");
+                    bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.DEACCESSION_FAILED + " - " + failureMessage);
+                } else if ((resultMessage.contains(ScsbCommonConstants.LAS_REJECTED) || resultMessage.contains(ScsbCommonConstants.LAS_SERVER_NOT_REACHABLE)) && StringUtils.isNotBlank(bibliographicMarcForm.getWarningMessage())) {
                     bibliographicMarcForm.setSubmitted(false);
-                    String failureMessage = resultMessage.replace(RecapCommonConstants.FAILURE + " -", "");
-                    bibliographicMarcForm.setErrorMessage(RecapCommonConstants.DEACCESSION_FAILED + " - " + failureMessage + " " + RecapConstants.DEACCESSION_ERROR_REQUEST_CANCEL);
+                    String failureMessage = resultMessage.replace(ScsbCommonConstants.FAILURE + " -", "");
+                    bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.DEACCESSION_FAILED + " - " + failureMessage + " " + ScsbConstants.DEACCESSION_ERROR_REQUEST_CANCEL);
                 } else {
-                    String failureMessage = resultMessage.replace(RecapCommonConstants.FAILURE + " -", "");
-                    bibliographicMarcForm.setErrorMessage(RecapCommonConstants.DEACCESSION_FAILED + " - " + failureMessage);
+                    String failureMessage = resultMessage.replace(ScsbCommonConstants.FAILURE + " -", "");
+                    bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.DEACCESSION_FAILED + " - " + failureMessage);
                 }
             }
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
-            bibliographicMarcForm.setErrorMessage(RecapCommonConstants.DEACCESSION_FAILED + " - " + e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.DEACCESSION_FAILED + " - " + e.getMessage());
         }
     }
 }

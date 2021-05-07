@@ -1,9 +1,9 @@
 package org.recap.security;
 
-import org.recap.RecapConstants;
+import org.recap.ScsbConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
-import org.recap.filter.ReCAPInstitutionFilter;
-import org.recap.filter.ReCAPLogoutFilter;
+import org.recap.filter.SCSBInstitutionFilter;
+import org.recap.filter.SCSBLogoutFilter;
 import org.recap.service.CustomUserDetailsService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +57,10 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         OAuth2SsoProperties sso = getApplicationContext().getBean(OAuth2SsoProperties.class);
 
         LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(sso.getLoginPath());
-        ReCAPExceptionTranslationFilter reCAPExceptionTranslationFilter = new ReCAPExceptionTranslationFilter(casPropertyProvider, loginUrlAuthenticationEntryPoint);
+        SCSBExceptionTranslationFilter SCSBExceptionTranslationFilter = new SCSBExceptionTranslationFilter(casPropertyProvider, loginUrlAuthenticationEntryPoint);
         http.addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
-                .addFilterAfter(new ReCAPInstitutionFilter(), CsrfCookieGeneratorFilter.class)
-                .addFilterAfter(reCAPExceptionTranslationFilter, ExceptionTranslationFilter.class)
+                .addFilterAfter(new SCSBInstitutionFilter(), CsrfCookieGeneratorFilter.class)
+                .addFilterAfter(SCSBExceptionTranslationFilter, ExceptionTranslationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(loginUrlAuthenticationEntryPoint).and()
                 .addFilter(casAuthenticationFilter())
@@ -73,7 +73,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
         httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
 
-        http.logout().logoutUrl(RecapConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
+        http.logout().logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
         // @formatter:on
     }
@@ -87,9 +87,9 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Bean
     public LogoutFilter requestCasGlobalLogoutFilter() {
         String logoutSuccessUrl = casServiceLogout + "?service=" + appServiceLogout;
-        ReCAPSimpleUrlLogoutSuccessHandler reCAPSimpleUrlLogoutSuccessHandler = new ReCAPSimpleUrlLogoutSuccessHandler(userAuthUtil);
-        reCAPSimpleUrlLogoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
-        LogoutFilter logoutFilter = new LogoutFilter(reCAPSimpleUrlLogoutSuccessHandler, new SecurityContextLogoutHandler());
+        SCSBSimpleUrlLogoutSuccessHandler SCSBSimpleUrlLogoutSuccessHandler = new SCSBSimpleUrlLogoutSuccessHandler(userAuthUtil);
+        SCSBSimpleUrlLogoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
+        LogoutFilter logoutFilter = new LogoutFilter(SCSBSimpleUrlLogoutSuccessHandler, new SecurityContextLogoutHandler());
         logoutFilter.setLogoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
         return logoutFilter;
     }
@@ -100,8 +100,8 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
      * @return the ReCAPLogoutFilter
      */
     @Bean
-    public ReCAPLogoutFilter reCAPLogoutFilter() {
-        return new ReCAPLogoutFilter();
+    public SCSBLogoutFilter reCAPLogoutFilter() {
+        return new SCSBLogoutFilter();
     }
 
     /**
@@ -158,8 +158,8 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
      * @return the ReCAPCas20ServiceTicketValidator
      */
     @Bean
-    public ReCAPCas20ServiceTicketValidator cas20ServiceTicketValidator() {
-        return new ReCAPCas20ServiceTicketValidator(casUrlPrefix);
+    public SCSBCas20ServiceTicketValidator cas20ServiceTicketValidator() {
+        return new SCSBCas20ServiceTicketValidator(casUrlPrefix);
     }
 
 
@@ -175,8 +175,8 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
      * @return the ReCAPHttpSessionEventPublisher
      */
     @Bean
-    public ReCAPHttpSessionEventPublisher httpSessionEventPublisher() {
-        return new ReCAPHttpSessionEventPublisher();
+    public SCSBHttpSessionEventPublisher httpSessionEventPublisher() {
+        return new SCSBHttpSessionEventPublisher();
     }
 
 }
