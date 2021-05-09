@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
@@ -43,6 +44,9 @@ public class LoginController extends AbstractController {
 
     @Autowired
     private PropertyUtil propertyUtil;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
 
     /**
      * Return either login or search view. Returns search view if user authenticated. If not it will return login view.
@@ -152,7 +156,8 @@ public class LoginController extends AbstractController {
     }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {
-        session.setAttribute("userName", authMap.get("userName"));
+        session.setAttribute(ScsbConstants.USER_NAME, authMap.get(ScsbConstants.USER_NAME));
+        session.setAttribute(ScsbConstants.USER_DESC, userDetailsRepository.findByLoginId(authMap.get(ScsbConstants.USER_NAME).toString()).getUserDescription());
         session.setAttribute(ScsbConstants.USER_ID, authMap.get(ScsbConstants.USER_ID));
         session.setAttribute(ScsbConstants.USER_INSTITUTION, authMap.get(ScsbConstants.USER_INSTITUTION));
         session.setAttribute(ScsbConstants.SUPER_ADMIN_USER, authMap.get(ScsbConstants.SUPER_ADMIN_USER));
