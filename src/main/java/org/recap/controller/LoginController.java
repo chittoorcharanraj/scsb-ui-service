@@ -156,8 +156,8 @@ public class LoginController extends AbstractController {
     }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {
-        session.setAttribute("userName", authMap.get("userName"));
-        session.setAttribute("userDesc", userDetailsRepository.findByLoginId(authMap.get("userName").toString()).getUserDescription());
+        session.setAttribute(ScsbConstants.USER_NAME, authMap.get(ScsbConstants.USER_NAME));
+        session.setAttribute(ScsbConstants.USER_DESC, userDetailsRepository.findByLoginId(authMap.get(ScsbConstants.USER_NAME).toString()).getUserDescription());
         session.setAttribute(ScsbConstants.USER_ID, authMap.get(ScsbConstants.USER_ID));
         session.setAttribute(ScsbConstants.USER_INSTITUTION, authMap.get(ScsbConstants.USER_INSTITUTION));
         session.setAttribute(ScsbConstants.SUPER_ADMIN_USER, authMap.get(ScsbConstants.SUPER_ADMIN_USER));
