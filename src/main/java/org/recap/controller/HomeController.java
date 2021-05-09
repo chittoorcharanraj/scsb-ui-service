@@ -88,7 +88,6 @@ public class HomeController extends AbstractController {
             resultMap.put(ScsbConstants.USER_NAME, request.getSession().getAttribute(ScsbConstants.USER_NAME));
             resultMap.put(ScsbConstants.USER_DESC, request.getSession().getAttribute(ScsbConstants.USER_DESC));
             resultMap.put(ScsbConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.REQUEST_PRIVILEGE));
-            resultMap.put(ScsbConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.REQUEST_PRIVILEGE));
             resultMap.put(ScsbConstants.SEARCH_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.SEARCH_PRIVILEGE));
             resultMap.put(ScsbConstants.COLLECTION_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.COLLECTION_PRIVILEGE));
             resultMap.put(ScsbConstants.DEACCESSION_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.DEACCESSION_PRIVILEGE));
