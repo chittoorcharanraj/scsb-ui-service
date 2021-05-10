@@ -240,7 +240,8 @@ public class ReportsController extends AbstractController {
         List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
         List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
         for(ImsLocationEntity imsLocationEntity: imsLocationEntities){
-            storageLocationsList.add(imsLocationEntity.getImsLocationCode());
+            if(!imsLocationEntity.getImsLocationCode().equalsIgnoreCase(ScsbConstants.FACETS_UN))
+                storageLocationsList.add(imsLocationEntity.getImsLocationCode());
         }
         for (InstitutionEntity institutionEntity : institutionCodeForSuperAdmin) {
             instList.add(institutionEntity.getInstitutionCode());

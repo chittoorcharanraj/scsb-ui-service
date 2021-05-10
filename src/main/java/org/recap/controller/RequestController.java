@@ -24,6 +24,7 @@ import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.util.SecurityUtil;
@@ -99,6 +100,9 @@ public class RequestController extends ScsbController {
 
     @Autowired
     private ImsLocationDetailRepository imsLocationDetailRepository;
+
+    @Autowired
+    private UserDetailsRepository userDetailsRepository;
 
     public RequestService getRequestService() {
         return requestService;
@@ -501,7 +505,7 @@ public class RequestController extends ScsbController {
     private void populateRequestResults(List<SearchResultRow> searchResultRows, RequestItemEntity requestItemEntity) {
         SearchResultRow searchResultRow = setSearchResultRow(requestItemEntity);
         searchResultRow.setShowItems(true);
-        searchResultRow.setRequestCreatedBy(requestItemEntity.getCreatedBy());
+        searchResultRow.setRequestCreatedBy((userDetailsRepository.findByLoginId(requestItemEntity.getCreatedBy())).getUserDescription());
         if (StringUtils.isNotBlank(requestItemEntity.getEmailId())) {
             searchResultRow.setPatronEmailId(securityUtil.getDecryptedValue(requestItemEntity.getEmailId()));
         } else {
