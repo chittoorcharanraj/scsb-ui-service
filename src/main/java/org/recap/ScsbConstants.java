@@ -13,6 +13,7 @@ public class ScsbConstants {
     public static final String REDIRECT_HOME = "redirect:home";
     public static final String REDIRECT_USER = "redirect:userLogin";
     public static final String FORWARD_INDEX = "forward:/index.html";
+    public static final String FACETS_UN = "UN";
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or Bib table does not contains this record";
     //Collection

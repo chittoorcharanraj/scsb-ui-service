@@ -173,7 +173,7 @@ public class BulkRequestService {
                     bulkSearchResultRow.setPatronBarcode(bulkRequestItemEntity.getPatronId());
                     bulkSearchResultRow.setRequestingInstitution(institutionMap.get(bulkRequestItemEntity.getRequestingInstitutionId()));
                     bulkSearchResultRow.setDeliveryLocation(bulkRequestItemEntity.getStopCode());
-                    bulkSearchResultRow.setCreatedBy(bulkRequestItemEntity.getCreatedBy());
+                    bulkSearchResultRow.setCreatedBy((userDetailsRepository.findByLoginId(bulkRequestItemEntity.getCreatedBy())).getUserDescription());
                     bulkSearchResultRow.setEmailAddress(getDecryptedPatronEmailId(bulkRequestItemEntity.getEmailId()));
                     bulkSearchResultRow.setCreatedDate(bulkRequestItemEntity.getCreatedDate());
                     bulkSearchResultRow.setStatus(bulkRequestItemEntity.getBulkRequestStatus());
