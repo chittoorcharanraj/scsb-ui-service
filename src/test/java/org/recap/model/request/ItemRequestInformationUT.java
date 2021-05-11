@@ -21,7 +21,7 @@ public class ItemRequestInformationUT extends BaseTestCase {
         itemRequestInformation.setTitleIdentifier("test");
         itemRequestInformation.setItemOwningInstitution("PUL");
         itemRequestInformation.setPatronBarcode("452353588");
-        itemRequestInformation.setEmailAddress("hemalatha.s@htcindia.com");
+        itemRequestInformation.setEmailAddress("test@email.com");
         itemRequestInformation.setRequestingInstitution("CUL");
         itemRequestInformation.setRequestType("Recall");
         itemRequestInformation.setDeliveryLocation("PB");

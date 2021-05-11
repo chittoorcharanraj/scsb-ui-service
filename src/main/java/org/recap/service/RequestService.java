@@ -26,6 +26,7 @@ import org.recap.util.UserAuthUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
@@ -70,6 +71,9 @@ public class RequestService {
 
     @Autowired
     private PropertyUtil propertyUtil;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * Gets request item details repository.
@@ -502,7 +506,7 @@ public class RequestService {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!ScsbConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
+            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -511,7 +515,7 @@ public class RequestService {
                 requestForm.setDisableRequestingInstitution(true);
                 requestForm.setOnChange("true");
             }
-            if ((userDetailsForm.isRecapUser() || userDetailsForm.isSuperAdmin()) && (!ScsbConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
+            if ((userDetailsForm.isRecapUser() || userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -559,7 +563,7 @@ public class RequestService {
      * @param institutionList the institution list
      */
     public void getInstitutionForSuperAdmin(List<String> institutionList) {
-        Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin();
+        Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin(supportInstitution);
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
             institutionList.add(institutionEntity.getInstitutionCode());

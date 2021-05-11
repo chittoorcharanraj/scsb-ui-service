@@ -20,6 +20,7 @@ import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.*;
 import org.recap.util.UserAuthUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -109,6 +110,9 @@ public class RequestServiceUT{
     @Mock
     RequestStatusEntity requestStatusEntity;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
+
     @Test
     public void testGetRefreshedStatus() {
         List<String> listOfRequestStatusDesc=new ArrayList<>();
@@ -152,7 +156,7 @@ public class RequestServiceUT{
     public void testInstitutionForSuperAdmin() {
         List<InstitutionEntity> institutionEntities=new ArrayList<>();
         institutionEntities.add(institutionEntity);
-        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin()).thenReturn(institutionEntities);
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(institutionEntities);
         List<String> institutionList=new ArrayList<>();
         Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
         requestService.getInstitutionForSuperAdmin(institutionList);

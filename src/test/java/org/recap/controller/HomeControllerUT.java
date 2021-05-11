@@ -13,6 +13,7 @@ import org.recap.model.usermanagement.UserForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,9 +38,11 @@ public class HomeControllerUT extends BaseTestCaseUT {
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
 
-
     @Mock
     UserManagementService userManagementService;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Before
     public void setup(){
@@ -53,12 +56,12 @@ public class HomeControllerUT extends BaseTestCaseUT {
     @Test
     public void loadInstitutions(){
         InstitutionEntity institutionEntity = getInstitutionEntity();
-        Mockito.when(institutionDetailsRepository.getInstitutionCodes()).thenReturn(Arrays.asList(institutionEntity));
+        Mockito.when(institutionDetailsRepository.getInstitutionCodes(supportInstitution)).thenReturn(Arrays.asList(institutionEntity));
         homeController.loadInstitutions();
     }
     @Test
     public void fecthingInstituionsFromDBException(){
-        Mockito.when(institutionDetailsRepository.getInstitutionCodes()).thenThrow(new NullPointerException());
+        Mockito.when(institutionDetailsRepository.getInstitutionCodes(supportInstitution)).thenThrow(new NullPointerException());
         homeController.fecthingInstituionsFromDB();
     }
     @Test

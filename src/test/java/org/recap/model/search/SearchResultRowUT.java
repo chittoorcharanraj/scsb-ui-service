@@ -79,7 +79,7 @@ public class SearchResultRowUT {
         searchResultRow.setRequestType("Recall");
         searchResultRow.setRequestNotes("test");
         searchResultRow.setRequestCreatedBy("test");
-        searchResultRow.setPatronEmailId("hemalatha.s@htcindia.com");
+        searchResultRow.setPatronEmailId("test@email.com");
         searchResultRow.setCreatedDate(new Date());
         searchResultRow.setStatus("success");
 
