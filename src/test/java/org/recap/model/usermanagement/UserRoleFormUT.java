@@ -46,7 +46,7 @@ public class UserRoleFormUT extends BaseTestCase{
         userRoleForm.setUserDescription("test");
         userRoleForm.setEditNetworkId("1");
         userRoleForm.setEditUserDescription("test");
-        userRoleForm.setUserEmailId("hemalatha.s@htcindia.com");
+        userRoleForm.setUserEmailId("test@email.com");
         userRoleForm.setEmailId("test@gmail.com");
         userRoleForm.setEditEmailId("1");
         userRoleForm.setAllowCreateEdit(true);

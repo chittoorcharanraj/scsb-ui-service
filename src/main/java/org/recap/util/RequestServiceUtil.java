@@ -13,6 +13,7 @@ import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,9 @@ public class RequestServiceUtil {
 
     @Autowired
     EntityManagerFactory entityManagerFactory;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * Based on the given search criteria in the request search UI page, this method builds the request search results to show them as rows in the request search UI page.
@@ -145,7 +149,7 @@ public class RequestServiceUtil {
     }
     private Map<Integer, String> mappingInstitution() {
         Map<Integer, String> institutionList = new HashMap<>();
-        List<InstitutionEntity> institutionEntities = institutionDetailsRepository.getInstitutionCodes();
+        List<InstitutionEntity> institutionEntities = institutionDetailsRepository.getInstitutionCodes(supportInstitution);
         institutionEntities.stream().forEach(inst -> institutionList.put(inst.getId(), inst.getInstitutionCode()));
         return institutionList;
     }

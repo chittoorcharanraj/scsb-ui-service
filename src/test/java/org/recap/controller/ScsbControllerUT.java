@@ -89,7 +89,7 @@ public class ScsbControllerUT extends BaseTestCaseUT {
         requestForm.setItemBarcodeInRequest("123");
         requestForm.setPatronBarcodeInRequest("46259871");
         requestForm.setRequestingInstitution("PUL");
-        requestForm.setPatronEmailAddress("hemalatha.s@htcindia.com");
+        requestForm.setPatronEmailAddress("test@email.com");
         requestForm.setInstitution("PUL");
         List<String> institutionList = new ArrayList<>();
         institutionList.add("PUL");

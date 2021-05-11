@@ -31,6 +31,7 @@ import org.recap.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -103,6 +104,9 @@ public class RequestController extends ScsbController {
 
     @Autowired
     private UserDetailsRepository userDetailsRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     public RequestService getRequestService() {
         return requestService;
@@ -553,7 +557,7 @@ public class RequestController extends ScsbController {
 
     private RequestForm setFormValuesToDisableSearchInstitution(@Valid @ModelAttribute("requestForm") RequestForm requestForm, UserDetailsForm userDetails, List<String> institutionList) {
         Optional<InstitutionEntity> institutionEntity = getInstitutionDetailsRepository().findById(userDetails.getLoginInstitutionId());
-        if (userDetails.isSuperAdmin() || userDetails.isRecapUser() || ((institutionEntity.isPresent()) && (institutionEntity.get().getInstitutionCode().equalsIgnoreCase("HTC")))) {
+        if (userDetails.isSuperAdmin() || userDetails.isRecapUser() || ((institutionEntity.isPresent()) && (institutionEntity.get().getInstitutionCode().equalsIgnoreCase(supportInstitution)))) {
             getRequestService().getInstitutionForSuperAdmin(institutionList);
             requestForm.setInstitutionList(institutionList);
         } else {
@@ -612,7 +616,7 @@ public class RequestController extends ScsbController {
 
     private ResponseEntity<RequestForm> exceptionRports(String institutionCode, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
         requestForm.setInstitution(institutionCode);
-        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
+        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
         Page<RequestItemEntity> requestItemEntities = null;
         List<SearchResultRow> searchResultRows = null;
         List<RequestItemEntity> requestItemEntitiesList = null;

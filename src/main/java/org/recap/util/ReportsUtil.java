@@ -16,6 +16,7 @@ import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -43,6 +44,9 @@ public class ReportsUtil {
 
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * To get the item count for the physical and edd request report from the scsb database and
@@ -218,19 +222,19 @@ public class ReportsUtil {
     }
 
     /**
-     * Get All institutions other than HTC
+     * Get All institutions other than Support Institution
      * @return
      */
     public List<String> getInstitutions() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
     }
 
     /**
-     * Get All institutions Entities other than HTC
+     * Get All institutions Entities other than Support Institution
      * @return
      */
     public List<InstitutionEntity> getInstitutionEntities() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution);
     }
 
     /**
@@ -238,7 +242,7 @@ public class ReportsUtil {
      * @return
      */
     private List<Integer> getInstitutionIds() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getId).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getId).collect(Collectors.toList());
     }
 
     /**

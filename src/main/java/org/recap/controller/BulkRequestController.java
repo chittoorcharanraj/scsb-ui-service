@@ -15,6 +15,7 @@ import org.recap.service.BulkRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,9 @@ public class BulkRequestController extends AbstractController {
 
     @Autowired
     private  UserManagementService userManagementService;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @GetMapping("/checkPermission")
     public boolean bulkRequest(HttpServletRequest request) {
@@ -189,7 +193,7 @@ public class BulkRequestController extends AbstractController {
     }
 
     private List<String> getInstitutions() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
     }
 
     private ModelAndView processBulkRequest(BulkRequestForm bulkRequestForm, Model model) {

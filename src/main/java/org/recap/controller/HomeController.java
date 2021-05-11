@@ -11,6 +11,7 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +50,9 @@ public class HomeController extends AbstractController {
     @Autowired
     private  UserManagementService userManagementService;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
+
     /**
      * @return InstitutionsList
      */
@@ -59,14 +63,14 @@ public class HomeController extends AbstractController {
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
-        instList.put(ScsbConstants.HTC, ScsbConstants.HTC);
+        instList.put(supportInstitution, supportInstitution);
         return instList;
     }
 
     public List<InstitutionEntity> fecthingInstituionsFromDB() {
         List<InstitutionEntity> InstitutionCodes = null;
         try {
-            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes(supportInstitution);
         } catch (Exception e) {
             logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
         }

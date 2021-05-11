@@ -26,7 +26,7 @@ public class ItemResponseInformationUT extends BaseTestCase {
         itemResponseInformation.setItemId("123");
         itemResponseInformation.setScreenMessage("success");
         itemResponseInformation.setSuccess(true);
-        itemResponseInformation.setEmailAddress("hemalatha.s@htcindia.com");
+        itemResponseInformation.setEmailAddress("test@email.com");
         itemResponseInformation.setStartPage(1);
         itemResponseInformation.setEndPage(10);
         itemResponseInformation.setTitleIdentifier("test");

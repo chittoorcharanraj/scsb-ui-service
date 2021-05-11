@@ -37,7 +37,7 @@ public class RequestFormUT extends BaseTestCaseUT {
         requestForm.setItemBarcodeInRequest("123");
         requestForm.setPatronBarcodeInRequest("46259871");
         requestForm.setRequestingInstitution("PUL");
-        requestForm.setPatronEmailAddress("hemalatha.s@htcindia.com");
+        requestForm.setPatronEmailAddress("test@email.com");
         requestForm.setItemTitle("test");
         requestForm.setItemOwningInstitution("PUL");
         requestForm.setRequestType("recall");

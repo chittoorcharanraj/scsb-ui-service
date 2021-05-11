@@ -8,6 +8,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.ReportsForm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
@@ -22,11 +23,14 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     @Mock
     ReportsUtil reportsUtil;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
+
     @Test
     public void requestCgdItemCountsException(){
         ReportsForm reportsForm = new ReportsForm();
         reportsForm.setCollectionGroupDesignations(Arrays.asList("PA","COMPLETE"));
-        Mockito.when(reportsUtil.getInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HD","HTC"));
+        Mockito.when(reportsUtil.getInstitutions()).thenReturn(Arrays.asList("PUL","CUL","NYPL","HD",supportInstitution));
         ReportsResponse response = reportsServiceUtil.requestCgdItemCounts(reportsForm);
         assertNotNull(response);
     }

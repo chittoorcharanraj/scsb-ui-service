@@ -17,6 +17,7 @@ import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.util.ReportsUtil;
 import org.recap.util.UserAuthUtil;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,6 +58,9 @@ public class ReportsControllerUT extends BaseTestCaseUT {
 
     @Mock
     UserManagementService userManagementService;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Test
     public void reports(){
@@ -209,7 +213,7 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     }
     @Test
     public void getInstitutionForIncompleteReport(){
-        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin()).thenReturn(Arrays.asList(getInstitutionEntity()));
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(Arrays.asList(getInstitutionEntity()));
         reportsController.getInstitutionForIncompleteReport();
     }
 

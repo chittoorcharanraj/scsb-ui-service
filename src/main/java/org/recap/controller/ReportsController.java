@@ -17,6 +17,7 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,9 @@ public class ReportsController extends AbstractController {
 
     @Autowired
     private ImsLocationDetailRepository imsLocationDetailRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * Gets reports util.
@@ -236,8 +240,8 @@ public class ReportsController extends AbstractController {
     public FacetsForm getInstitutionForIncompleteReport() {
         FacetsForm facetsForm = new FacetsForm();
         List<String> instList = new ArrayList<>();
-        List<String> storageLocationsList = new ArrayList<String>();
-        List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
+        List<String> storageLocationsList = new ArrayList<>();
+        List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution);
         List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
         for(ImsLocationEntity imsLocationEntity: imsLocationEntities){
             if(!imsLocationEntity.getImsLocationCode().equalsIgnoreCase(ScsbConstants.FACETS_UN))

@@ -534,7 +534,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         requestForm.setItemBarcodeInRequest("123");
         requestForm.setPatronBarcodeInRequest("46259871");
         requestForm.setRequestingInstitution("CUL");
-        requestForm.setPatronEmailAddress("hemalatha.s@htcindia.com");
+        requestForm.setPatronEmailAddress("test@email.com");
         requestForm.setInstitution("CU");
         requestForm.setItemTitle("test");
         requestForm.setItemOwningInstitution("PUL");
@@ -554,7 +554,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         itemRequestInformation.setItemBarcodes(Arrays.asList("123"));
         itemRequestInformation.setPatronBarcode("46259871");
         itemRequestInformation.setRequestingInstitution("PUL");
-        itemRequestInformation.setEmailAddress("hemalatha.s@htcindia.com");
+        itemRequestInformation.setEmailAddress("test@email.com");
         itemRequestInformation.setTitle("test");
         itemRequestInformation.setTitleIdentifier("test");
         itemRequestInformation.setItemOwningInstitution("PUL");

@@ -32,14 +32,14 @@ public interface InstitutionDetailsRepository extends BaseRepository<Institution
      *
      * @return the institution code for super admin
      */
-    @Query(value="select inst from InstitutionEntity inst where inst.institutionCode not in ('HTC')")
-    List<InstitutionEntity> getInstitutionCodeForSuperAdmin();
+    @Query(value="select inst from InstitutionEntity inst where inst.institutionCode not in (:supportInstitution)")
+    List<InstitutionEntity> getInstitutionCodeForSuperAdmin(@Param("supportInstitution") String supportInstitution);
 
     /**
      * To get the list of institution entities for home page.
      *
      * @return the institutions
      */
-    @Query(value="select inst from InstitutionEntity inst  where inst.institutionCode not in ('HTC') ORDER BY inst.id")
-    List<InstitutionEntity> getInstitutionCodes();
+    @Query(value="select inst from InstitutionEntity inst  where inst.institutionCode not in (:supportInstitution) ORDER BY inst.id")
+    List<InstitutionEntity> getInstitutionCodes(@Param("supportInstitution") String supportInstitution);
 }

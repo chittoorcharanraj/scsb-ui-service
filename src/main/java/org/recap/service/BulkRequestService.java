@@ -76,6 +76,8 @@ public class BulkRequestService {
     @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm,HttpServletRequest request) {
         try {
@@ -163,7 +165,7 @@ public class BulkRequestService {
         if (bulkRequestItemEntities.getTotalElements() > 0) {
             List<BulkRequestItemEntity> bulkRequestItemEntityList = bulkRequestItemEntities.getContent();
             List<BulkSearchResultRow> bulkSearchResultRows = new ArrayList<>();
-            Map<Integer, String> institutionMap = institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().collect(Collectors.toMap(InstitutionEntity::getId, InstitutionEntity::getInstitutionCode));
+            Map<Integer, String> institutionMap = institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().collect(Collectors.toMap(InstitutionEntity::getId, InstitutionEntity::getInstitutionCode));
             for (BulkRequestItemEntity bulkRequestItemEntity : bulkRequestItemEntityList) {
                 try {
                     BulkSearchResultRow bulkSearchResultRow = new BulkSearchResultRow();

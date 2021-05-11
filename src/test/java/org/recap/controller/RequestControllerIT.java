@@ -114,6 +114,9 @@ public class RequestControllerIT extends BaseControllerUT {
     @Value("${scsb.auth.url}")
     String scsbShiro;
 
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
+
     @Autowired
     RestHeaderService restHeaderService;
 
@@ -297,7 +300,7 @@ public class RequestControllerIT extends BaseControllerUT {
         Mockito.when(requestController.getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(requestController.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
         Mockito.when(requestController.getInstitutionDetailsRepository().findById(userDetailsForm.getLoginInstitutionId())).thenReturn(Optional.of(institutionEntity));
-        Mockito.when(requestController.getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin()).thenReturn(Arrays.asList(institutionEntity));
+        Mockito.when(requestController.getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(Arrays.asList(institutionEntity));
      /*   Mockito.when(requestController.goToSearchRequest(requestForm,"45678912",bindingResult, model,request)).thenCallRealMethod();
         ModelAndView modelAndView = requestController.goToSearchRequest(requestForm,"45678912",bindingResult, model,request);
         assertNotNull(modelAndView);
@@ -501,7 +504,7 @@ public class RequestControllerIT extends BaseControllerUT {
         Mockito.when(requestController.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
         Mockito.when(requestController.getInstitutionDetailsRepository().findById(userDetailsForm.getLoginInstitutionId())).thenReturn(Optional.of(institutionEntity));
         Mockito.when(requestStatusDetailsRepository.findAll()).thenReturn(Arrays.asList(requestStatusEntity));
-        Mockito.when(requestController.getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin()).thenReturn(Arrays.asList(institutionEntity));
+        Mockito.when(requestController.getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(Arrays.asList(institutionEntity));
         Mockito.when(requestController.loadSearchRequest(request)).thenCallRealMethod();
        // ModelAndView modelAndView = requestController.loadSearchRequest(model,request);
       //  assertNotNull(modelAndView);
@@ -595,7 +598,7 @@ public class RequestControllerIT extends BaseControllerUT {
         requestForm.setItemBarcodeInRequest("123");
         requestForm.setPatronBarcodeInRequest("46259871");
         requestForm.setRequestingInstitution("CUL");
-        requestForm.setPatronEmailAddress("hemalatha.s@htcindia.com");
+        requestForm.setPatronEmailAddress("test@email.com");
         requestForm.setInstitution("CU");
         requestForm.setItemTitle("test");
         requestForm.setItemOwningInstitution("PUL");
@@ -615,7 +618,7 @@ public class RequestControllerIT extends BaseControllerUT {
         itemRequestInformation.setItemBarcodes(Arrays.asList("123"));
         itemRequestInformation.setPatronBarcode("46259871");
         itemRequestInformation.setRequestingInstitution("PUL");
-        itemRequestInformation.setEmailAddress("hemalatha.s@htcindia.com");
+        itemRequestInformation.setEmailAddress("test@email.com");
         itemRequestInformation.setTitle("test");
         itemRequestInformation.setTitleIdentifier("test");
         itemRequestInformation.setItemOwningInstitution("PUL");
@@ -850,7 +853,7 @@ public class RequestControllerIT extends BaseControllerUT {
         searchResultRow.setRequestType("Recall");
         searchResultRow.setRequestNotes("test");
         searchResultRow.setRequestCreatedBy("test");
-        searchResultRow.setPatronEmailId("hemalatha.s@htcindia.com");
+        searchResultRow.setPatronEmailId("test@email.com");
         searchResultRow.setCreatedDate(new Date());
         searchResultRow.setStatus("success");
         return searchResultRow;
