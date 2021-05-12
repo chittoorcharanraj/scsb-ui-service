@@ -85,4 +85,10 @@ public interface UserRoleService {
      * @return the page
      */
     Page<UsersEntity> searchByNetworkIdAndUserEmailId(UserRoleForm userRoleForm, boolean superAdmin);
+
+    /**
+     *
+     * @return All users
+     */
+    List<UsersEntity> findAll(UserRoleForm userRoleForm, boolean superAdmin);
 }

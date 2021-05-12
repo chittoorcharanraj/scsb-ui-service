@@ -211,6 +211,15 @@ public class UserRoleServiceImpl implements UserRoleService {
         return institutions;
     }
 
+    @Override
+    public List<UsersEntity> findAll(UserRoleForm userRoleForm, boolean superAdmin) {
+        return (superAdmin) ? userDetailsRepository.findAll() : findByInstitution(userRoleForm);
+    }
+    private List<UsersEntity> findByInstitution(UserRoleForm userRoleForm){
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(userRoleForm.getInstitutionId());
+        return userDetailsRepository.findByInstitutionEntity(userRoleForm.getInstitutionId());
+    }
     private Pageable getPageable(UserRoleForm userRoleForm) {
         return PageRequest.of(userRoleForm.getPageNumber(), userRoleForm.getPageSize(), Sort.Direction.ASC, ScsbConstants.USER_ID);
     }
