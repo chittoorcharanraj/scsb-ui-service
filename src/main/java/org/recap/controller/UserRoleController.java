@@ -106,6 +106,21 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
+    @PostMapping("/exportUsers")
+    public UserRoleForm exportUsers(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
+            try {
+                userRoleForm.setIsExport(ScsbConstants.IS_EXPORT_TRUE);
+                userRoleForm = priorSearch(userRoleForm, request);
+                userRoleForm.setShowPagination(true);
+            } catch (Exception e) {
+                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            }
+        }
+        return userRoleForm;
+    }
     /**
      * To delete the user permanently in scsb.
      *
@@ -353,7 +368,7 @@ public class UserRoleController extends AbstractController {
         userRoleForm.setInstitutions(institutions);
         userRoleForm.setAllowCreateEdit(true);
         userRoleForm.setSubmitted(true);
-        return searchAndSetResult(request,userRoleForm, userDetailsForm.isSuperAdmin(), userId);
+        return (userRoleForm.getIsExport()) ? searchAndSetResultExport(request, userRoleForm, userDetailsForm.isSuperAdmin(), userId) : searchAndSetResult(request, userRoleForm, userDetailsForm.isSuperAdmin(), userId);
     }
 
     private UserRoleForm searchAndSetResult(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
@@ -378,7 +393,15 @@ public class UserRoleController extends AbstractController {
         }
         return userRoleForm;
     }
-
+    private UserRoleForm searchAndSetResultExport(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
+        if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
+            logger.debug("Search All Users");
+            List<UsersEntity> usersEntities = getUserRoleService().findAll(userRoleForm, superAdmin);
+            userRoleForm.setUserRoleFormList(setFormValues(request,usersEntities, userId));
+            userRoleForm.setShowResults(false);
+        }
+        return userRoleForm;
+    }
     private UserRoleForm getUsersInformation(HttpServletRequest request,UserRoleForm userRoleForm, Integer userId, Page<UsersEntity> usersEntities, String message) {
         List<UsersEntity> userEntity = usersEntities.getContent();
         if (!userEntity.isEmpty()) {
