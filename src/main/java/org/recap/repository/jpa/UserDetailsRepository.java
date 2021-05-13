@@ -154,7 +154,7 @@ public interface UserDetailsRepository extends BaseRepository<UsersEntity> {
      * @return users
      */
 
-    @Query(value = "select distinct users from UsersEntity users inner join users.userRole role where users.institutionId = :institutionId and role.roleName not in ('Super Admin')")
-    List<UsersEntity> findByInstitutionEntity(@Param("institutionId") Integer institutionId);
+    @Query(value = "select distinct users from UsersEntity users inner join users.userRole role where users.institutionId = :institutionId and role.roleName not in (:roleName)")
+    List<UsersEntity> findByInstitutionEntity(@Param("institutionId") Integer institutionId,@Param("roleName") String roleName);
 
 }
