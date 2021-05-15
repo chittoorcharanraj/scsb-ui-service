@@ -48,6 +48,7 @@ public class ScsbConstants {
     public static final String REQUEST_TYPE = "requestType";
     public static final String REQUEST_TYPES = "requestTypes";
     public static final String SHOW_EDD = "showEDD";
+    public static final String EDD = "EDD";
     public static final String MULTIPLE_BARCODES = "multipleBarcodes";
     public static final String CREATE_BULKREQUEST_CALLED = "Create BulkRequest Called";
     public static final String CREATE_SR_BULKREQUEST_CALLED = "Search Request Called in BulkRequest tab";
@@ -197,6 +198,7 @@ public class ScsbConstants {
     public static final String ID = "id";
     public static final Integer PAGE_NUMBER = 0;
     public static final Integer PAGE_SIZE = 10;
+    public static  final String NA = "NA";
 
     public static final String UNSCHEDULE = "Unschedule";
     public static final String UNSCHEDULED = "Unscheduled";

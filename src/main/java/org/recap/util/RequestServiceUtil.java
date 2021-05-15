@@ -169,7 +169,7 @@ public class RequestServiceUtil {
     private Map<Integer, String> pullCGDCodes(List<CollectionGroupEntity> collectionGroupEntities) {
         Map<Integer, String> cgdCodes = new HashMap<>();
         for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
-            if(!collectionGroupEntity.getCollectionGroupCode().equalsIgnoreCase("NA"))
+            if(!collectionGroupEntity.getCollectionGroupCode().equalsIgnoreCase(ScsbConstants.NA))
             cgdCodes.put(collectionGroupEntity.getId(),collectionGroupEntity.getCollectionGroupCode());
         }
         return cgdCodes;
@@ -201,7 +201,7 @@ public class RequestServiceUtil {
     }
 
     private List<String> validateTypeUse(TransactionReports transactionReports, List<CollectionGroupEntity> collectionGroupEntities,List<String> listCGDCodes) {
-        if (transactionReports.getTypeOfUses().contains("EDD") && (transactionReports.getTypeOfUses().size() == 1))
+        if (transactionReports.getTypeOfUses().contains(ScsbConstants.EDD) && (transactionReports.getTypeOfUses().size() == 1))
             return pullAllCGDCodesList(collectionGroupEntities);
         else {
             listCGDCodes.add(transactionReports.getCgdType());
