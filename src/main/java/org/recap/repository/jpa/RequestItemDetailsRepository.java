@@ -185,7 +185,7 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
                                                  @Param("typeOfUses") List<Integer> typeOfUses,
                                                  @Param("fromDate") Date fromDate,
                                                  @Param("toDate") Date toDate,
-                                                 @Param("cgdType") Integer cgdType);
+                                                 @Param("cgdType") List<Integer> cgdType);
 
     /**
      *
@@ -217,6 +217,6 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
                                                         @Param("typeOfUses") List<Integer> typeOfUses,
                                                         @Param("fromDate") Date fromDate,
                                                         @Param("toDate") Date toDate,
-                                                        @Param("cgdType") Integer cgdType);
+                                                        @Param("cgdType") List<Integer> cgdType);
 
 }

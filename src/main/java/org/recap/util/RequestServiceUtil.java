@@ -127,11 +127,13 @@ public class RequestServiceUtil {
      */
     public List<TransactionReport> getTransactionReports(TransactionReports transactionReports,Date fromDate, Date toDate) {
         List<TransactionReport> transactionReportsList = new ArrayList<>();
+        List<String> listCGDCodes = new ArrayList<>();
         Pageable pageable = PageRequest.of(transactionReports.getPageNumber(), transactionReports.getPageSize());
         Map<Integer, String> institutionList = mappingInstitution();
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
         Map<Integer, String> cgdCodes = pullCGDCodes(collectionGroupEntities);
-        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatus(pageable, getKeysByValues(transactionReports.getOwningInsts(),institutionList), getKeysByValues(transactionReports.getRequestingInsts(),institutionList), getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, getCGDIds(cgdCodes,transactionReports.getCgdType()));
+        listCGDCodes = validateTypeUse(transactionReports, collectionGroupEntities,listCGDCodes);
+        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatus(pageable, getKeysByValues(transactionReports.getOwningInsts(),institutionList), getKeysByValues(transactionReports.getRequestingInsts(),institutionList), getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
             transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString()));
         }
@@ -147,10 +149,12 @@ public class RequestServiceUtil {
      */
     public List<TransactionReport> getTransactionReportsExport(TransactionReports transactionReports,Date fromDate, Date toDate) {
         List<TransactionReport> transactionReportsList = new ArrayList<>();
+        List<String> listCGDCodes = new ArrayList<>();
         Map<Integer, String> institutionList = mappingInstitution();
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
         Map<Integer, String> cgdCodes = pullCGDCodes(collectionGroupEntities);
-        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(getKeysByValues(transactionReports.getOwningInsts(),institutionList), getKeysByValues(transactionReports.getRequestingInsts(),institutionList), getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, getCGDIds(cgdCodes,transactionReports.getCgdType()));
+        listCGDCodes =  validateTypeUse(transactionReports, collectionGroupEntities,listCGDCodes);
+        List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(getKeysByValues(transactionReports.getOwningInsts(),institutionList), getKeysByValues(transactionReports.getRequestingInsts(),institutionList), getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
             transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString()));
         }
@@ -165,17 +169,26 @@ public class RequestServiceUtil {
     private Map<Integer, String> pullCGDCodes(List<CollectionGroupEntity> collectionGroupEntities) {
         Map<Integer, String> cgdCodes = new HashMap<>();
         for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
+            if(!collectionGroupEntity.getCollectionGroupCode().equalsIgnoreCase("NA"))
             cgdCodes.put(collectionGroupEntity.getId(),collectionGroupEntity.getCollectionGroupCode());
         }
         return cgdCodes;
     }
-    private List<Integer> getKeysByValues(List<String> instCodes, Map<Integer, String> instList) {
-        List<Integer> instIds = new ArrayList<>();
-            for (Map.Entry<Integer, String> entry : instList.entrySet()) {
-                if(instCodes.stream().anyMatch(entry.getValue()::equalsIgnoreCase))
-                    instIds.add(entry.getKey());
+
+    private List<String> pullAllCGDCodesList(List<CollectionGroupEntity> collectionGroupEntities) {
+            List<String> listCGDCodes = new ArrayList<>();
+        for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
+            listCGDCodes.add(collectionGroupEntity.getCollectionGroupCode());
+        }
+        return listCGDCodes;
+    }
+    private List<Integer> getKeysByValues(List<String> values, Map<Integer, String> map) {
+        List<Integer> listKeys = new ArrayList<>();
+            for (Map.Entry<Integer, String> entry : map.entrySet()) {
+                if(values.stream().anyMatch(entry.getValue()::equalsIgnoreCase))
+                    listKeys.add(entry.getKey());
             }
-            return instIds;
+            return listKeys;
     }
 
     private Map<Integer, String> getRequestTypes() {
@@ -187,7 +200,12 @@ public class RequestServiceUtil {
        return requestTypes;
     }
 
-    private static Integer getCGDIds(Map<Integer, String> cgdCodes, String cgdType) {
-        return cgdCodes.entrySet().stream().filter(entry -> cgdType.equals(entry.getValue())).map(Map.Entry::getKey).findFirst().get();
+    private List<String> validateTypeUse(TransactionReports transactionReports, List<CollectionGroupEntity> collectionGroupEntities,List<String> listCGDCodes) {
+        if (transactionReports.getTypeOfUses().contains("EDD") && (transactionReports.getTypeOfUses().size() == 1))
+            return pullAllCGDCodesList(collectionGroupEntities);
+        else {
+            listCGDCodes.add(transactionReports.getCgdType());
+            return listCGDCodes;
+        }
     }
 }
