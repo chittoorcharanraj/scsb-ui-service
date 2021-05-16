@@ -19,12 +19,11 @@ public class TransactionReports {
    private Integer totalPageCount = 0;
    private String message;
    private List<TransactionReport> transactionReportList = new ArrayList<>();
-   List<String> owningInsts;
-   List<String> requestingInsts;
-   List<String> typeOfUses;
-   String fromDate;
-   String toDate;
-   String trasactionCallType;
-   List<String> cgdType;
-
+   private List<String> owningInsts;
+   private List<String> requestingInsts;
+   private List<String> typeOfUses;
+   private String fromDate;
+   private String toDate;
+   private String trasactionCallType;
+   private String cgdType;
 }

@@ -136,23 +136,22 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param toDate
      * @return List of COUNTS
      */
-    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, COLLECTION_GROUP_T.COLLECTION_GROUP_CODE, COUNT(*) " +
+    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, ITEM_T.COLLECTION_GROUP_ID, COUNT(*) " +
             "            FROM REQUEST_ITEM_T" +
             "            INNER JOIN ITEM_T ON REQUEST_ITEM_T.ITEM_ID = ITEM_T.ITEM_ID" +
             "            INNER JOIN REQUEST_TYPE_T ON REQUEST_ITEM_T.REQUEST_TYPE_ID = REQUEST_TYPE_T.REQUEST_TYPE_ID" +
-            "            INNER JOIN COLLECTION_GROUP_T ON ITEM_T.COLLECTION_GROUP_ID = COLLECTION_GROUP_T.COLLECTION_GROUP_ID" +
             "            WHERE ITEM_T.OWNING_INST_ID IN" +
-            "                (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:owningInsts))" +
+            "                (:owningInsts)" +
             "            AND REQUEST_ITEM_T.REQUESTING_INST_ID IN" +
-            "                (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:requestingInsts))" +
+            "                (:requestingInsts)" +
             "            AND REQUEST_ITEM_T.REQUEST_TYPE_ID" +
-            "                IN (SELECT REQUEST_TYPE_ID FROM REQUEST_TYPE_T WHERE REQUEST_TYPE_CODE IN (:typeOfUses))" +
+            "                IN (:typeOfUses)" +
             "            AND REQUEST_ITEM_T.CREATED_DATE >= :fromDate AND REQUEST_ITEM_T.CREATED_DATE <= :toDate" +
             "            GROUP BY REQUEST_TYPE_T.REQUEST_TYPE_DESC,ITEM_T.OWNING_INST_ID, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.COLLECTION_GROUP_ID" +
             "            ORDER BY REQUEST_TYPE_T.REQUEST_TYPE_ID,ITEM_T.OWNING_INST_ID,REQUESTING_INST_ID,ITEM_T.COLLECTION_GROUP_ID",nativeQuery = true)
-    List<Object[]> pullTransactionReportCount(  @Param("owningInsts") List<String> owningInsts,
-                                                @Param("requestingInsts") List<String> requestingInsts,
-                                                @Param("typeOfUses") List<String> typeOfUses,
+    List<Object[]> pullTransactionReportCount(  @Param("owningInsts") List<Integer> owningInsts,
+                                                @Param("requestingInsts") List<Integer> requestingInsts,
+                                                @Param("typeOfUses") List<Integer> typeOfUses,
                                                 @Param("fromDate") Date fromDate,
                                                 @Param("toDate") Date toDate);
 
@@ -166,28 +165,27 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param cgdType
      * @return the list of Objects with pagination
      */
-    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, COLLECTION_GROUP_T.COLLECTION_GROUP_CODE, ITEM_T.BARCODE, REQUEST_ITEM_T.CREATED_DATE,REQUEST_ITEM_STATUS_T.REQUEST_STATUS_CODE" +
+    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, ITEM_T.COLLECTION_GROUP_ID, ITEM_T.BARCODE, REQUEST_ITEM_T.CREATED_DATE,REQUEST_ITEM_STATUS_T.REQUEST_STATUS_CODE" +
             " FROM  REQUEST_ITEM_T" +
             "    INNER JOIN ITEM_T ON REQUEST_ITEM_T.ITEM_ID = ITEM_T.ITEM_ID " +
             "    INNER JOIN REQUEST_ITEM_STATUS_T ON REQUEST_ITEM_T.REQUEST_STATUS_ID =  REQUEST_ITEM_STATUS_T.REQUEST_STATUS_ID" +
-            "    INNER JOIN COLLECTION_GROUP_T ON ITEM_T.COLLECTION_GROUP_ID = COLLECTION_GROUP_T.COLLECTION_GROUP_ID" +
             "    INNER JOIN REQUEST_TYPE_T ON REQUEST_ITEM_T.REQUEST_TYPE_ID = REQUEST_TYPE_T.REQUEST_TYPE_ID " +
             "WHERE ITEM_T.OWNING_INST_ID IN" +
-            "    (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:owningInsts))" +
+            "    (:owningInsts)" +
             "    AND REQUEST_ITEM_T.REQUESTING_INST_ID IN" +
-            "    (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:requestingInsts))" +
+            "    (:requestingInsts)" +
             "    AND REQUEST_ITEM_T.REQUEST_TYPE_ID" +
-            "    IN (SELECT REQUEST_TYPE_ID FROM REQUEST_TYPE_T WHERE REQUEST_TYPE_CODE IN (:typeOfUses))" +
+            "    IN (:typeOfUses)" +
             "    AND REQUEST_ITEM_T.CREATED_DATE >= :fromDate AND REQUEST_ITEM_T.CREATED_DATE <= :toDate " +
-            "    AND COLLECTION_GROUP_T.COLLECTION_GROUP_CODE IN (:cgdType) " +
+            "    AND ITEM_T.COLLECTION_GROUP_ID  IN (:cgdType)" +
             "ORDER BY ITEM_T.OWNING_INST_ID, REQUEST_ITEM_T.REQUESTING_INST_ID, REQUEST_ITEM_T.REQUEST_STATUS_ID,ITEM_T.COLLECTION_GROUP_ID DESC ",nativeQuery = true)
     List<Object[]> findTransactionReportsByOwnAndReqInstWithStatus(Pageable pageable,
-                                                 @Param("owningInsts") List<String> owningInsts,
-                                                 @Param("requestingInsts") List<String> requestingInsts,
-                                                 @Param("typeOfUses") List<String> typeOfUses,
+                                                 @Param("owningInsts") List<Integer> owningInsts,
+                                                 @Param("requestingInsts") List<Integer> requestingInsts,
+                                                 @Param("typeOfUses") List<Integer> typeOfUses,
                                                  @Param("fromDate") Date fromDate,
                                                  @Param("toDate") Date toDate,
-                                                 @Param("cgdType") List<String> cgdType);
+                                                 @Param("cgdType") List<Integer> cgdType);
 
     /**
      *
@@ -199,27 +197,26 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
      * @param cgdType
      * @return the list of Objects
      */
-    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, COLLECTION_GROUP_T.COLLECTION_GROUP_CODE, ITEM_T.BARCODE, REQUEST_ITEM_T.CREATED_DATE,REQUEST_ITEM_STATUS_T.REQUEST_STATUS_CODE" +
+    @Query(value = "SELECT REQUEST_TYPE_T.REQUEST_TYPE_CODE, REQUEST_ITEM_T.REQUESTING_INST_ID, ITEM_T.OWNING_INST_ID, ITEM_T.COLLECTION_GROUP_ID, ITEM_T.BARCODE, REQUEST_ITEM_T.CREATED_DATE,REQUEST_ITEM_STATUS_T.REQUEST_STATUS_CODE" +
             " FROM  REQUEST_ITEM_T" +
             "    INNER JOIN ITEM_T ON REQUEST_ITEM_T.ITEM_ID = ITEM_T.ITEM_ID " +
             "    INNER JOIN REQUEST_ITEM_STATUS_T ON REQUEST_ITEM_T.REQUEST_STATUS_ID =  REQUEST_ITEM_STATUS_T.REQUEST_STATUS_ID" +
-            "    INNER JOIN COLLECTION_GROUP_T ON ITEM_T.COLLECTION_GROUP_ID = COLLECTION_GROUP_T.COLLECTION_GROUP_ID" +
             "    INNER JOIN REQUEST_TYPE_T ON REQUEST_ITEM_T.REQUEST_TYPE_ID = REQUEST_TYPE_T.REQUEST_TYPE_ID " +
             "WHERE ITEM_T.OWNING_INST_ID IN" +
-            "    (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:owningInsts))" +
+            "    (:owningInsts)" +
             "    AND REQUEST_ITEM_T.REQUESTING_INST_ID IN" +
-            "    (SELECT INSTITUTION_ID FROM INSTITUTION_T WHERE INSTITUTION_CODE  IN (:requestingInsts))" +
+            "    (:requestingInsts)" +
             "    AND REQUEST_ITEM_T.REQUEST_TYPE_ID" +
-            "    IN (SELECT REQUEST_TYPE_ID FROM REQUEST_TYPE_T WHERE REQUEST_TYPE_CODE IN (:typeOfUses))" +
+            "    IN (:typeOfUses)" +
             "    AND REQUEST_ITEM_T.CREATED_DATE >= :fromDate AND REQUEST_ITEM_T.CREATED_DATE <= :toDate " +
-            "    AND COLLECTION_GROUP_T.COLLECTION_GROUP_CODE IN (:cgdType) " +
+            "    AND ITEM_T.COLLECTION_GROUP_ID IN (:cgdType)" +
             "ORDER BY ITEM_T.OWNING_INST_ID, REQUEST_ITEM_T.REQUESTING_INST_ID, REQUEST_ITEM_T.REQUEST_STATUS_ID,ITEM_T.COLLECTION_GROUP_ID DESC ",nativeQuery = true)
     List<Object[]> findTransactionReportsByOwnAndReqInstWithStatusExport(
-                                                        @Param("owningInsts") List<String> owningInsts,
-                                                        @Param("requestingInsts") List<String> requestingInsts,
-                                                        @Param("typeOfUses") List<String> typeOfUses,
+                                                        @Param("owningInsts") List<Integer> owningInsts,
+                                                        @Param("requestingInsts") List<Integer> requestingInsts,
+                                                        @Param("typeOfUses") List<Integer> typeOfUses,
                                                         @Param("fromDate") Date fromDate,
                                                         @Param("toDate") Date toDate,
-                                                        @Param("cgdType") List<String> cgdType);
+                                                        @Param("cgdType") List<Integer> cgdType);
 
 }
