@@ -6,6 +6,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.marc4j.marc.Record;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -295,7 +296,7 @@ public class RequestService {
         JSONObject jsonObject = new JSONObject();
         Boolean multipleItemBarcodes = false;
         Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
-        Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
             List<String> itemBarcodes = Arrays.asList(requestForm.getItemBarcodeInRequest().split(","));
             if (itemBarcodes.size() > 1) {
@@ -395,7 +396,7 @@ public class RequestService {
             jsonObject.put(ScsbConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
             if (CollectionUtils.isNotEmpty(frozenBarcodes)) {
-                jsonObject.put(ScsbConstants.NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE, ScsbConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(frozenBarcodes, ",") + " " + ScsbConstants.OWNING_INST_CIRCULATION_FREEZE_ERROR);
+                jsonObject.put(ScsbConstants.NOT_AVAILABLE_FROZEN_ITEMS_ERROR_MESSAGE, ScsbConstants.BARCODES_NOT_AVAILABLE + " - " + StringUtils.join(frozenBarcodes, ",") + ". " + ScsbConstants.OWNING_INST_CIRCULATION_FREEZE_ERROR);
             }
             if (CollectionUtils.isNotEmpty(invalidBarcodes)) {
                 jsonObject.put(ScsbConstants.ERROR_MESSAGE, ScsbCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(invalidBarcodes, ","));

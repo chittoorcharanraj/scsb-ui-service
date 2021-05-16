@@ -1,7 +1,7 @@
 package org.recap.controller.version;
 
 import org.json.JSONObject;
-import org.recap.ScsbCommonConstants;
+import org.recap.PropertyKeyConstants;
 import org.recap.controller.ScsbController;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
@@ -72,13 +72,13 @@ public class DashBoardController extends ScsbController {
     @GetMapping("/getFrozenInstitutions")
     public List<String> getFrozenInstitutions() {
         List<String> institutionWithBannerMessages = new ArrayList<>();
-        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(ScsbCommonConstants.KEY_ILS_ENABLE_CIRCULATION_FREEZE);
+        Map<String, String> propertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         for (Map.Entry<String, String> mapEntry : propertyMap.entrySet()) {
             String institutionCode = mapEntry.getKey();
             String circulationFreezeValue = mapEntry.getValue();
             boolean isCirculationFreezeEnabled = Boolean.parseBoolean(circulationFreezeValue);
             if (isCirculationFreezeEnabled) {
-                String institutionBannerMessage = propertyUtil.getPropertyByInstitutionAndKey(institutionCode, ScsbCommonConstants.KEY_ILS_CIRCULATION_FREEZE_MESSAGE);
+                String institutionBannerMessage = propertyUtil.getPropertyByInstitutionAndKey(institutionCode, PropertyKeyConstants.ILS.ILS_CIRCULATION_FREEZE_MESSAGE);
                 institutionWithBannerMessages.add(institutionBannerMessage);
             }
         }

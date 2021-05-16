@@ -464,7 +464,7 @@ public class RequestController extends ScsbController {
             requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
             searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         } finally {
             if (CollectionUtils.isNotEmpty(searchResultRows)) {
                 requestForm.setSearchResultRows(searchResultRows);
