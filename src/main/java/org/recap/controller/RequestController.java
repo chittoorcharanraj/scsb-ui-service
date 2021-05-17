@@ -10,7 +10,11 @@ import org.codehaus.jettison.json.JSONObject;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.DeliveryCodeEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
+import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.reports.TransactionReport;
 import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
@@ -509,7 +513,11 @@ public class RequestController extends ScsbController {
     private void populateRequestResults(List<SearchResultRow> searchResultRows, RequestItemEntity requestItemEntity) {
         SearchResultRow searchResultRow = setSearchResultRow(requestItemEntity);
         searchResultRow.setShowItems(true);
-        searchResultRow.setRequestCreatedBy((userDetailsRepository.findByLoginId(requestItemEntity.getCreatedBy())).getUserDescription());
+        try {
+            searchResultRow.setRequestCreatedBy((userDetailsRepository.findByLoginId(requestItemEntity.getCreatedBy())).getUserDescription());
+        } catch (NullPointerException e) {
+            searchResultRow.setRequestCreatedBy(requestItemEntity.getCreatedBy());
+        }
         if (StringUtils.isNotBlank(requestItemEntity.getEmailId())) {
             searchResultRow.setPatronEmailId(securityUtil.getDecryptedValue(requestItemEntity.getEmailId()));
         } else {
