@@ -74,15 +74,14 @@ public class RequestServiceUtil {
         String status = StringUtils.isNotBlank(requestForm.getStatus()) ? requestForm.getStatus().trim() : requestForm.getStatus();
         String institution = StringUtils.isNotBlank(requestForm.getInstitution()) ? requestForm.getInstitution().trim() : requestForm.getInstitution();
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
-        Integer imsLocationId = imsLocationDetailRepository.findByImsLocationCode(requestForm.getStorageLocation()).getId();
+        Integer imsLocationId = (!requestForm.getStorageLocation().isEmpty()) ? imsLocationDetailRepository.findByImsLocationCode(requestForm.getStorageLocation()).getId() : 0 ;
         Optional<InstitutionEntity> institutionEntityOptional = Optional.ofNullable(institutionEntity);
         if (!institutionEntityOptional.isPresent()) {
             institutionEntity = new InstitutionEntity();
             institutionEntity.setId(0);
         }
         Pageable pageable = PageRequest.of(requestForm.getPageNumber(), requestForm.getPageSize(), Sort.Direction.DESC, "id");
-        Page<RequestItemEntity> requestItemEntities = null;
-        requestItemEntities = (status.equals(ScsbConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode,imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status,imsLocationId, institutionEntity.getId());
+        Page<RequestItemEntity> requestItemEntities = (status.equals(ScsbConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode, imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status, imsLocationId, institutionEntity.getId());
 
         return requestItemEntities;
     }
