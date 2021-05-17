@@ -317,7 +317,7 @@ public class RequestService {
                     List<ItemEntity> itemEntities = getItemDetailsRepository().findByBarcodeAndCatalogingStatusAndIsDeletedFalse(barcode, ScsbCommonConstants.COMPLETE_STATUS);
                     if (CollectionUtils.isNotEmpty(itemEntities)) {
                         for (ItemEntity itemEntity : itemEntities) {
-                            OwnerCodeEntity ownerCodeEntity = getOwnerCodeDetailsRepository().findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode());
+                            OwnerCodeEntity ownerCodeEntity = getOwnerCodeDetailsRepository().findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode(), itemEntity.getOwningInstitutionId());
                             if (ownerCodeEntity != null) {
                                 showEDD = true;
                             }

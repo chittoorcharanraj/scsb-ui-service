@@ -59,8 +59,8 @@ public interface OwnerCodeDetailsRepository extends BaseRepository<OwnerCodeEnti
 /*
     @Query(value="select ownerCode from OwnerCodeEntity ownerCode where ownerCode.ownerCode =:ownerCode and ownerCode.recapDeliveryRestrictions LIKE ('%EDD%')")
    */
-    @Query(value="select OC.* from OWNER_CODES_T OC join OWN_DELIVERY_MAPPING_T ODM on OC.OWNER_CODE_ID = ODM.OWNER_CODE_ID JOIN DELIVERY_CODES_T DC ON DC.DELIVERY_CODE_ID = ODM.DELIVERY_CODE_ID WHERE DC.DELIVERY_CODE = 'EDD' AND OC.OWNER_CODE=:ownerCode", nativeQuery = true)
-    OwnerCodeEntity findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(@Param("ownerCode") String ownerCode);
+    @Query(value="select OC.* from OWNER_CODES_T OC join OWN_DELIVERY_MAPPING_T ODM on OC.OWNER_CODE_ID = ODM.OWNER_CODE_ID JOIN DELIVERY_CODES_T DC ON DC.DELIVERY_CODE_ID = ODM.DELIVERY_CODE_ID WHERE DC.DELIVERY_CODE = 'EDD' AND OC.OWNER_CODE=:ownerCode AND OC.INSTITUTION_ID=:institutionId", nativeQuery = true)
+    OwnerCodeEntity findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(@Param("ownerCode") String ownerCode, @Param("institutionId") Integer institutionId);
 
 
     @Query(value="select * from DeliveryCodeEntity DC join OWN_DELIVERY_MAPPING_T ODM  on ON DC.id = ODM.DELIVERY_CODE_ID  JOIN OwnerCodeEntity ON OC.id = ODM.OWNER_CODE_ID  WHERE ODM.DEL_RESTRICT_TYPE_ID in(select DEL_RESTRICT_TYPE_ID from DELIVERY_RESTRICT_TYPE_T where DEL_RESTRICT_TYPE=:deliveryCodeType) AND OC.ownerCode=:ownerCode", nativeQuery = true)
@@ -78,10 +78,10 @@ public interface OwnerCodeDetailsRepository extends BaseRepository<OwnerCodeEnti
     @Query(value="SELECT * FROM DELIVERY_CODES_T WHERE DELIVERY_CODE_ID IN (SELECT DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T WHERE OWNER_CODE_ID =:ownerCodeId AND REQUESTING_INST_ID =:requestingInstitutionId)", nativeQuery = true)
     List<DeliveryCodeEntity> findDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(@Param("ownerCodeId") Integer ownerCodeId, @Param("requestingInstitutionId") Integer requestingInstitutionId);
 
-    @Query(value="select DC.* from DELIVERY_CODES_T DC where DC.DELIVERY_CODE_ID in (select ODM.DELIVERY_CODE_ID from OWN_DELIVERY_MAPPING_T ODM where ODM.OWNER_CODE_ID =:ownerCodeId and ODM.REQUESTING_INST_ID = :institutionId) AND DC.IMS_LOCATION_ID IS NULL", nativeQuery = true)
+    @Query(value="select DC.* from DELIVERY_CODES_T DC where DC.DELIVERY_CODE_ID in (select ODM.DELIVERY_CODE_ID from OWN_DELIVERY_MAPPING_T ODM where ODM.OWNER_CODE_ID =:ownerCodeId and ODM.REQUESTING_INST_ID = :institutionId AND ODM.DEL_RESTRICT_TYPE_ID NOT IN (SELECT DRT.DEL_RESTRICT_TYPE_ID FROM DELIVERY_RESTRICT_TYPE_T DRT WHERE DRT.DEL_RESTRICT_TYPE = 'PWD')) AND DC.IMS_LOCATION_ID IS NULL", nativeQuery = true)
     List<Object[]> findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(@Param("ownerCodeId") Integer ownerCodeId, @Param("institutionId") Integer institutionId);
 
-    @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.REQUESTING_INST_ID =:requestingInstitutionId) AND DC.IMS_LOCATION_ID =:imsLocationId", nativeQuery = true)
+    @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.REQUESTING_INST_ID =:requestingInstitutionId AND ODM.DEL_RESTRICT_TYPE_ID NOT IN (SELECT DRT.DEL_RESTRICT_TYPE_ID FROM DELIVERY_RESTRICT_TYPE_T DRT WHERE DRT.DEL_RESTRICT_TYPE = 'PWD')) AND DC.IMS_LOCATION_ID =:imsLocationId", nativeQuery = true)
     List<Object[]> findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(@Param("ownerCodeId") Integer ownerCodeId, @Param("requestingInstitutionId") Integer requestingInstitutionId, @Param("imsLocationId") Integer imsLocationId);
 
     @Query(value="SELECT DC.* FROM DELIVERY_CODES_T DC WHERE DC.DELIVERY_CODE_ID IN (SELECT ODM.DELIVERY_CODE_ID FROM OWN_DELIVERY_MAPPING_T ODM WHERE ODM.OWNER_CODE_ID =:ownerCodeId AND ODM.DEL_RESTRICT_TYPE_ID = (SELECT DRT.DEL_RESTRICT_TYPE_ID FROM DELIVERY_RESTRICT_TYPE_T DRT WHERE DRT.DEL_RESTRICT_TYPE =:deliveryRestrictType))", nativeQuery = true)

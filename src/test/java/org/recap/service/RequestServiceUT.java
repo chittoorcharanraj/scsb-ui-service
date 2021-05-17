@@ -185,7 +185,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -211,7 +211,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -238,7 +238,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -265,7 +265,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(Mockito.any(),Mockito.anyString())).thenReturn(userDetailsFormAuth);
         RequestForm requestForm =requestService.setFormDetailsForRequest(model,request,userDetailsForm);
         assertNotNull(requestForm);
@@ -299,7 +299,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
@@ -342,7 +342,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
@@ -384,7 +384,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
@@ -426,7 +426,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
@@ -467,7 +467,7 @@ public class RequestServiceUT{
         List<BibliographicEntity> bibliographicEntities=new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(itemEntity.getBibliographicEntities()).thenReturn(bibliographicEntities);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(Mockito.anyString(),Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(Mockito.any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
