@@ -8,14 +8,20 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobEntity;
+import org.recap.model.jpa.JobParamDataEntity;
+import org.recap.model.jpa.JobParamEntity;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
 import org.recap.model.search.ScheduleJobsForm;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.JobDetailsRepository;
+import org.recap.repository.jpa.JobParamDetailRepository;
 import org.recap.service.RestHeaderService;
 import org.recap.util.UserAuthUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,8 +31,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +58,12 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     JobDetailsRepository jobDetailsRepository;
 
     @Mock
+    JobParamDetailRepository jobParamDetailRepository;
+
+    @Mock
+    private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Mock
     RestTemplate restTemplate;
 
     @Mock
@@ -60,6 +71,9 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
 
     @Mock
     HttpHeaders httpHeaders;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     @Test
     public void displayJobs(){
@@ -130,6 +144,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
+
     @Test
     public void scheduleJobException(){
         ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
@@ -145,6 +160,42 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.<Class<ScheduleJobRequest>>any());
         ScheduleJobsForm jobsForm = scheduleJobsController.scheduleJob(scheduleJobsForm,request);
         assertNotNull(jobsForm);
+    }
+
+    @Test
+    public void getJobParameters(){
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        scheduleJobsForm.setJobName("Test");
+        when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
+        when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        when(jobDetailsRepository.findByJobName(any())).thenReturn(getJobEntity());
+        when(jobParamDetailRepository.findByJobName(any())).thenReturn(getJobParamEntity());
+        ResponseEntity responseEntity = new ResponseEntity<>(scheduleJobsForm, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<ScheduleJobRequest>>any());
+        ScheduleJobsForm jobsForm = scheduleJobsController.getJobParameters(scheduleJobsForm,request);
+        assertNotNull(jobsForm);
+    }
+
+    @Test
+    public void getInstitutions() {
+        List<String> institutions = new ArrayList<>();
+        institutions.add("Test");
+        when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
+        when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(Collections.singletonList(getInstitutionEntity()));
+        when(jobParamDetailRepository.findByJobName(any())).thenReturn(getJobParamEntity());
+        ResponseEntity responseEntity = new ResponseEntity<>(institutions, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<ScheduleJobRequest>>any());
+        List<String> institutionsList = scheduleJobsController.getInstitutions();
+        assertNotNull(institutionsList);
     }
 
     private ScheduleJobResponse getScheduleJobResponse() {
@@ -164,6 +215,27 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         jobEntity.setStatus("Success");
         jobEntity.setNextRunTime(new Date());
         return jobEntity;
+    }
+
+    private JobParamEntity getJobParamEntity() {
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        jobParamEntity.setId(1);
+        jobParamEntity.setJobName("Test");
+        JobParamDataEntity jobParamDataEntity = new JobParamDataEntity();
+        jobParamDataEntity.setId(1);
+        jobParamDataEntity.setRecordNum("1");
+        jobParamDataEntity.setParamName("institution");
+        jobParamDataEntity.setParamValue("test");
+        jobParamEntity.setJobParamDataEntities(Collections.singletonList(jobParamDataEntity));
+        return jobParamEntity;
+    }
+
+    private InstitutionEntity getInstitutionEntity() {
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionCode("Test");
+        institutionEntity.setInstitutionName("Test");
+        return institutionEntity;
     }
 
     private UserDetailsForm getUserDetailsForm() {
