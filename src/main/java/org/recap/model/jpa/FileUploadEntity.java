@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "on_boarding_new_inst_t", schema = "recap", catalog = "")
+@Table(name = "on_boarding_new_inst_t", catalog = "")
 @Getter
 @Setter
 @AttributeOverride(
