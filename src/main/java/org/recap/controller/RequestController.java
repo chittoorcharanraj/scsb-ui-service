@@ -359,7 +359,7 @@ public class RequestController extends ScsbController {
             }
 
             if (StringUtils.isNotBlank(requestForm.getDeliveryLocationInRequest())) {
-                DeliveryCodeEntity deliveryCodeEntity = deliveryCodeDetailsRepository.findByDeliveryCode(requestForm.getDeliveryLocationInRequest());
+                DeliveryCodeEntity deliveryCodeEntity = deliveryCodeDetailsRepository.findByDeliveryCodeAndActive(requestForm.getDeliveryLocationInRequest(), "Y");
                 if (null != deliveryCodeEntity) {
                     itemRequestInformation.setDeliveryLocation(deliveryCodeEntity.getDeliveryCode());
                 }
