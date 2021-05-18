@@ -39,7 +39,7 @@ public class Main {
     /**
      * The Tomcat max parameter count.
      */
-    @Value("${" + PropertyKeyConstants.TOMCAT_MAX_PARMETER_COUNT + "}")
+    @Value("${" + PropertyKeyConstants.TOMCAT_MAX_PARAMETER_COUNT + "}")
     Integer tomcatMaxParameterCount;
 
     /**
