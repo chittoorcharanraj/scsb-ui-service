@@ -19,6 +19,7 @@ public class ScheduleJobsForm {
     private String jobDescription;
     private String cronExpression;
     private String scheduleType;
+    private String jobParameter;
     private String message;
     private String errorMessage;
     private List<JobEntity> jobEntities = new ArrayList<>();

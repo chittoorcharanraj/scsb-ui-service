@@ -1,17 +1,23 @@
 package org.recap.controller;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobEntity;
+import org.recap.model.jpa.JobParamEntity;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
 import org.recap.model.search.ScheduleJobsForm;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.JobDetailsRepository;
+import org.recap.repository.jpa.JobParamDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +31,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by rajeshbabuk on 4/4/17.
@@ -40,6 +48,15 @@ public class ScheduleJobsController extends AbstractController {
 
     @Autowired
     private JobDetailsRepository jobDetailsRepository;
+
+    @Autowired
+    private JobParamDetailRepository jobParamDetailRepository;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Value("${scsb.support.institution}")
+    private String supportInstitution;
 
     /**
      * Gets rest template.
@@ -84,7 +101,6 @@ public class ScheduleJobsController extends AbstractController {
      */
     @PostMapping("/jobs")
     public ScheduleJobsForm scheduleJob(@RequestBody ScheduleJobsForm scheduleJobsForm, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
         ScheduleJobResponse scheduleJobResponse = null;
         try {
             ScheduleJobRequest scheduleJobRequest = new ScheduleJobRequest();
@@ -95,21 +111,10 @@ public class ScheduleJobsController extends AbstractController {
             HttpEntity<ScheduleJobRequest> httpEntity = new HttpEntity<>(scheduleJobRequest, getRestHeaderService().getHttpHeaders());
 
             ResponseEntity<ScheduleJobResponse> responseEntity = getRestTemplate().exchange(getScsbUrl() + ScsbCommonConstants.URL_SCHEDULE_JOBS, HttpMethod.POST, httpEntity, ScheduleJobResponse.class);
-            scheduleJobResponse = responseEntity.getBody();
+            scheduleJobResponse = responseEntity.getBody() != null ? responseEntity.getBody() : new ScheduleJobResponse();
             String message = scheduleJobResponse.getMessage();
             if (StringUtils.containsIgnoreCase(message, ScsbCommonConstants.SUCCESS)) {
-                JobEntity jobEntity = jobDetailsRepository.findByJobName(scheduleJobsForm.getJobName());
-                if (null != jobEntity) {
-                    if (ScsbConstants.UNSCHEDULE.equals(scheduleJobsForm.getScheduleType())) {
-                        jobEntity.setStatus(ScsbConstants.UNSCHEDULED);
-                        jobEntity.setNextRunTime(null);
-                    } else {
-                        jobEntity.setStatus(ScsbConstants.SCHEDULED);
-                        jobEntity.setCronExpression(scheduleJobsForm.getCronExpression());
-                        jobEntity.setNextRunTime(scheduleJobResponse.getNextRunTime());
-                    }
-                    jobDetailsRepository.save(jobEntity);
-                }
+                saveJob(scheduleJobsForm, scheduleJobResponse.getNextRunTime());
                 scheduleJobsForm.setMessage(scheduleJobResponse.getMessage());
             } else {
                 scheduleJobsForm.setErrorMessage(scheduleJobResponse.getMessage());
@@ -119,5 +124,67 @@ public class ScheduleJobsController extends AbstractController {
             scheduleJobsForm.setErrorMessage(e.getMessage());
         }
         return scheduleJobsForm;
+    }
+
+    /**
+     * Get job parameters by job name
+     *
+     * @param scheduleJobsForm the schedule jobs form
+     * @return the model
+     */
+    @PostMapping("/job-parameters")
+    public ScheduleJobsForm getJobParameters(@RequestBody ScheduleJobsForm scheduleJobsForm, HttpServletRequest request) {
+        try {
+            JobEntity jobEntity = jobDetailsRepository.findByJobName(scheduleJobsForm.getJobName());
+            if (null != jobEntity) {
+                JobParamEntity jobParamEntity = jobParamDetailRepository.findByJobName(jobEntity.getJobName());
+                if (null != jobParamEntity
+                        && CollectionUtils.isNotEmpty(jobParamEntity.getJobParamDataEntities())
+                        && ScsbCommonConstants.INSTITUTION.equalsIgnoreCase(jobParamEntity.getJobParamDataEntities().get(0).getParamName())) {
+                    scheduleJobsForm.setJobParameter(jobParamEntity.getJobParamDataEntities().get(0).getParamValue());
+                    scheduleJobsForm.setMessage(ScsbCommonConstants.SUCCESS);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            scheduleJobsForm.setErrorMessage(e.getMessage());
+        }
+        return scheduleJobsForm;
+    }
+
+    /**
+     * Get All Institutions except support institution
+     * @return instituions
+     */
+    @GetMapping("/get-institutions")
+    public List<String> getInstitutions() {
+       return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+    }
+
+    /**
+     * Save Job Entity
+     * @param scheduleJobsForm Schedule Jobs Form
+     * @param nextRunTime Next Run Time
+     */
+    private void saveJob(ScheduleJobsForm scheduleJobsForm, Date nextRunTime) {
+        JobEntity jobEntity = jobDetailsRepository.findByJobName(scheduleJobsForm.getJobName());
+        if (null != jobEntity) {
+            if (ScsbConstants.UNSCHEDULE.equals(scheduleJobsForm.getScheduleType())) {
+                jobEntity.setStatus(ScsbConstants.UNSCHEDULED);
+                jobEntity.setNextRunTime(null);
+            } else {
+                jobEntity.setStatus(ScsbConstants.SCHEDULED);
+                jobEntity.setCronExpression(scheduleJobsForm.getCronExpression());
+                jobEntity.setNextRunTime(nextRunTime);
+            }
+            jobDetailsRepository.save(jobEntity);
+            if (StringUtils.isNotBlank(scheduleJobsForm.getJobParameter())) {
+                JobParamEntity jobParamEntity = jobParamDetailRepository.findByJobName(jobEntity.getJobName());
+                if (CollectionUtils.isNotEmpty(jobParamEntity.getJobParamDataEntities())) {
+                    jobParamEntity.getJobParamDataEntities().get(0).setParamValue(scheduleJobsForm.getJobParameter());
+                    jobParamDetailRepository.save(jobParamEntity);
+                }
+            }
+        }
     }
 }
