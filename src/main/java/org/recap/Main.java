@@ -39,13 +39,13 @@ public class Main {
     /**
      * The Tomcat max parameter count.
      */
-    @Value("${tomcat.maxParameterCount}")
+    @Value("${" + PropertyKeyConstants.TOMCAT_MAX_PARMETER_COUNT + "}")
     Integer tomcatMaxParameterCount;
 
     /**
      * The Tomcat secure.
      */
-    @Value("${server.secure}")
+    @Value("${" + PropertyKeyConstants.SERVER_SECURE + "}")
     boolean tomcatSecure;
 
     /**

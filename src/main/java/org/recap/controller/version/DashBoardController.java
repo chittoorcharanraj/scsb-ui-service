@@ -27,10 +27,10 @@ public class DashBoardController extends ScsbController {
 
     private static final Logger logger = LoggerFactory.getLogger(DashBoardController.class);
 
-    @Value("${version.number}")
+    @Value("${" + PropertyKeyConstants.VERSION_NUMBER + "}")
     private String versionNumberService;
 
-    @Value("${scsb.email.assist.to}")
+    @Value("${" + PropertyKeyConstants.SCSB_EMAIL_ASSIST_TO + "}")
     private String recapAssistanceEmailTo;
 
     @Autowired

@@ -3,6 +3,7 @@ package org.recap.util;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
@@ -77,13 +78,12 @@ public class HelperUtil {
     public static String getLogoutUrl(String institutionCode) {
         String casLogoutUrl;
         PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
-        String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, "auth.type");
+        String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode,  PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
         if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
-            casLogoutUrl = propertyValueProvider.getProperty(ScsbConstants.SCSB_UI_URL) + "home"; // Todo : Need to get the corresponding logout url from NYPL
+            casLogoutUrl = propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL) + "home"; // Todo : Need to get the corresponding logout url from NYPL
         } else {
-            String urlProperty = ScsbConstants.AUTH + ScsbConstants.SERVICE_LOGOUT;
-            String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, urlProperty);
-            String redirectUri = propertyValueProvider.getProperty(ScsbConstants.LOGOUT_REDIRECT_URI);
+            String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_LOGOUT);
+            String redirectUri = propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_APP_LOGOUT_REDIRECT_URI);
             casLogoutUrl = url + "" + redirectUri;
         }
         return casLogoutUrl;

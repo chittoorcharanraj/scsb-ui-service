@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
@@ -23,7 +24,7 @@ public class SearchUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
     /**

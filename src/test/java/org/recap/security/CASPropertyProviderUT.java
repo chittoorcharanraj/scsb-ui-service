@@ -2,6 +2,7 @@ package org.recap.security;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.cas.ServiceProperties;
@@ -16,10 +17,10 @@ public class CASPropertyProviderUT extends BaseTestCase {
     @Autowired
     CASPropertyProvider casPropertyProvider;
 
-    @Value("${scsb.app.service.security}")
+    @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_SECURITY + "}")
     private String security;
 
-    @Value("${scsb.app.service.home}")
+    @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_HOME + "}")
     private String home;
 
     @Test

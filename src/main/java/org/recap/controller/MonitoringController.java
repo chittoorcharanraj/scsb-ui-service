@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.security.UserManagementService;
 import org.recap.util.MonitoringUtil;
@@ -24,19 +25,19 @@ public class MonitoringController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringController.class);
 
-    @Value("${monitoring.embed.ui.url}")
+    @Value("${" + PropertyKeyConstants.MONITORING_EMBED_UI_URL + "}")
     private String scsbURL;
 
-    @Value("${monitoring.embed.docker.url}")
+    @Value("${" + PropertyKeyConstants.MONITORING_EMBED_DOCKER_URL + "}")
     private String dockerURL;
 
-    @Value("${monitoring.embed.aws.url}")
+    @Value("${" + PropertyKeyConstants.MONITORING_EMBED_AWS_URL + "}")
     private String awsURL;
 
-    @Value("${logging.ui.url}")
+    @Value("${" + PropertyKeyConstants.LOGGING_UI_URL + "}")
     private String loggingURL;
 
-    @Value("${logging.embed.ui.url}")
+    @Value("${" + PropertyKeyConstants.LOGGING_EMBED_UI_URL + "}")
     private String embedLogURL;
 
 

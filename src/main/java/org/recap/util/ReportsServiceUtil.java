@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.reports.ReportsRequest;
@@ -25,7 +26,7 @@ public class ReportsServiceUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsServiceUtil.class);
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
     @Autowired

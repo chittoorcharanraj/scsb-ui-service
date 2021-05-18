@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.recap.PropertyKeyConstants;
 import org.recap.service.RestHeaderService;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
@@ -13,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 @Setter
 public class AbstractController {
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
-    @Value("${scsb.auth.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_AUTH_URL + "}")
     private String scsbShiro;
 
     @Autowired
