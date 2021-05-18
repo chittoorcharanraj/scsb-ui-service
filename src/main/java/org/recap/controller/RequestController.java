@@ -162,6 +162,7 @@ public class RequestController extends ScsbController {
             requestForm.resetPageNumber();
             setFormValues(requestForm, userDetails);
             requestForm.setStatus("");
+            requestForm.setItemBarcode("");
             requestForm = searchAndSetResults(requestForm);
         } catch (Exception exception) {
             logger.error(ScsbCommonConstants.LOG_ERROR, exception);
