@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
@@ -108,13 +109,13 @@ public class RequestControllerIT extends BaseControllerUT {
     @Mock
     RestTemplate restTemplate;
 
-    @Value("${scsb.gateway.url}")
+    @Value("${"+ PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     String scsbUrl;
 
-    @Value("${scsb.auth.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_AUTH_URL + "}")
     String scsbShiro;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     @Autowired

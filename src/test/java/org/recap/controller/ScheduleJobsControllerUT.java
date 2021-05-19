@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.JobEntity;
@@ -72,7 +73,7 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     @Mock
     HttpHeaders httpHeaders;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     @Test

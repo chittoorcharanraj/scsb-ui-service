@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.dataexportinfo.DataExportResponse;
@@ -39,9 +40,9 @@ public class DataExportsRecentInfoController {
     private static final Logger logger = LoggerFactory.getLogger(DataExportsRecentInfoController.class);
     @Autowired
     HomeController homeController;
-    @Value("${scsb.etl.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_ETL_URL + "}")
     private String scsbEtlUrl;
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
     @Autowired
     private UserAuthUtil userAuthUtil;

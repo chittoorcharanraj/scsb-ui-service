@@ -2,6 +2,7 @@ package org.recap.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
@@ -73,10 +74,10 @@ public class BulkRequestService {
     @Autowired
     private SecurityUtil securityUtil;
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm,HttpServletRequest request) {

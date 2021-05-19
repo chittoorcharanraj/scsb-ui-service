@@ -1,6 +1,7 @@
 package org.recap.security;
 
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
@@ -197,12 +198,11 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
         logger.debug("Calling Authentication entry point.");
         String institution = HelperUtil.getInstitutionFromRequest(request);
         if (StringUtils.isNotBlank(institution)) {
-            String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, "auth.type");
+            String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
             if(StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else {
-                String urlProperty =  ScsbConstants.AUTH + ScsbConstants.SERVICE_LOGIN;
-                String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
+                String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_LOGIN);
 
                 //Calling cas entry point based on institution type.
                 CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
