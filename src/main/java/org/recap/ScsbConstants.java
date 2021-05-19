@@ -140,12 +140,6 @@ public class ScsbConstants {
     public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
     public static final String ANONYMOUS_USER = "anonymousUser";
     public static final String SCSB_INSTITUTION_CODE = "RECAP_INSTITUTION_CODE";
-    public static final String CAS = "cas.";
-    public static final String SERVICE_LOGIN = ".service.login";
-    public static final String SERVICE_LOGOUT = ".service.logout";
-    public static final String SERVICE_PREFIX = ".service.prefix";
-    public static final String LOGOUT_REDIRECT_URI = "scsb.app.logout.redirect.uri";
-    public static final String SCSB_UI_URL = "scsb.ui.url";
     public static final String STATUS = "status";
     public static final String CREATED = "CREATED";
     public static final String SEARCH_REQUEST_ACTIVE = "active";

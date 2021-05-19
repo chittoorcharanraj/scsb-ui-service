@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
 import org.recap.filter.SCSBInstitutionFilter;
@@ -34,13 +35,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableOAuth2Sso
 public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${cas.default.url.prefix}")
+    @Value("${" + PropertyKeyConstants.CAS_DEFAULT_URL_PREFIX + "}")
     private String casUrlPrefix;
 
-    @Value("${cas.default.service.logout}")
+    @Value("${" + PropertyKeyConstants.CAS_DEFAULT_SERVICE_LOGOUT + "}")
     private String casServiceLogout;
 
-    @Value("${scsb.app.service.logout}")
+    @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_LOGOUT + "}")
     private String appServiceLogout;
 
     @Autowired

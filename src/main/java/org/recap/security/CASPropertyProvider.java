@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.recap.PropertyKeyConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.stereotype.Component;
@@ -10,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class CASPropertyProvider {
 
-    @Value("${scsb.app.service.security}")
+    @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_SECURITY + "}")
     private String security;
 
-    @Value("${scsb.app.service.home}")
+    @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_HOME + "}")
     private String home;
 
     /**

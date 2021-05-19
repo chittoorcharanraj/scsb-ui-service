@@ -2,6 +2,7 @@ package org.recap.util;
 
 import com.csvreader.CsvWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
@@ -45,7 +46,7 @@ public class ReportsUtil {
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     /**

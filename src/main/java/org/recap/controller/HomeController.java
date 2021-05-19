@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
@@ -50,7 +51,7 @@ public class HomeController extends AbstractController {
     @Autowired
     private  UserManagementService userManagementService;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     /**
