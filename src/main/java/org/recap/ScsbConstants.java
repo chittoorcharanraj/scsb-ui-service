@@ -72,6 +72,7 @@ public class ScsbConstants {
     public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL = "auth/touchExistingSession";
     public static final String SCSB_SHIRO_REQUEST_URL = "auth/request";
     public static final String SCSB_SHIRO_COLLECTION_URL = "auth/collection";
+    public static final String AUTH_PATH = "auth/";
     //  REPORT LOGS
     public static final String EXCEPTION_LOGS_TRANSACTION = "Exception Occured in while pulling Transaction Reports :: {}";
     public static final String EXCEPTION_LOGS_REQUEST_EXCEPTIONS = "Exception Occured while Exporting Request Exception Reports :: {}";
@@ -212,7 +213,7 @@ public class ScsbConstants {
     public static final String FALSE_STRING = "FALSE";
     public static final String TRUE_STRING = "TRUE";
     public static final String USER_AUTHENTICATED = "user_authenticated";
-
+    public static final String API_PATH = "api_path";
     private ScsbConstants() {
         //Do nothing
     }

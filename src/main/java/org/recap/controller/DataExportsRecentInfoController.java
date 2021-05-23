@@ -49,17 +49,6 @@ public class DataExportsRecentInfoController {
     @Autowired
     private  UserManagementService userManagementService;
 
-    @GetMapping("/checkPermission")
-    public boolean validateDataExport(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_DATAEXPORT_URL);
-        if (authenticated) {
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.SEARCH, logger);
-        }
-    }
-
     @GetMapping("/getRecentDataExportsInfo")
     public S3RecentDataExportInfoList getRecentDataExportsInfo(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

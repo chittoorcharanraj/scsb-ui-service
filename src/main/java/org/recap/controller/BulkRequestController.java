@@ -62,18 +62,6 @@ public class BulkRequestController extends AbstractController {
     @Value("${scsb.support.institution}")
     private String supportInstitution;
 
-    @GetMapping("/checkPermission")
-    public boolean bulkRequest(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_BULK_REQUEST_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.BULKREQUEST_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.BULK_REQUEST_CHECK, logger);
-        }
-    }
-
     @PostMapping("/loadCreateRequest")
     public BulkRequestForm loadCreateRequest(@RequestBody BulkRequestForm bulkRequestForm) {
         return loadCreateRequestPage(bulkRequestForm);

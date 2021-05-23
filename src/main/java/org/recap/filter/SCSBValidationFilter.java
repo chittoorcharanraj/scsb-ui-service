@@ -1,5 +1,6 @@
 package org.recap.filter;
 
+import com.ctc.wstx.util.StringUtil;
 import org.apache.http.HttpStatus;
 import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 
 
 public class SCSBValidationFilter implements Filter {
@@ -29,8 +31,10 @@ public class SCSBValidationFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         var user_authenticated = ScsbConstants.FALSE_STRING;
         try {
-            HttpSession session = httpServletRequest.getSession(false);
-            boolean authenticated = getUserAuthUtil().isAuthenticated(session, ScsbConstants.SCSB_SHIRO_SEARCH_URL);
+            HttpSession session = httpServletRequest.getSession(ScsbConstants.FALSE);
+            Optional<String> API_PATH = Optional.ofNullable(httpServletRequest.getHeader(ScsbConstants.API_PATH));
+            API_PATH = (API_PATH.isEmpty()) ? Optional.ofNullable(ScsbConstants.SEARCH.toLowerCase()) : API_PATH;
+            boolean authenticated = getUserAuthUtil().isAuthenticated(session, ScsbConstants.AUTH_PATH + API_PATH.get());
             user_authenticated = (authenticated) ? ScsbConstants.TRUE_STRING : ScsbConstants.FALSE_STRING;
             httpServletResponse.setHeader(ScsbConstants.USER_AUTHENTICATED, user_authenticated);
         } catch (Exception e) {

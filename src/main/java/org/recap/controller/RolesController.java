@@ -61,24 +61,6 @@ public class RolesController extends AbstractController {
     private  UserManagementService userManagementService;
 
     /**
-     * Render the roles UI page for the scsb application.
-     *
-     * @param request the request
-     * @return the string
-     */
-    @GetMapping("/checkPermission")
-    public boolean roles(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.ROLES_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.ROLES, logger);
-        }
-    }
-
-    /**
      * Gets role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form

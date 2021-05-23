@@ -77,19 +77,6 @@ public class SearchRecordsController extends ScsbController {
         return institutionDetailsRepository;
     }
 
-    @GetMapping("/checkPermission")
-    public boolean searchRecords(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.SEARCH_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.SEARCH, logger);
-        }
-    }
-
-
     /**
      * Performs search on solr and returns the results as rows to get displayed in the search UI page.
      *
