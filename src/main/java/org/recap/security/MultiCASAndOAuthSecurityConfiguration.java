@@ -4,12 +4,14 @@ import org.recap.ScsbConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
 import org.recap.filter.SCSBInstitutionFilter;
 import org.recap.filter.SCSBLogoutFilter;
+import org.recap.filter.SCSBValidationFilter;
 import org.recap.service.CustomUserDetailsService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
@@ -53,7 +55,6 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // @formatter:off
-
         OAuth2SsoProperties sso = getApplicationContext().getBean(OAuth2SsoProperties.class);
 
         LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(sso.getLoginPath());
@@ -118,6 +119,14 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         return casAuthenticationFilter;
     }
 
+    @Bean
+    FilterRegistrationBean<SCSBValidationFilter> filterRegistrationBean(){
+        FilterRegistrationBean<SCSBValidationFilter>  filterRegistrationBean = new FilterRegistrationBean();
+        SCSBValidationFilter scsbValidationFilter = new SCSBValidationFilter();
+        filterRegistrationBean.setFilter(scsbValidationFilter);
+        filterRegistrationBean.addUrlPatterns("/collection/*","/search/*","/request/*","/reports/*","/userRoles/*","/bulkRequest/*","/roles/*","/jobs/*","/openMarcRecordByBibId/*","/admin/*","/dataExport/*","/monitoring/*");
+        return filterRegistrationBean;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

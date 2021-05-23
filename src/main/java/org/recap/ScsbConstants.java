@@ -56,7 +56,7 @@ public class ScsbConstants {
     public static final Boolean IS_EXPORT_FALSE = false;
     public static final Boolean IS_EXPORT_TRUE = true;
     public static final String REPORTS = "REPORTS";
-    public static  final String COUNT = "COUNT";
+    public static final String COUNT = "COUNT";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
     public static final String SCSB_UPDATE_CGD_URL = "updateCgdService/updateCgd";
@@ -87,7 +87,7 @@ public class ScsbConstants {
     public static final String LOGOUT = "logout";
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String AUTH = "auth";
-    public static  final  String LOG_USER_LOGOUT_URL = "/logout";
+    public static final String LOG_USER_LOGOUT_URL = "/logout";
     public static final String USER_ID = "id";
     public static final String USER_INSTITUTION = "userInstitution";
     public static final String REQUEST_PRIVILEGE = "isRequestAllowed";
@@ -178,7 +178,7 @@ public class ScsbConstants {
     //EXCEPTION REPORTS
     public static final String REPORTS_EXCEPTION = "EXCEPTION";
     public static final String ID = "id";
-    public static  final String NA = "NA";
+    public static final String NA = "NA";
 
     public static final String UNSCHEDULE = "Unschedule";
     public static final String UNSCHEDULED = "Unscheduled";
@@ -208,6 +208,10 @@ public class ScsbConstants {
     public static final String SUCCESSED = "Successed";
     public static final String FAILED = "Failed";
     public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
+    //AUTHENTICATN
+    public static final String FALSE_STRING = "FALSE";
+    public static final String TRUE_STRING = "TRUE";
+    public static final String USER_AUTHENTICATED = "user_authenticated";
 
     private ScsbConstants() {
         //Do nothing
