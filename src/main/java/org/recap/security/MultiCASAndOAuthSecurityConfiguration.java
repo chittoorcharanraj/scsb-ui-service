@@ -124,7 +124,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         FilterRegistrationBean<SCSBValidationFilter>  filterRegistrationBean = new FilterRegistrationBean();
         SCSBValidationFilter scsbValidationFilter = new SCSBValidationFilter();
         filterRegistrationBean.setFilter(scsbValidationFilter);
-        filterRegistrationBean.addUrlPatterns("/collection/*","/search/*","/request/*","/reports/*","/userRoles/*","/bulkRequest/*","/roles/*","/jobs/*","/openMarcRecordByBibId/*","/admin/*","/dataExport/*","/monitoring/*");
+        filterRegistrationBean.addUrlPatterns("/collection/*","/search/*","/request/*","/reports/*","/userRoles/*","/bulkRequest/*","/roles/*","/jobs/*","/openMarcRecordByBibId/*","/admin/*","/dataExport/*");
         return filterRegistrationBean;
     }
 
