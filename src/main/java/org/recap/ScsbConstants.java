@@ -56,6 +56,7 @@ public class ScsbConstants {
     public static final Boolean IS_EXPORT_FALSE = false;
     public static final Boolean IS_EXPORT_TRUE = true;
     public static final String REPORTS = "REPORTS";
+    public static final String EXPORT = "EXPORT";
     public static final String COUNT = "COUNT";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
