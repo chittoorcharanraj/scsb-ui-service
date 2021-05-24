@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCase;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.deaccession.DeAccessionItem;
@@ -89,7 +90,7 @@ public class CollectionServiceUtilIT extends BaseTestCase {
     @Mock
     private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     String scsbUrl;
 
     @Mock

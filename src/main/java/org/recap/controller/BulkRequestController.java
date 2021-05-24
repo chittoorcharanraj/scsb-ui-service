@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
@@ -59,7 +60,7 @@ public class BulkRequestController extends AbstractController {
     @Autowired
     private  UserManagementService userManagementService;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     @PostMapping("/loadCreateRequest")

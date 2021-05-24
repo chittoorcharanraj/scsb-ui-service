@@ -12,7 +12,9 @@ public interface DeliveryCodeDetailsRepository extends BaseRepository<DeliveryCo
      * Find by delivery code delivery code entity.
      *
      * @param deliveryCode the delivery code
+     * @param owningInstitutionId Instituion Id
+     * @param active active flag
      * @return the delivery code entity
      */
-    DeliveryCodeEntity findByDeliveryCodeAndActive(@Param("deliveryCode") String deliveryCode, @Param("active") String active);
+    DeliveryCodeEntity findByDeliveryCodeAndOwningInstitutionIdAndActive(@Param("deliveryCode") String deliveryCode, @Param("owningInstitutionId") Integer owningInstitutionId, @Param("active") char active);
 }

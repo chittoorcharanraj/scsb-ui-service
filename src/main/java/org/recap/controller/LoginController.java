@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.repository.jpa.UserDetailsRepository;
@@ -87,7 +88,7 @@ public class LoginController extends AbstractController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = auth.getName();
             String institutionFromRequest = request.getParameter("institution");
-            String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest, "auth.type");
+            String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest,  PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
             if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 OAuth2Authentication oauth = (OAuth2Authentication) auth;
                 String tokenString = ((OAuth2AuthenticationDetails) oauth.getDetails()).getTokenValue();

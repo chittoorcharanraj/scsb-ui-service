@@ -6,6 +6,7 @@ import org.jasig.cas.client.proxy.Cas20ProxyRetriever;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.security.SCSBCas20ServiceTicketValidator;
 import org.recap.util.HelperUtil;
@@ -148,8 +149,7 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
 
-            String urlProperty = ScsbConstants.AUTH + ScsbConstants.SERVICE_PREFIX;
-            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, urlProperty);
+            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_PREFIX);
 
             SCSBCas20ServiceTicketValidator ticketValidator = (SCSBCas20ServiceTicketValidator) this.ticketValidator;
             ticketValidator.setCasServerUrlPrefix(casServerUrl);

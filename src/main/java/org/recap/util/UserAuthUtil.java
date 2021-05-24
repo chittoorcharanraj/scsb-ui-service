@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.service.RestHeaderService;
@@ -26,7 +27,7 @@ public class UserAuthUtil {
     private static final Logger logger = LoggerFactory.getLogger(UserAuthUtil.class);
     @Autowired
     RestHeaderService restHeaderService;
-    @Value("${scsb.auth.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_AUTH_URL + "}")
     private String scsbShiro;
 
     public RestHeaderService getRestHeaderService() {

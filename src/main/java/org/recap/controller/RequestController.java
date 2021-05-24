@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
@@ -109,7 +110,7 @@ public class RequestController extends ScsbController {
     @Autowired
     private UserDetailsRepository userDetailsRepository;
 
-    @Value("${scsb.support.institution}")
+    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
     public RequestService getRequestService() {
@@ -347,7 +348,8 @@ public class RequestController extends ScsbController {
             }
 
             if (StringUtils.isNotBlank(requestForm.getDeliveryLocationInRequest())) {
-                DeliveryCodeEntity deliveryCodeEntity = deliveryCodeDetailsRepository.findByDeliveryCodeAndActive(requestForm.getDeliveryLocationInRequest(), "Y");
+                InstitutionEntity institutionEntity = getInstitutionDetailsRepository().findByInstitutionCode(requestForm.getRequestingInstitution());
+                DeliveryCodeEntity deliveryCodeEntity = deliveryCodeDetailsRepository.findByDeliveryCodeAndOwningInstitutionIdAndActive(requestForm.getDeliveryLocationInRequest(), institutionEntity.getId(), 'Y');
                 if (null != deliveryCodeEntity) {
                     itemRequestInformation.setDeliveryLocation(deliveryCodeEntity.getDeliveryCode());
                 }

@@ -2,6 +2,7 @@ package org.recap.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionItem;
@@ -34,7 +35,7 @@ public class CollectionServiceUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CollectionServiceUtil.class);
 
-    @Value("${scsb.gateway.url}")
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
     @Autowired
