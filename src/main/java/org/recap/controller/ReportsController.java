@@ -71,25 +71,6 @@ public class ReportsController extends AbstractController {
     }
 
     /**
-     * Render the reports UI page for the scsb application.
-     *
-     * @param request the request
-     * @return the string
-     */
-    @GetMapping("/checkPermission")
-    public boolean reports(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REPORT_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.REPORTS_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.REPORTS, logger);
-        }
-
-    }
-
-    /**
      * Get the item count for requested, accessioned and deaccessioned report.
      *
      * @param reportsForm the reports form

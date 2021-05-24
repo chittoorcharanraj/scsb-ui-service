@@ -179,13 +179,6 @@ public class RequestServiceUtil {
         return cgdCodes;
     }
 
-    private List<String> pullAllCGDCodesList(List<CollectionGroupEntity> collectionGroupEntities) {
-            List<String> listCGDCodes = new ArrayList<>();
-        for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
-            listCGDCodes.add(collectionGroupEntity.getCollectionGroupCode());
-        }
-        return listCGDCodes;
-    }
     private Map<Integer, String> getRequestTypes() {
         Map<Integer, String> requestTypes = new HashMap<>();
        List<RequestTypeEntity> requestTypeEntities = requestTypeDetailsRepository.findAll();
@@ -196,11 +189,7 @@ public class RequestServiceUtil {
     }
 
     private List<String> validateTypeUse(TransactionReports transactionReports, List<CollectionGroupEntity> collectionGroupEntities,List<String> listCGDCodes) {
-        if (transactionReports.getTypeOfUses().contains(ScsbConstants.EDD) && (transactionReports.getTypeOfUses().size() == 1))
-            return pullAllCGDCodesList(collectionGroupEntities);
-        else {
             listCGDCodes.add(transactionReports.getCgdType());
             return listCGDCodes;
-        }
     }
 }

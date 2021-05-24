@@ -121,18 +121,6 @@ public class RequestController extends ScsbController {
         return institutionDetailsRepository;
     }
 
-    @GetMapping("/checkPermission")
-    public boolean request(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REQUEST_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.REQUEST_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.REQUEST, logger);
-        }
-    }
-
     /**
      * Get results from scsb database and display them as row based on the search conditions provided in the search request UI page.
      *

@@ -36,7 +36,6 @@ public class ScsbConstants {
     public static final String BULK_REQUEST_ITEM_URL = "requestItem/bulkRequest";
     public static final String URL_REQUEST_CANCEL = "requestItem/cancelRequest";
     public static final String URL_REQUEST_RESUBMIT = "requestItem/replaceRequest";
-    public static final String PATRON_EMAIL_ADDRESS = "patronEmailAddress";
     public static final String DELIVERY_LOCATION = "deliveryLocation";
     public static final String REQUEST_NOTES = "requestNotes";
     public static final String ERROR_MESSAGE = "errorMessage";
@@ -48,10 +47,8 @@ public class ScsbConstants {
     public static final String REQUEST_TYPE = "requestType";
     public static final String REQUEST_TYPES = "requestTypes";
     public static final String SHOW_EDD = "showEDD";
-    public static final String EDD = "EDD";
     public static final String MULTIPLE_BARCODES = "multipleBarcodes";
     public static final String CREATE_BULKREQUEST_CALLED = "Create BulkRequest Called";
-    public static final String CREATE_SR_BULKREQUEST_CALLED = "Search Request Called in BulkRequest tab";
 
     //Reports
     public static final Integer CGD_SHARED = 1;
@@ -59,7 +56,7 @@ public class ScsbConstants {
     public static final Boolean IS_EXPORT_FALSE = false;
     public static final Boolean IS_EXPORT_TRUE = true;
     public static final String REPORTS = "REPORTS";
-    public static  final String COUNT = "COUNT";
+    public static final String COUNT = "COUNT";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
     public static final String SCSB_UPDATE_CGD_URL = "updateCgdService/updateCgd";
@@ -75,6 +72,7 @@ public class ScsbConstants {
     public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL = "auth/touchExistingSession";
     public static final String SCSB_SHIRO_REQUEST_URL = "auth/request";
     public static final String SCSB_SHIRO_COLLECTION_URL = "auth/collection";
+    public static final String AUTH_PATH = "auth/";
     //  REPORT LOGS
     public static final String EXCEPTION_LOGS_TRANSACTION = "Exception Occured in while pulling Transaction Reports :: {}";
     public static final String EXCEPTION_LOGS_REQUEST_EXCEPTIONS = "Exception Occured while Exporting Request Exception Reports :: {}";
@@ -86,25 +84,17 @@ public class ScsbConstants {
     public static final String SCSB_SHIRO_ROLE_URL = "auth/roles";
     public static final String SCSB_SHIRO_DATAEXPORT_URL = "auth/dataExport";
     public static final String SCSB_SHIRO_LOGOUT_URL = "userAuth/logout";
-    public static final String LOG_USER_NOT_VALID = ": User not valid :";
     public static final String LOG_USER_LOGOUT_SUCCESS = "User logged out successfully";
     public static final String LOGOUT = "logout";
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String AUTH = "auth";
-    public static  final  String LOG_USER_LOGOUT_URL = "/logout";
-
+    public static final String LOG_USER_LOGOUT_URL = "/logout";
     public static final String USER_ID = "id";
-
     public static final String USER_INSTITUTION = "userInstitution";
-
     public static final String REQUEST_PRIVILEGE = "isRequestAllowed";
-
     public static final String COLLECTION_PRIVILEGE = "isCollectionAllowed";
-
     public static final String REPORTS_PRIVILEGE = "isReportAllowed";
-
     public static final String SEARCH_PRIVILEGE = "isSearchAllowed";
-
     public static final String USER_ROLE_PRIVILEGE = "isUserRoleAllowed";
 
     //ROLES
@@ -115,8 +105,6 @@ public class ScsbConstants {
     public static final String SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE = "Special characters and spaces are not allowed in Role Name";
     public static final String ROLES_SUPER_ADMIN = "Super Admin";
     public static final String ROLES = "Roles";
-
-
     public static final String EDITED_AND_SAVED = " edited and saved successfully";
     public static final String DELETED_SUCCESSFULLY = " deleted successfully";
     public static final String ALREADY_EXISTS = " already exists";
@@ -182,55 +170,47 @@ public class ScsbConstants {
     public static final String USER_DESC = "userDesc";
     public static final String ROLE_FOR_SUPER_ADMIN = "isRoleAllowed";
     public static final String TOKEN_SPLITER = ":";
-
     public static final String OCLC_NUMBER_PATTERN = "[^0-9]";
-
     public static final String LOGGED_IN_INSTITUTION = "loggedInInstitution";
 
     //EXCEPTION REPORTS
     public static final String REPORTS_EXCEPTION = "EXCEPTION";
     public static final String ID = "id";
-    public static final Integer PAGE_NUMBER = 0;
-    public static final Integer PAGE_SIZE = 10;
-    public static  final String NA = "NA";
+    public static final String NA = "NA";
 
     public static final String UNSCHEDULE = "Unschedule";
     public static final String UNSCHEDULED = "Unscheduled";
     public static final String SCHEDULED = "Scheduled";
-
     public static final String REQUESTED_ITEM_AVAILABILITY = "requestedItemAvailabilty";
-
     public static final String BULK_REQUEST_FORM = "bulkRequestForm";
     public static final String BULK_REQUEST = "bulkRequest";
     public static final String IN_PROCESS = "IN PROCESS";
-
     public static final String SCSB_SHIRO_BULK_REQUEST_URL = "auth/bulkRequest";
     public static final String EXCEPTION = "EXCEPTION";
     public static final String MONITORING = "isMonitoring";
     public static final String LOGGING = "isLogging";
     public static final String DATA_EXPORT = "isDataExport";
-
-
     public static final String SCSB_UI = "scsb_ui";
     public static final String SCSB_AUTH = "scsb_auth";
     public static final String SCSB_GATEWAY = "scsb_gateway";
     public static final String SCSB_DOC = "scsb_doc";
     public static final String SCSB_CIRC = "scsb_circ";
     public static final String SCSB_BATCH = "scsb_batch_scheduler";
-
     public static final String AUTH_TYPE_OAUTH = "OAuth2";
     public static final boolean TRUE = true;
     public static final boolean FALSE = false;
     public static final String IS_AUTHENTICATED = "isAuthenticated";
-
     public static final String ON_BOARD_INSTITUTION_STATUS = "On-Board Institution Status";
     public static final String ADMIN_TEXT = "Admin";
     public static final String DESCRIPTION = "Description";
     public static final String SUCCESSED = "Successed";
     public static final String FAILED = "Failed";
-
     public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
-
+    //AUTHENTICATN
+    public static final String FALSE_STRING = "FALSE";
+    public static final String TRUE_STRING = "TRUE";
+    public static final String USER_AUTHENTICATED = "user_authenticated";
+    public static final String API_PATH = "api_path";
     private ScsbConstants() {
         //Do nothing
     }

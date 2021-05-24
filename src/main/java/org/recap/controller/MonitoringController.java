@@ -47,30 +47,6 @@ public class MonitoringController extends AbstractController {
     @Autowired
     private  UserManagementService userManagementService;
 
-    /**
-     * Display All Monitoring url's
-     *
-     * @return the boolean
-     */
-    @GetMapping("/monitoring")
-    public boolean monitoring(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_MONITORING_URL);
-        if (authenticated) {
-            return true;
-        }
-        return userManagementService.unAuthorizedUser(session, "Monitoring", logger);
-    }
-
-    @GetMapping("/logging")
-    public boolean logging(HttpServletRequest request) {
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_LOGGING_URL);
-        HttpSession session = request.getSession(false);
-        if (authenticated) {
-            return true;
-        }
-        return userManagementService.unAuthorizedUser(session, "Logging", logger);
-    }
     @GetMapping("/properties")
     public Map<String,String> properties(){
         Map<String,String> prop = new HashMap<>();

@@ -98,18 +98,6 @@ public class CollectionController extends AbstractController {
         return requestItemDetailsRepository;
     }
 
-    @RequestMapping(value = "/checkPermission", method = RequestMethod.GET)
-    public boolean collection(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL);
-        if (authenticated) {
-            logger.info(ScsbConstants.COLLECTION_TAB_CLICKED);
-            return ScsbConstants.TRUE;
-        } else {
-            return userManagementService.unAuthorizedUser(session, ScsbConstants.COLLECTION, logger);
-        }
-    }
-
     /**
      * Perform search on solr based on the item barcodes and returns the results as rows to get displayed in the collection UI page.
      *
