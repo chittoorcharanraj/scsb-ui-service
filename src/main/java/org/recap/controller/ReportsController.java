@@ -4,15 +4,18 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.facets.FacetsForm;
+import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
+import org.recap.service.SCSBService;
 import org.recap.util.HelperUtil;
 import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
@@ -57,6 +60,12 @@ public class ReportsController extends AbstractController {
 
     @Autowired
     private ImsLocationDetailRepository imsLocationDetailRepository;
+
+    @Autowired
+    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Autowired
+    private SCSBService scsbService;
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
@@ -223,8 +232,10 @@ public class ReportsController extends AbstractController {
         FacetsForm facetsForm = new FacetsForm();
         List<String> instList = new ArrayList<>();
         List<String> storageLocationsList = new ArrayList<>();
+        List<String> cgdCodesList = new ArrayList<>();
         List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution);
         List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
+        List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
         for(ImsLocationEntity imsLocationEntity: imsLocationEntities){
             if(!imsLocationEntity.getImsLocationCode().equalsIgnoreCase(ScsbConstants.FACETS_UN))
                 storageLocationsList.add(imsLocationEntity.getImsLocationCode());
@@ -232,12 +243,13 @@ public class ReportsController extends AbstractController {
         for (InstitutionEntity institutionEntity : institutionCodeForSuperAdmin) {
             instList.add(institutionEntity.getInstitutionCode());
         }
+        cgdCodesList = scsbService.pullCGDCodesList(collectionGroupEntities);
         facetsForm.setInstitutionList(instList);
         facetsForm.setStorageLocationsList(storageLocationsList);
+        facetsForm.setCgdCodesList(cgdCodesList);
         logger.info("Institutions List Returned");
         return facetsForm;
     }
-
 
     /**
      * To export the incomplete report results to a csv file.

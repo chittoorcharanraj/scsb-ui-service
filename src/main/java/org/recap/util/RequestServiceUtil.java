@@ -158,7 +158,7 @@ public class RequestServiceUtil {
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
         Map<Integer, String> cgdCodes = pullCGDCodes(collectionGroupEntities);
         listCGDCodes = (transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.EXPORT)) ? validateTypeUse(transactionReports, collectionGroupEntities, listCGDCodes)
-                : pullCGDCodesList(collectionGroupEntities);
+                : scsbService.pullCGDCodesList(collectionGroupEntities);
         List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(scsbService.getKeysByValues(transactionReports.getOwningInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getRequestingInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, scsbService.getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
             transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString()));
@@ -179,14 +179,6 @@ public class RequestServiceUtil {
             cgdCodes.put(collectionGroupEntity.getId(),collectionGroupEntity.getCollectionGroupCode());
         }
         return cgdCodes;
-    }
-    private List<String> pullCGDCodesList(List<CollectionGroupEntity> collectionGroupEntities){
-        List<String> cgdCodesList = new ArrayList<>();
-        for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
-            if(!collectionGroupEntity.getCollectionGroupCode().equalsIgnoreCase(ScsbConstants.NA))
-            cgdCodesList.add(collectionGroupEntity.getCollectionGroupCode());
-        }
-        return cgdCodesList;
     }
     private Map<Integer, String> getRequestTypes() {
         Map<Integer, String> requestTypes = new HashMap<>();
