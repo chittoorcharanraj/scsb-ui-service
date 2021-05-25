@@ -9,6 +9,7 @@ import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.UsersEntity;
+import org.recap.model.jpa.BulkCustomerCodeEntity;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.BulkRequestInformation;
 import org.recap.model.search.BulkRequestResponse;
@@ -84,6 +85,7 @@ public class BulkRequestService {
         try {
             if (processPatronValidation(bulkRequestForm)){
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bulkRequestForm.getRequestingInstitution());
+                BulkCustomerCodeEntity bulkCustomerCodeEntity = bulkCustomerCodeDetailsRepository.findByCustomerCode(bulkRequestForm.getDeliveryLocationInRequest());
                 MultipartFile multipartFile = bulkRequestForm.getFile();
                 byte[] bytes = multipartFile.getBytes();
                 HttpSession session = request.getSession(false);
@@ -100,6 +102,8 @@ public class BulkRequestService {
                 bulkRequestItemEntity.setPatronId(bulkRequestForm.getPatronBarcodeInRequest());
                 bulkRequestItemEntity.setStopCode(bulkRequestForm.getDeliveryLocationInRequest());
                 bulkRequestItemEntity.setRequestingInstitutionId(institutionEntity.getId());
+                bulkRequestItemEntity.setImsLocation(bulkCustomerCodeEntity.getImsLocationId());
+
                 bulkRequestItemEntity.setNotes(bulkRequestForm.getRequestNotes());
                 bulkRequestItemEntity.setBulkRequestStatus(ScsbConstants.IN_PROCESS);
                 BulkRequestItemEntity savedBulkRequestItemEntity = bulkRequestDetailsRepository.save(bulkRequestItemEntity);

@@ -295,6 +295,7 @@ public class RequestService {
     public String populateItemForRequest(RequestForm requestForm, HttpServletRequest request) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         Boolean multipleItemBarcodes = false;
+        Boolean isRecallAvailable = false;
         Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
         Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
@@ -357,6 +358,12 @@ public class RequestService {
                                             getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
                                             deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
                                         }
+                                        Optional<InstitutionEntity> loginInstitution = institutionDetailsRepository.findById(userDetailsForm.getLoginInstitutionId());
+                                        if(loginInstitution.isPresent()) {
+                                            Map<String, String> recalAvailablePropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_RECALL_FUNCTIONALITY_AVAILABLE);
+                                            isRecallAvailable = Boolean.parseBoolean(recalAvailablePropertyMap.get(loginInstitution.get().getInstitutionCode()));
+
+                                        }
                                     }
                                 }
                             }
@@ -375,7 +382,7 @@ public class RequestService {
             if (CollectionUtils.isNotEmpty(storageLocations)) {
                 jsonObject.put(ScsbConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
             }
-            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes)) {
+            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && isRecallAvailable) {
                 requestForm.setRequestType(ScsbCommonConstants.RECALL);
                 requestTypes.add(requestForm.getRequestType());
             }
@@ -493,7 +500,14 @@ public class RequestService {
             HashSet<String> str = (HashSet<String>) availability;
             for (String itemAvailability : str) {
                 if (ScsbCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)) {
-                    addOnlyRecall = true;
+                    Optional<InstitutionEntity> loginInstitution = institutionDetailsRepository.findById(userDetailsForm.getLoginInstitutionId());
+                    if (loginInstitution.isPresent()) {
+                        Map<String, String> recalAvailablePropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_RECALL_FUNCTIONALITY_AVAILABLE);
+                        boolean isRecallAvailable = Boolean.parseBoolean(recalAvailablePropertyMap.get(loginInstitution.get().getInstitutionCode()));
+                        if (isRecallAvailable) {
+                            addOnlyRecall = true;
+                        }
+                    }
                 }
                 if (ScsbCommonConstants.AVAILABLE.equalsIgnoreCase(itemAvailability)) {
                     addAllRequestType = true;

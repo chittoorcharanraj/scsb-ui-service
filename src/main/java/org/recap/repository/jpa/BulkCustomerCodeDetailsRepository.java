@@ -10,4 +10,7 @@ import java.util.List;
 public interface BulkCustomerCodeDetailsRepository extends BaseRepository<BulkCustomerCodeEntity> {
 
     List<BulkCustomerCodeEntity> findByOwningInstitutionId(Integer owningInstitutionId);
+
+    BulkCustomerCodeEntity findByCustomerCode(String customerCode);
+
 }
