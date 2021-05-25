@@ -15,4 +15,5 @@ import java.util.List;
 public class FacetsForm {
     List<String> institutionList = new ArrayList<>();
     List<String> storageLocationsList= new ArrayList<>();
+    List<String> cgdCodesList = new ArrayList<>();
 }
