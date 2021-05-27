@@ -1,7 +1,7 @@
 package org.recap.model;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.model.jaxb.Bib;
 import org.recap.model.jaxb.BibRecord;
 import org.recap.model.jaxb.Holding;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 22/3/17.
  */
-public class BibHoldingItemUT extends BaseTestCase {
+public class BibHoldingItemUT extends BaseTestCaseUT {
 
     @Test
     public void testBib(){

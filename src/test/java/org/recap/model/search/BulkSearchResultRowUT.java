@@ -1,13 +1,13 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
 import static junit.framework.TestCase.assertNotNull;
 
-public class BulkSearchResultRowUT extends BaseTestCase {
+public class BulkSearchResultRowUT extends BaseTestCaseUT {
 
     @Test
     public void testBulkSearchTResultRow(){

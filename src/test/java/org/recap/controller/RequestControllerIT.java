@@ -11,8 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.*;
 import org.recap.model.CancelRequestResponse;
+import org.recap.model.jpa.*;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
@@ -49,11 +49,8 @@ import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.function.Function;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by rajeshbabuk on 21/10/16.
@@ -152,7 +149,7 @@ public class RequestControllerIT extends BaseControllerUT {
         return scsbShiro;
     }
 
-    @Test
+    /*@Test
     public void request() throws Exception{
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(requestController.getRequestService()).thenReturn(requestService);
@@ -165,7 +162,7 @@ public class RequestControllerIT extends BaseControllerUT {
         boolean response = requestController.request(request);
         assertNotNull(response);
 //        assertEquals("searchRecords",response);
-    }
+    }*/
 
     @Test
     public void searchRequests() throws Exception {

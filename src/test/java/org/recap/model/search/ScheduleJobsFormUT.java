@@ -1,11 +1,11 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
-public class ScheduleJobsFormUT extends BaseTestCase {
+public class ScheduleJobsFormUT extends BaseTestCaseUT {
     @Test
     public void testScheduleJobsForm(){
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();

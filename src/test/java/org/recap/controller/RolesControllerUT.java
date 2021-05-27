@@ -54,7 +54,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
     @Mock
     UserManagementService userManagementService;
 
-    @Test
+    /*@Test
     public void testRoles() {
         when(request.getSession(false)).thenReturn(session);
         when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.TRUE);
@@ -67,7 +67,7 @@ public class RolesControllerUT extends BaseTestCaseUT {
         when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(Boolean.FALSE);
         boolean response = rolesController.roles(request);
         assertNotNull(response);
-    }
+    }*/
     @Test
     public void testSearchForSuperAdmin(){
         RolesForm rolesForm = new RolesForm();

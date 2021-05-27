@@ -1,7 +1,7 @@
 package org.recap.model.request;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.search.RequestForm;
@@ -11,7 +11,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
 
-public class ReplaceRequestUT extends BaseTestCase {
+public class ReplaceRequestUT extends BaseTestCaseUT {
 
     @Test
     public void testReplaceRequest(){

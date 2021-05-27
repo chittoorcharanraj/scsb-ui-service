@@ -32,7 +32,6 @@ public class BulkRequestFormUT extends BaseTestCaseUT {
         bulkRequestForm.setRequestTypes(Arrays.asList("RECALL"));
         bulkRequestForm.setDeliveryLocations(new ArrayList<>());
         bulkRequestForm.setRequestStatuses(Arrays.asList("Complete"));
-        bulkRequestForm.resetPageNumber();
         bulkRequestForm.setOnChange("change");
         bulkRequestForm.setInstitutionList(Arrays.asList("PUL"));
         bulkRequestForm.setShowRequestErrorMsg(Boolean.TRUE);
