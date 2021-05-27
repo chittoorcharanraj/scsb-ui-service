@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.marc4j.MarcException;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.DeliveryCodeEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
@@ -15,6 +16,7 @@ import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
@@ -67,6 +69,9 @@ public class CollectionController extends AbstractController {
 
     @Autowired
     private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    private CollectionGroupDetailsRepository collectionGroupDetailsRepository;
 
     @Autowired
     SCSBService scsbService;
@@ -237,7 +242,8 @@ public class CollectionController extends AbstractController {
             SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
             searchRecordsRequest.setFieldName(ScsbCommonConstants.BARCODE);
             searchRecordsRequest.setFieldValue(limitedBarcodes(collectionForm));
-
+            List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
+            searchRecordsRequest.setCollectionGroupDesignations(scsbService.pullCGDCodesList(collectionGroupEntities));
             SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
             List<SearchResultRow> searchResultRows = searchRecordsResponse.getSearchResultRows();
             collectionForm.setSearchResultRows(Collections.emptyList());

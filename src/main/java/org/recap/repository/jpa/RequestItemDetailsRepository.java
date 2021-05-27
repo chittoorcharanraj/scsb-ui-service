@@ -219,4 +219,15 @@ public interface RequestItemDetailsRepository extends BaseRepository<RequestItem
                                                         @Param("toDate") Date toDate,
                                                         @Param("cgdType") List<Integer> cgdType);
 
+    /**
+     *
+     * @param pageable
+     * @param imsLocationId
+     * @param institutionId
+     * @return page of Request Item Entity
+     */
+    @Query(value = "select request from RequestItemEntity request inner join request.itemEntity item inner join request.requestStatusEntity status where ((request.requestingInstitutionId = :institutionId OR :institutionId = 0)  and (status.requestStatusDescription = 'REFILED') and (item.imsLocationId = :imsLocationId OR :imsLocationId = 0)) OR ((request.requestingInstitutionId not in (:institutionId)) and (item.owningInstitutionId = :institutionId OR :institutionId = 0) and (status.requestStatusDescription = 'REFILED' ) and (item.imsLocationId = :imsLocationId OR :imsLocationId = 0))")
+    Page<RequestItemEntity> findByStatusAndInstitutionAndImslocation(Pageable pageable, @Param("imsLocationId") Integer imsLocationId,@Param("institutionId") Integer institutionId);
+
+
 }

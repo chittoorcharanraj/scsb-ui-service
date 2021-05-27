@@ -82,8 +82,11 @@ public class RequestServiceUtil {
             institutionEntity.setId(0);
         }
         Pageable pageable = PageRequest.of(requestForm.getPageNumber(), requestForm.getPageSize(), Sort.Direction.DESC, "id");
-        Page<RequestItemEntity> requestItemEntities = (status.equals(ScsbConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode, imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status, imsLocationId, institutionEntity.getId());
-
+        Page<RequestItemEntity> requestItemEntities;
+        if (!(status.equals(ScsbConstants.SEARCH_REQUEST_REFILED) && itemBarcode.isEmpty() && patronBarcode.isEmpty()))
+            requestItemEntities = (status.equals(ScsbConstants.SEARCH_REQUEST_ACTIVE)) ? requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndActiveAndInstitution(pageable, patronBarcode, itemBarcode, imsLocationId, institutionEntity.getId()) : requestItemDetailsRepository.findByPatronBarcodeAndItemBarcodeAndStatusAndInstitution(pageable, patronBarcode, itemBarcode, status, imsLocationId, institutionEntity.getId());
+        else
+            requestItemEntities = requestItemDetailsRepository.findByStatusAndInstitutionAndImslocation(pageable, imsLocationId,institutionEntity.getId());
         return requestItemEntities;
     }
 
