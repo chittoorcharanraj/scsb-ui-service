@@ -11,6 +11,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
 import org.recap.model.search.*;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
@@ -42,6 +43,9 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     SearchUtil searchUtil;
 
     @Mock
+    CollectionGroupDetailsRepository collectionGroupDetailsRepository;
+
+    @Mock
     MarcRecordViewUtil marcRecordViewUtil;
 
     @Mock
@@ -71,28 +75,13 @@ public class CollectionControllerUT extends BaseTestCaseUT {
     @Mock
     UserManagementService userManagementService;
 
-    /*@Test
-    public void collection() {
-        Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.TRUE);
-        boolean result = collectionController.collection(request);
-        assertTrue(result);
-    }
-
-    @Test
-    public void collectionFailure() {
-        Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(Boolean.FALSE);
-        boolean result = collectionController.collection(request);
-        assertFalse(result);
-    }*/
-
     @Test
     public void displayRecords() throws Exception {
         SearchRecordsResponse searchRecordsResponse = getSearchRecordsResponse();
         CollectionForm collectionForm = getCollectionForm();
         collectionForm.setErrorMessage("No results found.");
         Mockito.when(searchUtil.requestSearchResults(any())).thenReturn(searchRecordsResponse);
+        Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(Arrays.asList(getCollectionGroupEntity()));
         CollectionForm form = collectionController.displayRecords(collectionForm,request);
         assertNotNull(form);
     }
@@ -408,6 +397,15 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         requestItemEntity.setRequestTypeEntity(requestTypeEntity);
 
         return requestItemEntity;
+    }
+
+    private CollectionGroupEntity getCollectionGroupEntity() {
+        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
+        collectionGroupEntity.setCollectionGroupCode("GA");
+        collectionGroupEntity.setCollectionGroupDescription("collection");
+        collectionGroupEntity.setCreatedDate(new Date());
+        collectionGroupEntity.setLastUpdatedDate(new Date());
+        return collectionGroupEntity;
     }
 
 }
