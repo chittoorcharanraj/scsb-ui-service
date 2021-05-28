@@ -16,6 +16,7 @@ import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.DeliveryCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
@@ -43,6 +44,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyChar;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -80,6 +82,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
     OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
+    DeliveryCodeDetailsRepository deliveryCodeDetailsRepository;
+
+    @Mock
     RequestItemDetailsRepository requestItemDetailsRepository;
 
     @Mock
@@ -95,12 +100,12 @@ public class RequestControllerUT extends BaseTestCaseUT {
        // ReflectionTestUtils.invokeMethod(requestController,"scsbShiro",scsbShiro);
     }
 
-    @Test
+    /*@Test
     public void request(){
         Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REQUEST_URL)).thenReturn(Boolean.TRUE);
         boolean result = requestController.request(request);
         assertNotNull(result);
-    }
+    }*/
 
     @Test
     public void searchRequests(){
@@ -232,7 +237,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(any())).thenReturn(getRequestItemEntity().getInstitutionEntity());
+        Mockito.when(deliveryCodeDetailsRepository.findByDeliveryCodeAndOwningInstitutionIdAndActive(any(), any(), anyChar())).thenReturn(getDeliveryCodeEntity());
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doReturn(responseEntity1).when(restTemplate).exchange(
@@ -250,7 +256,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(any())).thenReturn(getRequestItemEntity().getInstitutionEntity());
+        Mockito.when(deliveryCodeDetailsRepository.findByDeliveryCodeAndOwningInstitutionIdAndActive(any(), any(), anyChar())).thenReturn(getDeliveryCodeEntity());
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doThrow(new NullPointerException()).when(restTemplate).exchange(
@@ -269,7 +276,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(customerCodeEntity);
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(any())).thenReturn(getRequestItemEntity().getInstitutionEntity());
+        Mockito.when(deliveryCodeDetailsRepository.findByDeliveryCodeAndOwningInstitutionIdAndActive(any(), any(), anyChar())).thenReturn(getDeliveryCodeEntity());
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
         doThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST)).when(restTemplate).exchange(
@@ -547,7 +555,16 @@ public class RequestControllerUT extends BaseTestCaseUT {
         requestForm.setDeliveryLocationInRequest("PB");
         return requestForm;
     }
-
+    private DeliveryCodeEntity getDeliveryCodeEntity() {
+        DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+        deliveryCodeEntity.setId(1);
+        deliveryCodeEntity.setDescription("Test");
+        deliveryCodeEntity.setDeliveryCode("PA");
+        deliveryCodeEntity.setAddress("Test");
+        deliveryCodeEntity.setDeliveryCodeTypeId(1);
+        deliveryCodeEntity.setActive('Y');
+        return deliveryCodeEntity;
+    }
     private ItemRequestInformation getItemRequestInformation(){
         ItemRequestInformation itemRequestInformation = new ItemRequestInformation();
         itemRequestInformation.setUsername("Admin");

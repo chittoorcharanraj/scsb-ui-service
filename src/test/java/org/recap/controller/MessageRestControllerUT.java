@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 
 public class MessageRestControllerUT extends BaseTestCaseUT {
 
@@ -24,8 +25,8 @@ public class MessageRestControllerUT extends BaseTestCaseUT {
     @Test
     public void getValue(){
         JSONObject jsonObject = new JSONObject();
-        Mockito.when(propertyUtil.getPropertyByInstitution(any(), any())).thenReturn(jsonObject);
-        Map<String, Object> objectMap = messageRestController.getValue(any());
+        Mockito.when(propertyUtil.getPropertyByInstitution(any(), anyBoolean())).thenReturn(jsonObject);
+        Map<String, Object> objectMap = messageRestController.getValue("test");
         assertNotNull(objectMap);
     }
 
