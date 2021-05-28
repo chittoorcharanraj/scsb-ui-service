@@ -25,7 +25,7 @@ public class SearchUtil {
     private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
-    private String scsbUrl;
+    private String scsbGatewayUrl;
 
     /**
      * This method makes a call to scsb microservice to get search results response for the given search criteria in the search UI page.
@@ -40,7 +40,7 @@ public class SearchUtil {
             HttpHeaders headers = HelperUtil.getSwaggerHeaders();
             HttpEntity<SearchRecordsRequest> httpEntity = new HttpEntity<>(searchRecordsRequest, headers);
 
-            ResponseEntity<SearchRecordsResponse> responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.SCSB_SEARCH_SERVICE_URL, HttpMethod.POST, httpEntity, SearchRecordsResponse.class);
+            ResponseEntity<SearchRecordsResponse> responseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_SEARCH_SERVICE_URL, HttpMethod.POST, httpEntity, SearchRecordsResponse.class);
             searchRecordsResponse = responseEntity.getBody();
             return searchRecordsResponse;
         } catch (Exception e) {

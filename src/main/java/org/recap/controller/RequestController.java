@@ -32,6 +32,7 @@ import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
+import org.recap.service.SCSBService;
 import org.recap.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +110,9 @@ public class RequestController extends ScsbController {
 
     @Autowired
     private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    private SCSBService scsbService;
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
@@ -621,7 +625,7 @@ public class RequestController extends ScsbController {
         List<RequestItemEntity> requestItemEntitiesList = null;
         Map<String,Date> dateMap = null;
         try {
-            dateMap = dateFormatter(fromDate,toDate);
+            dateMap = scsbService.dateFormatter(fromDate,toDate);
             if (!isExport) {
                 requestItemEntities = getRequestServiceUtil().exportExceptionReportsWithDate(institutionCode, dateMap.get("fromDate"), dateMap.get("toDate"), requestForm.getPageNumber(), requestForm.getPageSize());
                 searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
@@ -678,7 +682,7 @@ public class RequestController extends ScsbController {
         List<TransactionReport> transactionReportsList = null;
         Map<String, Date> dateMap = null;
         try {
-            dateMap = dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
+            dateMap = scsbService.dateFormatter(transactionReports.getFromDate(), transactionReports.getToDate());
             if ((transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.COUNT))) {
                 transactionReportsList = getRequestServiceUtil().getTransactionReportCount(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             } else if((transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.REPORTS))){
@@ -697,17 +701,7 @@ public class RequestController extends ScsbController {
         }
         return transactionReports;
     }
-    private Map<String,Date> dateFormatter(String fromDate, String toDate) throws Exception{
-        Map<String,Date> dateMap = new HashMap<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
-        Date requestFromDate = simpleDateFormat.parse(fromDate);
-        Date requestToDate = simpleDateFormat.parse(toDate);
-        Date fromDateAfter = reportsController.getFromDate(requestFromDate);
-        Date toDateAfter = reportsController.getToDate(requestToDate);
-        dateMap.put("fromDate",fromDateAfter);
-        dateMap.put("toDate",toDateAfter);
-        return  dateMap;
-    }
+
     private RequestForm search(RequestForm requestForm) {
         return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
     }

@@ -11,6 +11,7 @@ import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
 import org.recap.model.reports.ReportsInstitutionForm;
+import org.recap.model.submitCollection.SubmitCollectionReprot;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
@@ -18,7 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -48,6 +55,9 @@ public class ReportsUtil {
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
+
+    @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
+    private String scsbGatewayUrl;
 
     /**
      * To get the item count for the physical and edd request report from the scsb database and
@@ -201,6 +211,27 @@ public class ReportsUtil {
             }
         }
         return file;
+    }
+
+    /**
+     *
+     * @param submitCollectionReprot
+     * @return SubmitCOllectionReport
+     */
+    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(SubmitCollectionReprot submitCollectionReprot){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+        HttpEntity<SubmitCollectionReprot> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
+        ResponseEntity<SubmitCollectionReprot> submitCollectionReprotResponseEntity = null;
+        try {
+             submitCollectionReprotResponseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_REPORTS_SUBMIT_RESULTS_URL, HttpMethod.POST, httpEntity, SubmitCollectionReprot.class);
+             submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
+             if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
+                 submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }catch (Exception e) {
+            submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        return new ResponseEntity<>(submitCollectionReprot, HttpStatus.OK);
     }
 
     private void writeRow(IncompleteReportResultsRow incompleteReportResultsRow, CsvWriter csvOutput) throws IOException {
