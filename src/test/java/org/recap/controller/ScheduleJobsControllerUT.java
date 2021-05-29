@@ -1,11 +1,7 @@
 package org.recap.controller;
 
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
@@ -36,9 +32,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ScheduleJobsControllerUT extends BaseTestCaseUT {
 
@@ -167,34 +161,18 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     public void getJobParameters(){
         ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
         scheduleJobsForm.setJobName("Test");
-        when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
-        when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         when(jobDetailsRepository.findByJobName(any())).thenReturn(getJobEntity());
         when(jobParamDetailRepository.findByJobName(any())).thenReturn(getJobParamEntity());
         ResponseEntity responseEntity = new ResponseEntity<>(scheduleJobsForm, HttpStatus.OK);
-        doReturn(responseEntity).when(restTemplate).exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod.class),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.<Class<ScheduleJobRequest>>any());
         ScheduleJobsForm jobsForm = scheduleJobsController.getJobParameters(scheduleJobsForm,request);
         assertNotNull(jobsForm);
     }
 
     @Test
     public void getInstitutions() {
-        List<String> institutions = new ArrayList<>();
-        institutions.add("Test");
-        when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
-        when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
-        when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution)).thenReturn(Collections.singletonList(getInstitutionEntity()));
-        when(jobParamDetailRepository.findByJobName(any())).thenReturn(getJobParamEntity());
-        ResponseEntity responseEntity = new ResponseEntity<>(institutions, HttpStatus.OK);
-        doReturn(responseEntity).when(restTemplate).exchange(
-                ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(HttpMethod.class),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.<Class<ScheduleJobRequest>>any());
+        List<InstitutionEntity> institutions = new ArrayList<>();
+        institutions.add(getInstitutionEntity());
+        when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(institutions);
         List<String> institutionsList = scheduleJobsController.getInstitutions();
         assertNotNull(institutionsList);
     }

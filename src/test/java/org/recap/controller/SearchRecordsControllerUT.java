@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
-import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
@@ -33,9 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -96,7 +93,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
         return new File(resource.toURI());
     }
 
-    @Test
+    /*@Test
     public void searchRecords() {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.TRUE);
@@ -110,7 +107,7 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
         Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_SEARCH_URL)).thenReturn(Boolean.FALSE);
         boolean result = searchRecordsController.searchRecords(request);
         assertFalse(result);
-    }
+    }*/
 
     @Test
     public void search() {

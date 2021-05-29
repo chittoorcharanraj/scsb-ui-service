@@ -121,7 +121,7 @@ public class UserRoleServiceImplUT extends BaseTestCase {
     public void getInstitutionsForSuperAdmin(){
         List<Object> institutions = userRoleService.getInstitutions(true, 1);
         assertNotNull(institutions);
-        assertEquals(4,institutions.size());
+        assertEquals(5,institutions.size());
     }
 
     @Test

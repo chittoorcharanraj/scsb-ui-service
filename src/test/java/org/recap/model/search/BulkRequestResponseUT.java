@@ -1,11 +1,11 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import static org.junit.Assert.assertNotNull;
 
-public class BulkRequestResponseUT extends BaseTestCase {
+public class BulkRequestResponseUT extends BaseTestCaseUT {
 
     @Test
     public void testBulkRequestResponse(){

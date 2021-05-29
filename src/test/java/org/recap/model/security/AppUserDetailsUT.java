@@ -1,17 +1,15 @@
 package org.recap.model.security;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
-import org.springframework.security.core.Authentication;
+import org.recap.BaseTestCaseUT;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import static junit.framework.TestCase.*;
 
-public class AppUserDetailsUT extends BaseTestCase {
+public class AppUserDetailsUT extends BaseTestCaseUT {
 
     AppUserDetails appUserDetails = new AppUserDetails();
     Collection<? extends GrantedAuthority> authorities = null;

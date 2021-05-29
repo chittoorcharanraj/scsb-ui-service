@@ -8,17 +8,15 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -35,17 +33,21 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getDeliveryLocationsList() {
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn(getCustomerCodeEntity());
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCode(any())).thenReturn((OwnerCodeEntity) Arrays.asList(getCustomerCodeEntity()));
+      //  Object ownerCodeEntity [] = {getOwnerCodeEntity()} ;
+        List<Object[]> deliveryCodeObjects = new ArrayList<>();
+       // deliveryCodeObjects.add(ownerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(any(),any())).thenReturn(getOwnerCodeEntity());
+        Mockito.when(ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(any(),any())).thenReturn(deliveryCodeObjects);
         mockMarcRecordViewUtil.getDeliveryLocationsList("PA", 1);
     }
 
-    private OwnerCodeEntity getCustomerCodeEntity() {
-        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
-        customerCodeEntity.setOwnerCode("PA");
-        customerCodeEntity.setDescription("test");
-        customerCodeEntity.setInstitutionId(1);
-        return customerCodeEntity;
+    private OwnerCodeEntity getOwnerCodeEntity() {
+        OwnerCodeEntity ownerCodeEntity = new OwnerCodeEntity();
+        ownerCodeEntity.setId(1);
+        ownerCodeEntity.setOwnerCode("PA");
+        ownerCodeEntity.setDescription("test");
+        ownerCodeEntity.setInstitutionId(1);
+        return ownerCodeEntity;
     }
 
     public BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {

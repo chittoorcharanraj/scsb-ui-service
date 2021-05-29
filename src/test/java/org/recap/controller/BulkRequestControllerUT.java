@@ -1,34 +1,30 @@
 package org.recap.controller;
 
-import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.security.UserManagementService;
-import org.springframework.ui.Model;
 import net.minidev.json.JSONObject;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.recap.ScsbConstants;
+import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
 import org.recap.util.UserAuthUtil;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public class BulkRequestControllerUT extends BaseTestCaseUT {
 
@@ -62,7 +58,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
     @Mock
     UserManagementService userManagementService;
 
-    @Test
+    /*@Test
     public void testBulkRequest() {
         when(request.getSession(false)).thenReturn(session);
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
@@ -79,7 +75,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_BULK_REQUEST_URL)).thenReturn(Boolean.FALSE);
         boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
-    }
+    }*/
     @Test
     public void loadCreateRequest(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();

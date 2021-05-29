@@ -1,7 +1,7 @@
 package org.recap.model.schedule;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
+import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 17/7/17.
  */
-public class ScheduleJobRequestUT extends BaseTestCase{
+public class ScheduleJobRequestUT extends BaseTestCaseUT {
 
     @Test
     public void testScheduleJobRequest(){

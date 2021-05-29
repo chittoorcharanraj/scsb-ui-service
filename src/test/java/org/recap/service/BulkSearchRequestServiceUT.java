@@ -7,13 +7,18 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.BulkRequestItemEntity;
+import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
+import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 
 public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
@@ -29,9 +34,12 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
 
     @Mock
     InstitutionEntity institutionEntity;
-    @Mock
 
+    @Mock
     BulkRequestDetailsRepository bulkRequestDetailsRepository;
+
+    @Mock
+    ImsLocationDetailRepository imsLocationDetailRepository;
 
     @Test
     public void testProcessSearch(){
@@ -39,8 +47,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByRequestingInstitutionIdAndImsLocation(any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -52,8 +61,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -65,8 +75,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionIdAndImsLocation(any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -80,8 +91,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -95,8 +107,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -110,8 +123,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -125,8 +139,9 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
@@ -140,10 +155,24 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(Mockito.any(),Mockito.any(),Mockito.anyString(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
+        Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
         assertNotNull(bulkRequestItemEntities);
     }
 
+    private ImsLocationEntity getImsLocationEntity() {
+        ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
+        imsLocationEntity.setId(1);
+        imsLocationEntity.setImsLocationCode("1");
+        imsLocationEntity.setImsLocationName("test");
+        imsLocationEntity.setCreatedBy("test");
+        imsLocationEntity.setCreatedDate(new Date());
+        imsLocationEntity.setActive(true);
+        imsLocationEntity.setDescription("test");
+        imsLocationEntity.setUpdatedBy("test");
+        imsLocationEntity.setUpdatedDate(new Date());
+        return imsLocationEntity;
+    }
 }
