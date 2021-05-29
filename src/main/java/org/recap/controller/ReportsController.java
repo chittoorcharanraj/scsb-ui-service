@@ -11,6 +11,7 @@ import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.model.submitCollection.SubmitCollectionReprot;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -22,22 +23,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rajeshbabuk on 13/10/16.
@@ -70,6 +75,7 @@ public class ReportsController extends AbstractController {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
+
     /**
      * Gets reports util.
      *
@@ -93,8 +99,8 @@ public class ReportsController extends AbstractController {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());
             Date requestToDate = simpleDateFormat.parse(reportsForm.getRequestToDate());
-            Date fromDate = getFromDate(requestFromDate);
-            Date toDate = getToDate(requestToDate);
+            Date fromDate = scsbService.getFromDate(requestFromDate);
+            Date toDate = scsbService.getToDate(requestToDate);
             if (reportsForm.getShowBy().equalsIgnoreCase(ScsbCommonConstants.REPORTS_PARTNERS)) {
                 reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
             } else if (reportsForm.getShowBy().equalsIgnoreCase(ScsbCommonConstants.REPORTS_REQUEST_TYPE)) {
@@ -292,6 +298,14 @@ public class ReportsController extends AbstractController {
         }
     }
 
+    @PostMapping("/submitCollcetionReport")
+    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(@RequestBody SubmitCollectionReprot submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
+        submitCollectionReprot.setFrom(dateMap.get("fromDate"));
+        submitCollectionReprot.setTo(dateMap.get("toDate"));
+        return reportsUtil.submitCollectionReport(submitCollectionReprot);
+    }
+
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {
         List<IncompleteReportResultsRow> incompleteReportResultsRows = getReportsUtil().incompleteRecordsReportFieldsInformation(reportsForm);
         if (incompleteReportResultsRows.isEmpty()) {
@@ -305,35 +319,7 @@ public class ReportsController extends AbstractController {
         return reportsForm;
     }
 
-    /**
-     * For the given date this method will add the start time of the day.
-     *
-     * @param createdDate the created date
-     * @return the from date
-     */
-    public Date getFromDate(Date createdDate) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(createdDate);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        return cal.getTime();
-    }
 
-    /**
-     * For the given date this method will add the end time of the day.
-     *
-     * @param createdDate the created date
-     * @return the to date
-     */
-    public Date getToDate(Date createdDate) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(createdDate);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        return cal.getTime();
-    }
 
     private ReportsForm setReportData(ReportsForm reportsForm) throws Exception {
         return daccessionItemResults(reportsForm);
