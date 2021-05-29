@@ -299,9 +299,8 @@ public class ReportsController extends AbstractController {
     }
 
     @PostMapping("/submitCollcetionReport")
-    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(@RequestBody SubmitCollectionReprot submitCollectionReprot) throws Exception {
-        Map<String,Date> dateMap = null;
-            dateMap = scsbService.dateFormatter(submitCollectionReprot.getFromDate(),submitCollectionReprot.getToDate());
+    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(@RequestBody SubmitCollectionReprot submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
         submitCollectionReprot.setFrom(dateMap.get("fromDate"));
         submitCollectionReprot.setTo(dateMap.get("toDate"));
         return reportsUtil.submitCollectionReport(submitCollectionReprot);
