@@ -83,6 +83,6 @@ public interface RolesDetailsRepositorty extends BaseRepository<RoleEntity> {
      *
      * @return
      */
-    @Query("select roles from RoleEntity roles where roles.roleName not in ('ReSubmit Request')")
+    @Query("select roles from RoleEntity roles where roles.roleName not in ('ReSubmit Request','Monitoring','Logging')")
     List<RoleEntity> findAllExceptReSubmitRole();
 }
