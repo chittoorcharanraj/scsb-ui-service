@@ -355,12 +355,17 @@ public class UserRoleController extends AbstractController {
         userRoleForm.setInstitutions(institutions);
         userRoleForm.setAllowCreateEdit(true);
         userRoleForm.setSubmitted(true);
-        return (userRoleForm.getIsExport()) ? searchAndSetResultExport(request, userRoleForm, userDetailsForm.isSuperAdmin(), userId) : searchAndSetResult(request, userRoleForm, userDetailsForm.isSuperAdmin(), userId);
+        return searchAndSetResult(request, userRoleForm, userDetailsForm.isSuperAdmin(), userId);
     }
 
     private UserRoleForm searchAndSetResult(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
-        if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
+        if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId()) && userRoleForm.getIsExport()) {
             logger.debug("Search All Users");
+            List<UsersEntity> usersEntities = getUserRoleService().findAll(userRoleForm, superAdmin);
+            userRoleForm.setUserRoleFormList(setFormValues(request,usersEntities, userId));
+            userRoleForm.setShowResults(false);
+        } else if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
+            logger.debug("Export All Users");
             Page<UsersEntity> usersEntities = getUserRoleService().searchUsers(userRoleForm, superAdmin);
             userRoleForm = setUserRoleFormValues(request,userRoleForm, usersEntities, userId);
         } else if (StringUtils.isNotBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
@@ -376,15 +381,6 @@ public class UserRoleController extends AbstractController {
             Page<UsersEntity> usersEntities = getUserRoleService().searchByNetworkIdAndUserEmailId(userRoleForm, superAdmin);
             userRoleForm = getUsersInformation(request,userRoleForm, userId, usersEntities, ScsbConstants.NETWORK_LOGIN_ID_AND_EMAILID_ID_DOES_NOT_EXIST);
         } else {
-            userRoleForm.setShowResults(false);
-        }
-        return userRoleForm;
-    }
-    private UserRoleForm searchAndSetResultExport(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
-        if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
-            logger.debug("Search All Users");
-            List<UsersEntity> usersEntities = getUserRoleService().findAll(userRoleForm, superAdmin);
-            userRoleForm.setUserRoleFormList(setFormValues(request,usersEntities, userId));
             userRoleForm.setShowResults(false);
         }
         return userRoleForm;
