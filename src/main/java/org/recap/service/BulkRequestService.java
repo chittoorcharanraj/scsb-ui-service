@@ -81,7 +81,11 @@ public class BulkRequestService {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
-    public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm,HttpServletRequest request) {
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
+
+    public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm, HttpServletRequest request) {
         try {
             if (processPatronValidation(bulkRequestForm)){
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bulkRequestForm.getRequestingInstitution());
@@ -111,11 +115,11 @@ public class BulkRequestService {
                 String bulkRequestItemUrl = scsbUrl + ScsbConstants.BULK_REQUEST_ITEM_URL;
                 HttpEntity requestEntity = new HttpEntity<>(restHeaderService.getHttpHeaders());
                 UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(bulkRequestItemUrl).queryParam("bulkRequestId", savedBulkRequestItemEntity.getId());
-                new RestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, BulkRequestResponse.class);
+                getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, BulkRequestResponse.class);
 
                 bulkRequestForm.setSubmitted(true);
                 bulkRequestForm.setFileName(multipartFile.getOriginalFilename());
-            }else {
+            } else {
                 bulkRequestForm.setShowRequestErrorMsg(true);
                 bulkRequestForm.setErrorMessage("Patron Barcode is incorrect");
             }
@@ -129,8 +133,8 @@ public class BulkRequestService {
         BulkRequestInformation bulkRequestInformation = new BulkRequestInformation();
         bulkRequestInformation.setRequestingInstitution(bulkRequestForm.getRequestingInstitution());
         bulkRequestInformation.setPatronBarcode(bulkRequestForm.getPatronBarcodeInRequest());
-        HttpEntity httpEntity = new HttpEntity(bulkRequestInformation,restHeaderService.getHttpHeaders());
-        ResponseEntity<Boolean> responseEntity = new RestTemplate().exchange(scsbUrl + "/requestItem/patronValidationBulkRequest", HttpMethod.POST,httpEntity, Boolean.class);
+        HttpEntity httpEntity = new HttpEntity(bulkRequestInformation, restHeaderService.getHttpHeaders());
+        ResponseEntity<Boolean> responseEntity = getRestTemplate().exchange(scsbUrl + "/requestItem/patronValidationBulkRequest", HttpMethod.POST, httpEntity, Boolean.class);
         return responseEntity.getBody();
     }
 

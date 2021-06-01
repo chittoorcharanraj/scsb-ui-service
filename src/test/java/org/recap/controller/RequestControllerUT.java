@@ -3,7 +3,6 @@ package org.recap.controller;
 import org.codehaus.jettison.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.recap.BaseTestCaseUT;
@@ -11,6 +10,8 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
 import org.recap.model.jpa.*;
+import org.recap.model.reports.TransactionReport;
+import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
@@ -37,14 +38,14 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyChar;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -79,6 +80,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
     InstitutionDetailsRepository institutionDetailsRepository;
 
     @Mock
+    ReportsController reportsController;
+
+    @Mock
     OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
     @Mock
@@ -94,35 +98,23 @@ public class RequestControllerUT extends BaseTestCaseUT {
 
     String scsbShiro = "testscsb";
 
-    @Before
-    public void setUp(){
-       // ReflectionTestUtils.invokeMethod(requestController,"scsbUrl",scsbUrl);
-       // ReflectionTestUtils.invokeMethod(requestController,"scsbShiro",scsbShiro);
-    }
-
-    /*@Test
-    public void request(){
-        Mockito.when(userAuthUtil.isAuthenticated(request, ScsbConstants.SCSB_SHIRO_REQUEST_URL)).thenReturn(Boolean.TRUE);
-        boolean result = requestController.request(request);
-        assertNotNull(result);
-    }*/
-
     @Test
-    public void searchRequests(){
+    public void searchRequests() {
         RequestForm requestForm = getRequestForm();
         Page<RequestItemEntity> requestItemEntities = getPage();
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         RequestForm form = requestController.searchRequests(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void searchRequestsException(){
+    public void searchRequestsException() {
         RequestForm form = requestController.searchRequests(null);
         assertNull(form);
     }
 
     @Test
-    public void goToSearchRequest(){
+    public void goToSearchRequest() {
         RequestForm requestForm = getRequestForm();
         UserDetailsForm userDetailsForm = getUserDetails();
         InstitutionEntity institutionEntity = getRequestItemEntity().getInstitutionEntity();
@@ -132,25 +124,21 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
         Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
-        RequestForm form = requestController.goToSearchRequest(requestForm,request);
+        RequestForm form = requestController.goToSearchRequest(requestForm, request);
         assertNotNull(form);
     }
 
     @Test
-    public void goToSearchRequestException(){
+    public void goToSearchRequestException() {
         RequestForm requestForm = getRequestForm();
-        UserDetailsForm userDetailsForm = getUserDetails();
-        InstitutionEntity institutionEntity = getRequestItemEntity().getInstitutionEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
-        Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
-        Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
-        Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
-        RequestForm form = requestController.goToSearchRequest(requestForm,request);
+        Mockito.doThrow(new NullPointerException()).when(userAuthUtil).getUserDetails(any(), anyString());
+        RequestForm form = requestController.goToSearchRequest(requestForm, request);
         assertNotNull(form);
     }
 
     @Test
-    public void searchFirst(){
+    public void searchFirst() {
         RequestForm requestForm = getRequestForm();
         requestForm.setInstitution("UC");
         Page<RequestItemEntity> requestItemEntities = getPage();
@@ -158,40 +146,45 @@ public class RequestControllerUT extends BaseTestCaseUT {
         RequestForm form = requestController.searchFirst(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void searchNext(){
+    public void searchNext() {
         RequestForm requestForm = getRequestForm();
         Page<RequestItemEntity> requestItemEntities = getPage();
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         RequestForm form = requestController.searchNext(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void searchLast(){
+    public void searchLast() {
         RequestForm requestForm = getRequestForm();
         Page<RequestItemEntity> requestItemEntities = getPage();
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         RequestForm form = requestController.searchLast(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void searchPrevious(){
+    public void searchPrevious() {
         RequestForm requestForm = getRequestForm();
         Page<RequestItemEntity> requestItemEntities = getPage();
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         RequestForm form = requestController.searchPrevious(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void onRequestPageSizeChange(){
+    public void onRequestPageSizeChange() {
         RequestForm requestForm = getRequestForm();
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         RequestForm form = requestController.onRequestPageSizeChange(requestForm);
         assertNotNull(form);
     }
+
     @Test
-    public void loadCreateRequest(){
+    public void loadCreateRequest() {
         RequestForm requestForm = getRequestForm();
         UserDetailsForm userDetailsForm = getUserDetails();
         userDetailsForm.setSuperAdmin(Boolean.TRUE);
@@ -201,8 +194,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
         RequestForm form = requestController.loadCreateRequest(request);
         assertNotNull(form);
     }
+
     @Test
-    public void loadSearchRequest(){
+    public void loadSearchRequest() {
         UserDetailsForm userDetailsForm = getUserDetailsForm();
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         Mockito.when(request.getSession(false)).thenReturn(session);
@@ -217,22 +211,23 @@ public class RequestControllerUT extends BaseTestCaseUT {
     public void populateItem() throws JSONException {
         RequestForm requestForm = getRequestForm();
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn("test");
-        String result = requestController.populateItem(requestForm,request);
+        String result = requestController.populateItem(requestForm, request);
         assertNotNull(result);
-        assertEquals("test",result);
+        assertEquals("test", result);
     }
 
     @Test
     public void populateItemException() throws JSONException {
         RequestForm requestForm = getRequestForm();
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenThrow(new NullPointerException());
-        String result = requestController.populateItem(requestForm,request);
+        String result = requestController.populateItem(requestForm, request);
         assertNotNull(result);
     }
+
     @Test
     public void createRequest() throws JSONException {
         RequestForm requestForm = getRequestForm();
-        ResponseEntity responseEntity1 = new ResponseEntity<>(getItemResponseInformation(),HttpStatus.OK);
+        ResponseEntity responseEntity1 = new ResponseEntity<>(getItemResponseInformation(), HttpStatus.OK);
         OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
@@ -246,9 +241,10 @@ public class RequestControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ItemRequestInformation>>any());
-        RequestForm form = requestController.createRequest(requestForm,request);
+        RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void createRequestException() throws JSONException {
         RequestForm requestForm = getRequestForm();
@@ -265,9 +261,10 @@ public class RequestControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ItemRequestInformation>>any());
-        RequestForm form = requestController.createRequest(requestForm,request);
+        RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void createRequestHttpClientErrorException() throws JSONException {
         RequestForm requestForm = getRequestForm();
@@ -285,9 +282,10 @@ public class RequestControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(HttpMethod.class),
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<ItemRequestInformation>>any());
-        RequestForm form = requestController.createRequest(requestForm,request);
+        RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void createRequestWithNoPermissionErrorMessage() throws JSONException {
         RequestForm requestForm = getRequestForm();
@@ -296,9 +294,10 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(message);
-        RequestForm form = requestController.createRequest(requestForm,request);
+        RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
     }
+
     @Test
     public void createRequestWithErrorMessage() throws JSONException {
         RequestForm requestForm = getRequestForm();
@@ -307,15 +306,15 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(message);
-        RequestForm form = requestController.createRequest(requestForm,request);
+        RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
     }
 
     @Test
-    public void cancelRequest(){
+    public void cancelRequest() {
         RequestForm requestForm = getRequestForm();
         CancelRequestResponse cancelRequestResponse = getCancelRequestResponse();
-        ResponseEntity<CancelRequestResponse> responseEntity = new ResponseEntity<CancelRequestResponse>(cancelRequestResponse,HttpStatus.OK);
+        ResponseEntity<CancelRequestResponse> responseEntity = new ResponseEntity<CancelRequestResponse>(cancelRequestResponse, HttpStatus.OK);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
@@ -328,8 +327,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String result = requestController.cancelRequest(requestForm);
         assertNotNull(result);
     }
+
     @Test
-    public void cancelRequestException(){
+    public void cancelRequestException() {
         RequestForm requestForm = getRequestForm();
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
@@ -344,11 +344,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void resubmitRequest(){
+    public void resubmitRequest() {
         RequestForm requestForm = getRequestForm();
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("1", ScsbCommonConstants.SUCCESS);
-        ResponseEntity responseEntity = new ResponseEntity<>(map,HttpStatus.OK);
+        ResponseEntity responseEntity = new ResponseEntity<>(map, HttpStatus.OK);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
         Mockito.when(requestController.getRestTemplate()).thenReturn(restTemplate);
@@ -359,10 +359,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String result = requestController.resubmitRequest(requestForm);
         assertNotNull(result);
     }
+
     @Test
-    public void resubmitInvalidRequest(){
+    public void resubmitInvalidRequest() {
         RequestForm requestForm = getRequestForm();
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put(ScsbCommonConstants.INVALID_REQUEST, "Invalid Request");
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
@@ -374,10 +375,11 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String result = requestController.resubmitRequest(requestForm);
         assertNotNull(result);
     }
+
     @Test
-    public void resubmitRequestFailed(){
+    public void resubmitRequestFailed() {
         RequestForm requestForm = getRequestForm();
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put(ScsbCommonConstants.FAILURE, "Resubmit Failed");
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
@@ -389,8 +391,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String result = requestController.resubmitRequest(requestForm);
         assertNotNull(result);
     }
+
     @Test
-    public void resubmitRequestException(){
+    public void resubmitRequestException() {
         RequestForm requestForm = getRequestForm();
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
         Mockito.when(requestController.getScsbUrl()).thenReturn(scsbUrl);
@@ -404,13 +407,112 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void refreshStatus(){
+    public void refreshStatus() {
         String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
         Mockito.when(requestService.getRefreshedStatus(reqJson)).thenReturn(ScsbCommonConstants.COMPLETE_STATUS);
         String result = requestController.refreshStatus(reqJson);
         assertNotNull(result);
-        assertEquals("Complete",result);
+        assertEquals("Complete", result);
 
+    }
+
+    @Test
+    public void exportExceptionReports() throws ParseException {
+        String institution = "PUL";
+        String fromDate = "03/11/2009";
+        String toDate = "04/12/2011";
+        Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
+        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
+        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
+        ResponseEntity<RequestForm> responseEntity = requestController.exportExceptionReports(institution, fromDate, toDate);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void exportExceptionReportsWithDateRange() throws ParseException {
+        String institution = "PUL";
+        String fromDate = "03/11/2009";
+        String toDate = "04/12/2011";
+        Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
+        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
+        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
+        Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
+        ResponseEntity<RequestForm> responseEntity = requestController.exportExceptionReportsWithDateRange(institution, fromDate, toDate);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void pageSizeChange() throws ParseException {
+        String institution = "PUL";
+        String fromDate = "03/11/2009";
+        String toDate = "04/12/2011";
+        Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
+        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
+        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
+        Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
+        ResponseEntity<RequestForm> responseEntity = requestController.pageSizeChange(institution, fromDate, toDate, "10");
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void nextCallException() throws ParseException {
+        String institution = "PUL";
+        String fromDate = "03/11/2009";
+        String toDate = "04/12/2011";
+        Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
+        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
+        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
+        Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
+        ResponseEntity<RequestForm> responseEntity = requestController.nextCallException(institution, fromDate, toDate, "2", "10");
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void pullTransactionRportCount() {
+        TransactionReports transactionReports = getTransactionReports();
+        transactionReports.setTrasactionCallType(ScsbConstants.COUNT);
+        TransactionReport transactionReport = new TransactionReport(transactionReports.getTrasactionCallType(), "PUL", "PUL", "Complete", 1L);
+        Mockito.when(requestServiceUtil.getTransactionReportCount(any(), any(), any())).thenReturn(Arrays.asList(transactionReport));
+        ResponseEntity<TransactionReports> responseEntity = requestController.pullTransactionRportCount(transactionReports);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void pullTransactionRepodrts() {
+        TransactionReports transactionReports = getTransactionReports();
+        transactionReports.setTrasactionCallType(ScsbConstants.REPORTS);
+        ResponseEntity<TransactionReports> responseEntity = requestController.pullTransactionReports(transactionReports);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void pullTransactionReportsExport() {
+        TransactionReports transactionReports = getTransactionReports();
+        transactionReports.setTrasactionCallType(ScsbConstants.EXPORT);
+        ResponseEntity<TransactionReports> responseEntity = requestController.pullTransactionReportsExport(transactionReports);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void pullTransactionReportsException() {
+        TransactionReports transactionReports = new TransactionReports();
+        ResponseEntity<TransactionReports> responseEntity = requestController.pullTransactionReportsExport(transactionReports);
+        assertNotNull(responseEntity);
+    }
+
+    private TransactionReports getTransactionReports() {
+        TransactionReports transactionReports = new TransactionReports();
+        transactionReports.setMessage("test");
+        transactionReports.setPageSize(1);
+        transactionReports.setTotalPageCount(10);
+        transactionReports.setOwningInsts(Arrays.asList("PUL"));
+        transactionReports.setFromDate("03/11/2009");
+        transactionReports.setToDate("04/12/2011");
+        return transactionReports;
     }
 
     private CancelRequestResponse getCancelRequestResponse() {
@@ -433,32 +535,33 @@ public class RequestControllerUT extends BaseTestCaseUT {
         JSONObject json = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         JSONArray array = new JSONArray();
-        jsonObject.put("1","PA");
-        jsonObject.put("2","PB");
+        jsonObject.put("1", "PA");
+        jsonObject.put("2", "PB");
         array.put("RECALL");
         array.put("RETRIEVE");
         json.put("error", "No Error");
         json.put("noPermissionErrorMessage", "No");
         json.put("itemTitle", "testName");
         json.put("itemOwningInstitution", "CUL");
-        json.put("deliveryLocation",jsonObject);
-        json.put("requestTypes",array);
+        json.put("deliveryLocation", jsonObject);
+        json.put("requestTypes", array);
         return json;
     }
+
     private JSONObject getJsonObject1() {
         JSONObject json = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         JSONArray array = new JSONArray();
-        jsonObject.put("1","PA");
-        jsonObject.put("2","PB");
+        jsonObject.put("1", "PA");
+        jsonObject.put("2", "PB");
         array.put("RECALL");
         array.put("RETRIEVE");
         json.put("error", "No Error");
         json.put("errorMessage", "Request Error");
         json.put("itemTitle", "testName");
         json.put("itemOwningInstitution", "CUL");
-        json.put("deliveryLocation",jsonObject);
-        json.put("requestTypes",array);
+        json.put("deliveryLocation", jsonObject);
+        json.put("requestTypes", array);
         return json;
     }
 
@@ -470,8 +573,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         return userDetailsForm;
     }
 
-    private RequestItemEntity getRequestItemEntity(){
-        RequestStatusEntity requestStatusEntity=new RequestStatusEntity();
+    private RequestItemEntity getRequestItemEntity() {
+        RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
         requestStatusEntity.setRequestStatusDescription("RECALL");
         RequestTypeEntity requestTypeEntity = new RequestTypeEntity();
         requestTypeEntity.setRequestTypeCode("RECALL");
@@ -492,6 +595,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         itemEntity.setBarcode("CU12513083");
         itemEntity.setCatalogingStatus("Complete");
         itemEntity.setItemStatusEntity(itemStatusEntity);
+        itemEntity.setImsLocationEntity(getImsLocationEntity());
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent("Mock Bib Content".getBytes());
         bibliographicEntity.setCreatedDate(new Date());
@@ -501,13 +605,26 @@ public class RequestControllerUT extends BaseTestCaseUT {
         bibliographicEntity.setOwningInstitutionBibId("2");
         bibliographicEntity.setOwningInstitutionId(3);
         itemEntity.setBibliographicEntities(Arrays.asList(bibliographicEntity));
-        itemEntity.setInstitutionEntity(institutionEntity);;
+        itemEntity.setInstitutionEntity(institutionEntity);
         requestItemEntity.setItemEntity(itemEntity);
         requestItemEntity.setRequestingInstitutionId(2);
         return requestItemEntity;
     }
 
-    private ReplaceRequest getReplaceRequest(){
+    private ImsLocationEntity getImsLocationEntity() {
+        ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
+        imsLocationEntity.setImsLocationCode("1");
+        imsLocationEntity.setImsLocationName("test");
+        imsLocationEntity.setCreatedBy("test");
+        imsLocationEntity.setCreatedDate(new Date());
+        imsLocationEntity.setActive(true);
+        imsLocationEntity.setDescription("test");
+        imsLocationEntity.setUpdatedBy("test");
+        imsLocationEntity.setUpdatedDate(new Date());
+        return imsLocationEntity;
+    }
+
+    private ReplaceRequest getReplaceRequest() {
         ReplaceRequest replaceRequest = new ReplaceRequest();
         RequestForm requestForm = getRequestForm();
         replaceRequest.setEndRequestId("10");
@@ -520,7 +637,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         replaceRequest.setStartRequestId("1");
         return replaceRequest;
     }
-    private RequestForm getRequestForm(){
+
+    private RequestForm getRequestForm() {
         RequestForm requestForm = new RequestForm();
         requestForm.setRequestId(1);
         requestForm.setPatronBarcode("43265854");
@@ -555,6 +673,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         requestForm.setDeliveryLocationInRequest("PB");
         return requestForm;
     }
+
     private DeliveryCodeEntity getDeliveryCodeEntity() {
         DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
         deliveryCodeEntity.setId(1);
@@ -565,7 +684,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         deliveryCodeEntity.setActive('Y');
         return deliveryCodeEntity;
     }
-    private ItemRequestInformation getItemRequestInformation(){
+
+    private ItemRequestInformation getItemRequestInformation() {
         ItemRequestInformation itemRequestInformation = new ItemRequestInformation();
         itemRequestInformation.setUsername("Admin");
         itemRequestInformation.setItemBarcodes(Arrays.asList("123"));
@@ -585,7 +705,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         return itemRequestInformation;
     }
 
-    private ItemResponseInformation getItemResponseInformation(){
+    private ItemResponseInformation getItemResponseInformation() {
         ItemResponseInformation itemResponseInformation = new ItemResponseInformation();
         itemResponseInformation.setPatronBarcode("46259871");
         itemResponseInformation.setItemBarcode("123");
@@ -593,8 +713,8 @@ public class RequestControllerUT extends BaseTestCaseUT {
         return itemResponseInformation;
     }
 
-    private UserDetailsForm getUserDetails(){
-        UserDetailsForm userDetailsForm=new UserDetailsForm();
+    private UserDetailsForm getUserDetails() {
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setLoginInstitutionId(2);
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setRecapPermissionAllowed(false);
@@ -603,7 +723,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
 
-    public Page getPage(){
+    public Page getPage() {
         Page<RequestItemEntity> page = new Page<RequestItemEntity>() {
             @Override
             public int getTotalPages() {

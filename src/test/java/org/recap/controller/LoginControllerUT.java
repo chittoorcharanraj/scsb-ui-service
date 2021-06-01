@@ -10,8 +10,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.recap.BaseTestCaseUT;
+import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
+import org.recap.model.jpa.UsersEntity;
 import org.recap.model.usermanagement.UserForm;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
@@ -24,11 +27,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +43,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SecurityContextHolder.class)
-public class LoginControllerUT extends BaseTestCaseUT{
+public class LoginControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
     LoginController loginController;
@@ -78,40 +81,47 @@ public class LoginControllerUT extends BaseTestCaseUT{
     @Mock
     SecurityContext securityContext;
 
-    @Test
-    public void setup(){}
+    @Mock
+    UserDetailsRepository userDetailsRepository;
 
     @Test
-    public void loginScreenTest(){
+    public void setup() {
+    }
+
+    @Test
+    public void loginScreenTest() {
         String response = loginController.loginScreen(request);
         assertNotNull(response);
-        assertEquals(response,"forward:/index.html");
+        assertEquals(response, "forward:/index.html");
     }
+
     @Test
-    public void home(){
+    public void home() {
         String response = loginController.home(request);
         assertNotNull(response);
-        assertEquals(response,"forward:/index.html");
+        assertEquals(response, "forward:/index.html");
     }
+
     @Test
     public void logOutTest() throws Exception {
         UserForm userForm = new UserForm();
         userForm.setUsername("SuperAdmin");
         userForm.setInstitution("1");
         userForm.setPassword("12345");
-        UsernamePasswordToken token=new UsernamePasswordToken(userForm.getUsername()+ ScsbConstants.TOKEN_SPLITER +userForm.getInstitution(),userForm.getPassword(),true);
+        UsernamePasswordToken token = new UsernamePasswordToken(userForm.getUsername() + ScsbConstants.TOKEN_SPLITER + userForm.getInstitution(), userForm.getPassword(), true);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(session.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(token);
-        Mockito.when( userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN))).thenReturn(Boolean.TRUE);
+        Mockito.when(userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN))).thenReturn(Boolean.TRUE);
         String response = loginController.logoutUser(request);
         assertNotNull(response);
     }
+
     @Test
-    public void testLogin(){
+    public void testLogin() {
 
         Authentication auth = getAuthentication();
         Map<String, Object> additionalInformation = new HashMap<>();
-        additionalInformation.put("sub","testName");
+        additionalInformation.put("sub", "testName");
         Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(request.getSession(true)).thenReturn(session);
@@ -123,22 +133,23 @@ public class LoginControllerUT extends BaseTestCaseUT{
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
-        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(), any());
         Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(ScsbConstants.AUTH_TYPE_OAUTH);
         Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
         Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
-        String responseStr = loginController.login(request,response);
+        String responseStr = loginController.login(request, response);
         assertNotNull(responseStr);
     }
+
     @Test
     public void testLoginWithDiffAuthType() throws Exception {
 
         Authentication auth = getAuthentication();
         Map<String, Object> additionalInformation = new HashMap<>();
-        additionalInformation.put("sub","testName");
+        additionalInformation.put("sub", "testName");
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED,Boolean.FALSE);
-        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED, Boolean.FALSE);
+        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG, "AuthenticationFailed");
         Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(request.getSession(true)).thenReturn(session);
@@ -150,23 +161,24 @@ public class LoginControllerUT extends BaseTestCaseUT{
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
-        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(), any());
         Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(ScsbConstants.AUTH);
         Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
         Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
         Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
-        String responseStr = loginController.login(request,response);
+        String responseStr = loginController.login(request, response);
         assertNotNull(responseStr);
     }
+
     @Test
     public void testLoginWithDiffAuthTypeAndWithSuperAdmin() throws Exception {
 
         Authentication auth = getAuthentication();
         Map<String, Object> additionalInformation = new HashMap<>();
-        additionalInformation.put("sub","testName");
+        additionalInformation.put("sub", "testName");
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED,Boolean.TRUE);
-        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED, Boolean.TRUE);
+        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG, "AuthenticationFailed");
         Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(request.getSession(true)).thenReturn(session);
@@ -179,23 +191,24 @@ public class LoginControllerUT extends BaseTestCaseUT{
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
-        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(), any());
         Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(ScsbConstants.AUTH);
         Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
         Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
         Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
-        String responseStr = loginController.login(request,response);
+        String responseStr = loginController.login(request, response);
         assertNotNull(responseStr);
     }
+
     @Test
     public void testLoginWithDiffAuthTypeAndWithoutSuperAdmin() throws Exception {
 
         Authentication auth = getAuthentication();
         Map<String, Object> additionalInformation = new HashMap<>();
-        additionalInformation.put("sub","testName");
+        additionalInformation.put("sub", "testName");
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED,Boolean.TRUE);
-        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG,"AuthenticationFailed");
+        resultMap.put(ScsbConstants.IS_USER_AUTHENTICATED, Boolean.TRUE);
+        resultMap.put(ScsbConstants.USER_AUTH_ERRORMSG, "AuthenticationFailed");
         Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(request.getSession(true)).thenReturn(session);
@@ -208,15 +221,56 @@ public class LoginControllerUT extends BaseTestCaseUT{
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
-        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(),any());
+        Mockito.doNothing().when(userInstitutionCache).addRequestSessionId(any(), any());
         Mockito.when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(ScsbConstants.AUTH);
         Mockito.when(tokenStore.readAccessToken(any())).thenReturn(oAuth2AccessToken);
         Mockito.when(oAuth2AccessToken.getAdditionalInformation()).thenReturn(additionalInformation);
         Mockito.when(userAuthUtil.doAuthentication(any())).thenReturn(resultMap);
-        String responseStr = loginController.login(request,response);
+        String responseStr = loginController.login(request, response);
         assertNotNull(responseStr);
     }
-    private Authentication getAuthentication(){
+
+    @Test
+    public void setValuesInSession() {
+        Map<String, Object> map = getAuthMap();
+        Mockito.when(userDetailsRepository.findByLoginId(any())).thenReturn(new UsersEntity());
+        Mockito.when(session.getAttribute(any())).thenReturn(Boolean.FALSE);
+        ReflectionTestUtils.invokeMethod(loginController, "setValuesInSession", session, map);
+    }
+
+    @Test
+    public void setValuesInSessionForSuperAdmin() {
+        Map<String, Object> map = getAuthMap();
+        Mockito.when(userDetailsRepository.findByLoginId(any())).thenReturn(new UsersEntity());
+        Mockito.when(session.getAttribute(any())).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.invokeMethod(loginController, "setValuesInSession", session, map);
+    }
+
+    private Map<String, Object> getAuthMap() {
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put(ScsbConstants.USER_NAME, "Test");
+        authMap.put(ScsbConstants.USER_ID, 1);
+        authMap.put(ScsbConstants.USER_INSTITUTION, 1);
+        authMap.put(ScsbConstants.SUPER_ADMIN_USER, 1);
+        authMap.put(ScsbConstants.RECAP_USER, 1);
+        authMap.put(ScsbConstants.REQUEST_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.COLLECTION_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.REPORTS_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.SEARCH_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.USER_ROLE_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.REQUEST_ALL_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.REQUEST_ITEM_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.DEACCESSION_PRIVILEGE, 1);
+        authMap.put(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE, 1);
+        authMap.put(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, 1);
+        authMap.put(ScsbConstants.MONITORING, 1);
+        authMap.put(ScsbConstants.LOGGING, 1);
+        authMap.put(ScsbConstants.DATA_EXPORT, 1);
+        return authMap;
+    }
+
+    private Authentication getAuthentication() {
 
         Authentication auth = new Authentication() {
 
