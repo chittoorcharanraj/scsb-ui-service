@@ -11,7 +11,7 @@ import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -36,10 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -299,7 +297,7 @@ public class ReportsController extends AbstractController {
     }
 
     @PostMapping("/submitCollcetionReport")
-    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(@RequestBody SubmitCollectionReprot submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public ResponseEntity<SubmitCollectionReport> submitCollectionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
         submitCollectionReprot.setFrom(dateMap.get("fromDate"));
         submitCollectionReprot.setTo(dateMap.get("toDate"));
