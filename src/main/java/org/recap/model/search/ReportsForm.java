@@ -66,6 +66,8 @@ public class ReportsForm {
         this.getCollectionGroupDesignations().add("Shared");
         this.getCollectionGroupDesignations().add("Private");
         this.getCollectionGroupDesignations().add("Open");
+        this.getCollectionGroupDesignations().add("Committed");
+        this.getCollectionGroupDesignations().add("Uncommittable");
     }
 
 
