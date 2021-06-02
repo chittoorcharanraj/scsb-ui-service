@@ -6,12 +6,12 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.reports.ReportsInstitutionForm;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
-import org.recap.model.reports.ReportsInstitutionForm;
-import org.recap.model.submitCollection.SubmitCollectionReprot;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
@@ -30,7 +30,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -218,13 +221,13 @@ public class ReportsUtil {
      * @param submitCollectionReprot
      * @return SubmitCOllectionReport
      */
-    public ResponseEntity<SubmitCollectionReprot> submitCollectionReport(SubmitCollectionReprot submitCollectionReprot){
+    public ResponseEntity<SubmitCollectionReport> submitCollectionReport(SubmitCollectionReport submitCollectionReprot){
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = HelperUtil.getSwaggerHeaders();
-        HttpEntity<SubmitCollectionReprot> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
-        ResponseEntity<SubmitCollectionReprot> submitCollectionReprotResponseEntity = null;
+        HttpEntity<SubmitCollectionReport> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
+        ResponseEntity<SubmitCollectionReport> submitCollectionReprotResponseEntity = null;
         try {
-             submitCollectionReprotResponseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_REPORTS_SUBMIT_RESULTS_URL, HttpMethod.POST, httpEntity, SubmitCollectionReprot.class);
+             submitCollectionReprotResponseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_REPORTS_SUBMIT_RESULTS_URL, HttpMethod.POST, httpEntity, SubmitCollectionReport.class);
              submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
              if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
                  submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
