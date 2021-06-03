@@ -34,9 +34,11 @@ public class SCSBValidationFilter implements Filter {
             HttpSession session = httpServletRequest.getSession(ScsbConstants.FALSE);
             Optional<String> API_PATH = Optional.ofNullable(httpServletRequest.getHeader(ScsbConstants.API_PATH));
             API_PATH = (API_PATH.isEmpty()) ? Optional.ofNullable(ScsbConstants.SEARCH.toLowerCase()) : API_PATH;
-            boolean authenticated = getUserAuthUtil().isAuthenticated(session, ScsbConstants.AUTH_PATH + API_PATH.get());
-            user_authenticated = (authenticated) ? ScsbConstants.TRUE_STRING : ScsbConstants.FALSE_STRING;
-            httpServletResponse.setHeader(ScsbConstants.USER_AUTHENTICATED, user_authenticated);
+            if(API_PATH.isPresent()) {
+                boolean authenticated = getUserAuthUtil().isAuthenticated(session, ScsbConstants.AUTH_PATH + API_PATH.get());
+                user_authenticated = (authenticated) ? ScsbConstants.TRUE_STRING : ScsbConstants.FALSE_STRING;
+                httpServletResponse.setHeader(ScsbConstants.USER_AUTHENTICATED, user_authenticated);
+            }
         } catch (Exception e) {
             httpServletResponse.setHeader(ScsbConstants.USER_AUTHENTICATED, user_authenticated);
         }

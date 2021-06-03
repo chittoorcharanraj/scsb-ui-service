@@ -58,12 +58,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -458,21 +456,21 @@ public class RequestController extends ScsbController {
 
     private RequestForm searchAndSetResults(RequestForm requestForm) {
         List<SearchResultRow> searchResultRows = new ArrayList<>();
-        Page<RequestItemEntity> requestItemEntities = null;
         try {
-            requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
+            Page<RequestItemEntity> requestItemEntities = getRequestServiceUtil().searchRequests(requestForm);
             searchResultRows = buildSearchResultRows(requestItemEntities.getContent(), requestForm);
-        } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
-        } finally {
             if (CollectionUtils.isNotEmpty(searchResultRows)) {
                 requestForm.setSearchResultRows(searchResultRows);
-                requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
-                requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+                if (!requestItemEntities.isEmpty()) {
+                    requestForm.setTotalRecordsCount(NumberFormat.getNumberInstance().format(requestItemEntities.getTotalElements()));
+                    requestForm.setTotalPageCount(requestItemEntities.getTotalPages());
+                }
             } else {
                 requestForm.setSearchResultRows(Collections.emptyList());
                 requestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             }
+        } catch (Exception e) {
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         requestForm.setShowResults(true);
         return requestForm;
