@@ -23,6 +23,7 @@ import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
+import org.recap.service.SCSBService;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.data.domain.Page;
@@ -78,6 +79,9 @@ public class RequestControllerUT extends BaseTestCaseUT {
 
     @Mock
     InstitutionDetailsRepository institutionDetailsRepository;
+
+    @Mock
+    SCSBService scsbService;
 
     @Mock
     ReportsController reportsController;
@@ -422,8 +426,6 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String fromDate = "03/11/2009";
         String toDate = "04/12/2011";
         Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
-        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
-        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
         ResponseEntity<RequestForm> responseEntity = requestController.exportExceptionReports(institution, fromDate, toDate);
         assertNotNull(responseEntity);
@@ -435,8 +437,6 @@ public class RequestControllerUT extends BaseTestCaseUT {
         String fromDate = "03/11/2009";
         String toDate = "04/12/2011";
         Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
-        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
-        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
         Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
         ResponseEntity<RequestForm> responseEntity = requestController.exportExceptionReportsWithDateRange(institution, fromDate, toDate);
@@ -444,13 +444,15 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void pageSizeChange() throws ParseException {
+    public void pageSizeChange() throws Exception {
         String institution = "PUL";
         String fromDate = "03/11/2009";
         String toDate = "04/12/2011";
         Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
-        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
-        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Map<String,Date> dateMap = new HashMap<>();
+        dateMap.put("fromDate",new Date());
+        dateMap.put("toDate",new Date());
+        Mockito.when(scsbService.dateFormatter(any(),any())).thenReturn(dateMap);
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
         Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
         ResponseEntity<RequestForm> responseEntity = requestController.pageSizeChange(institution, fromDate, toDate, "10");
@@ -458,13 +460,15 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
     @Test
-    public void nextCallException() throws ParseException {
+    public void nextCallException() throws Exception {
         String institution = "PUL";
         String fromDate = "03/11/2009";
         String toDate = "04/12/2011";
         Page<RequestItemEntity> requestItemEntities = new PageImpl<>(Arrays.asList(getRequestItemEntity()));
-        Mockito.when(reportsController.getFromDate(any())).thenReturn(new Date());
-        Mockito.when(reportsController.getToDate(any())).thenReturn(new Date());
+        Map<String,Date> dateMap = new HashMap<>();
+        dateMap.put("fromDate",new Date());
+        dateMap.put("toDate",new Date());
+        Mockito.when(scsbService.dateFormatter(any(),any())).thenReturn(dateMap);
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getRequestItemEntity().getInstitutionEntity()));
         Mockito.when(requestServiceUtil.exportExceptionReportsWithDate(any(), any(), any(), any(), any())).thenReturn(requestItemEntities);
         ResponseEntity<RequestForm> responseEntity = requestController.nextCallException(institution, fromDate, toDate, "2", "10");
