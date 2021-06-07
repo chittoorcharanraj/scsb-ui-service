@@ -89,6 +89,24 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void exportUsers(){
+        UserRoleForm userRoleForm = new UserRoleForm();
+        usersSessionAttributes();
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
+        UserRoleForm userRole = userRoleController.exportUsers(userRoleForm, request);
+        assertNotNull(userRole);
+    }
+    @Test
+    public void exportUsersException(){
+        UserRoleForm userRoleForm = new UserRoleForm();
+        Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
+        UserRoleForm userRole = userRoleController.exportUsers(userRoleForm, request);
+        assertNotNull(userRole);
+    }
+
+    @Test
     public void deleteUser() {
         UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();

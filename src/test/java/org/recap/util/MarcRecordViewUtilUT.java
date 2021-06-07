@@ -7,10 +7,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
+import org.recap.model.jpa.*;
+import org.recap.model.search.BibliographicMarcForm;
+import org.recap.model.usermanagement.UserDetailsForm;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 
 import java.io.File;
@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
@@ -31,11 +32,60 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
     @Mock
     OwnerCodeDetailsRepository ownerCodeDetailsRepository;
 
+    @Mock
+    BibliographicDetailsRepository bibliographicDetailsRepository;
+
+    @Test
+    public void buildBibliographicMarcForm() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 1;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(getBibEntityWithHoldingsAndItem());
+        Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Arrays.asList(getBibEntityWithHoldingsAndItem().getItemEntities().get(0)));
+        BibliographicMarcForm bibliographicMarcForm =mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+
+    @Test
+    public void buildBibliographicMarcFormWithoutItemId() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 0;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(getBibEntityWithHoldingsAndItem());
+        Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Arrays.asList(getBibEntityWithHoldingsAndItem().getItemEntities().get(0)));
+        BibliographicMarcForm bibliographicMarcForm = mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+
+    @Test
+    public void buildBibliographicMarcFormWithoutBibliographicEntity() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 0;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(null);
+        BibliographicMarcForm bibliographicMarcForm = mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+
+    @Test
+    public void buildBibliographicMarcFormItemNotAvailable() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 1;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+        ItemEntity itemEntity= getBibEntityWithHoldingsAndItem().getItemEntities().get(0);
+        itemEntity.getItemStatusEntity().setStatusCode(ScsbCommonConstants.NOT_AVAILABLE);
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(getBibEntityWithHoldingsAndItem());
+        Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Arrays.asList(itemEntity));
+        BibliographicMarcForm bibliographicMarcForm = mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+
     @Test
     public void getDeliveryLocationsList() {
-      //  Object ownerCodeEntity [] = {getOwnerCodeEntity()} ;
+        Object[] objects = {1, "PA", "test", "test", 1, 1, 1};
         List<Object[]> deliveryCodeObjects = new ArrayList<>();
-       // deliveryCodeObjects.add(ownerCodeEntity);
+        deliveryCodeObjects.add(objects);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(any(),any())).thenReturn(getOwnerCodeEntity());
         Mockito.when(ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(any(),any())).thenReturn(deliveryCodeObjects);
         mockMarcRecordViewUtil.getDeliveryLocationsList("PA", 1);
@@ -48,6 +98,13 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         ownerCodeEntity.setDescription("test");
         ownerCodeEntity.setInstitutionId(1);
         return ownerCodeEntity;
+    }
+
+    private UserDetailsForm getUserDetailsForm() {
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
+        userDetailsForm.setSuperAdmin(false);
+        userDetailsForm.setLoginInstitutionId(2);
+        return userDetailsForm;
     }
 
     public BibliographicEntity getBibEntityWithHoldingsAndItem() throws Exception {
@@ -79,6 +136,7 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         holdingsEntity.setDeleted(false);
 
         ItemEntity itemEntity = new ItemEntity();
+        itemEntity.setId(1);
         itemEntity.setLastUpdatedDate(new Date());
         itemEntity.setOwningInstitutionItemId(String.valueOf(random.nextInt()));
         itemEntity.setOwningInstitutionId(1);
@@ -95,8 +153,21 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         itemEntity.setDeleted(false);
         itemEntity.setCatalogingStatus(ScsbCommonConstants.COMPLETE_STATUS);
         itemEntity.setImsLocationId(1);
+        CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
+        collectionGroupEntity.setCollectionGroupCode(ScsbCommonConstants.SHARED_CGD);
+        ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
+        itemStatusEntity.setId(1);
+        itemStatusEntity.setStatusCode(ScsbCommonConstants.AVAILABLE);
+        itemEntity.setItemStatusEntity(itemStatusEntity);
+        itemEntity.setCollectionGroupEntity(collectionGroupEntity);
+
+        InstitutionEntity institutionEntity = new InstitutionEntity();
+        institutionEntity.setId(1);
+        institutionEntity.setInstitutionName("UC");
+        institutionEntity.setInstitutionName("UC");
 
         holdingsEntity.setItemEntities(Arrays.asList(itemEntity));
+        bibliographicEntity.setInstitutionEntity(institutionEntity);
         bibliographicEntity.setHoldingsEntities(Arrays.asList(holdingsEntity));
         bibliographicEntity.setItemEntities(Arrays.asList(itemEntity));
 
