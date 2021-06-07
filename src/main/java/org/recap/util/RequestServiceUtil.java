@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
+import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.RequestTypeEntity;
@@ -137,12 +138,14 @@ public class RequestServiceUtil {
         List<String> listCGDCodes = new ArrayList<>();
         Pageable pageable = PageRequest.of(transactionReports.getPageNumber(), transactionReports.getPageSize());
         Map<Integer, String> institutionList = mappingInstitution();
+        List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
+        Map<Integer, String> imsCodes = pullImsLocationCodes(imsLocationEntities);
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
         Map<Integer, String> cgdCodes = pullCGDCodes(collectionGroupEntities);
         listCGDCodes = validateTypeUse(transactionReports, collectionGroupEntities,listCGDCodes);
         List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatus(pageable, scsbService.getKeysByValues(transactionReports.getOwningInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getRequestingInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, scsbService.getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString()));
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString()));
         }
         return transactionReportsList;
     }
@@ -159,12 +162,14 @@ public class RequestServiceUtil {
         List<String> listCGDCodes = new ArrayList<>();
         Map<Integer, String> institutionList = mappingInstitution();
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
+        List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
+        Map<Integer, String> imsCodes = pullImsLocationCodes(imsLocationEntities);
         Map<Integer, String> cgdCodes = pullCGDCodes(collectionGroupEntities);
         listCGDCodes = (transactionReports.getTrasactionCallType().equalsIgnoreCase(ScsbConstants.EXPORT)) ? validateTypeUse(transactionReports, collectionGroupEntities, listCGDCodes)
                 : scsbService.pullCGDCodesList(collectionGroupEntities);
         List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(scsbService.getKeysByValues(transactionReports.getOwningInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getRequestingInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, scsbService.getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString()));
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString()));
         }
         return transactionReportsList;
     }
@@ -182,6 +187,14 @@ public class RequestServiceUtil {
             cgdCodes.put(collectionGroupEntity.getId(),collectionGroupEntity.getCollectionGroupCode());
         }
         return cgdCodes;
+    }
+    private Map<Integer, String> pullImsLocationCodes(List<ImsLocationEntity> imsLocationEntities) {
+        Map<Integer, String> imsLocationCodes = new HashMap<>();
+        for (ImsLocationEntity imsLocationEntity : imsLocationEntities){
+            if(!imsLocationEntity.getImsLocationCode().equalsIgnoreCase("UN"))
+                imsLocationCodes.put(imsLocationEntity.getId(),imsLocationEntity.getImsLocationCode());
+        }
+        return imsLocationCodes;
     }
     private Map<Integer, String> getRequestTypes() {
         Map<Integer, String> requestTypes = new HashMap<>();

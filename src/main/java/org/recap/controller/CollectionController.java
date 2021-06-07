@@ -320,6 +320,7 @@ public class CollectionController extends AbstractController {
         collectionForm.setWarningMessage(bibliographicMarcForm.getWarningMessage());
         collectionForm.setCollectionAction(bibliographicMarcForm.getCollectionAction());
         collectionForm.setLeaderMaterialType(bibliographicMarcForm.getLeaderMaterialType());
+        collectionForm.setLocationCode(bibliographicMarcForm.getLocationCode());
         collectionForm.setShowModal(true);
         collectionForm.setShowResults(true);
         collectionForm.setAllowEdit(bibliographicMarcForm.isAllowEdit());

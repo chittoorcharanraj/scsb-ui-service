@@ -146,7 +146,10 @@ public class BulkRequestService {
                 bulkRequestForm.getBulkSearchResultRows().clear();
             }
             bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
+            if(bulkRequestForm.getTotalPageCount() == 0)
+                bulkRequestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }catch (Exception e){
+            bulkRequestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             logger.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bulkRequestForm;
