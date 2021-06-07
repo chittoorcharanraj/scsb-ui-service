@@ -239,6 +239,12 @@ public class BulkRequestServiceUT {
         assertNotNull(bulkRequestFormResult);
     }
 
+    @Test
+    public void saveUpadatedRequestStatus() throws Exception {
+        BulkRequestItemEntity bulkRequestItemEntity =  bulkRequestService.saveUpadatedRequestStatus(1);
+        assertNotNull(bulkRequestItemEntity);
+    }
+
     private InstitutionEntity getInstitutionEntity() {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setId(1);
@@ -292,6 +298,7 @@ public class BulkRequestServiceUT {
         bulkSearchResultRow.setPatronBarcode("123");
         bulkSearchResultRow.setRequestingInstitution("PUL");
         bulkSearchResultRow.setStatus("SUCCESS");
+        bulkSearchResultRow.setImsLocation("HD");
         return bulkSearchResultRow;
     }
 
@@ -309,6 +316,10 @@ public class BulkRequestServiceUT {
         bulkRequestItemEntity.setRequestingInstitutionId(1);
         bulkRequestItemEntity.setStopCode("test");
         bulkRequestItemEntity.setBulkRequestFileData(new byte[1]);
+        ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
+        imsLocationEntity.setId(1);
+        imsLocationEntity.setImsLocationCode("HD");
+        bulkRequestItemEntity.setImsLocationEntity(imsLocationEntity);
         return bulkRequestItemEntity;
     }
 }

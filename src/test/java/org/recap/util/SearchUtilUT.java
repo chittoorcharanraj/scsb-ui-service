@@ -37,7 +37,7 @@ public class SearchUtilUT extends BaseTestCaseUT {
 
     @Before
     public void setUp() {
-        ReflectionTestUtils.setField(searchUtil, "scsbUrl", "http://localhost:9090");
+        ReflectionTestUtils.setField(searchUtil, "scsbGatewayUrl", "http://localhost:9090");
         ApplicationContextProvider.getInstance().setApplicationContext(applicationContext);
     }
 
