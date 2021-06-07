@@ -20,6 +20,8 @@ public class TransactionReport {
     private String itemBarcode;
     private String createdDate;
     private String requestStatus;
+    private String imsLocation;
+    private String callNumber;
 
     public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, Long count) {
         this.requestType = requestType;
@@ -29,7 +31,7 @@ public class TransactionReport {
         this.count = count;
     }
 
-    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, String itemBarcode, String createdDate, String requestStatus) {
+    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, String itemBarcode, String createdDate, String requestStatus,String imsLocation,String callNumber) {
         this.requestType = requestType;
         this.requestingInst = requestingInst;
         this.owningInst = owningInst;
@@ -37,5 +39,7 @@ public class TransactionReport {
         this.itemBarcode = itemBarcode;
         this.createdDate = createdDate;
         this.requestStatus = requestStatus;
+        this.imsLocation = imsLocation;
+        this.callNumber = callNumber;
     }
 }

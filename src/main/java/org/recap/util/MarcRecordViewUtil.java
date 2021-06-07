@@ -70,6 +70,7 @@ public class MarcRecordViewUtil {
                         CollectionGroupEntity collectionGroupEntity = nonDeletedItemEntities.get(0).getCollectionGroupEntity();
                         if (null != collectionGroupEntity) {
                             bibliographicMarcForm.setMonographCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
+                            bibliographicMarcForm.setLocationCode(nonDeletedItemEntities.get(0).getImsLocationEntity().getImsLocationCode());
                         }
                     }
                     bibliographicMarcForm.setCallNumber(nonDeletedItemEntities.get(0).getCallNumber());
