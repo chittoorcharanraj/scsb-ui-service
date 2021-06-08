@@ -82,6 +82,7 @@ public class MarcRecordViewUtil {
                                 bibliographicMarcForm.setUseRestriction(itemEntity.getUseRestrictions());
                                 bibliographicMarcForm.setCallNumber(itemEntity.getCallNumber());
                                 bibliographicMarcForm.setCustomerCode(itemEntity.getCustomerCode());
+                                bibliographicMarcForm.setLocationCode(itemEntity.getImsLocationEntity().getImsLocationCode());
                                 ItemStatusEntity itemStatusEntity = itemEntity.getItemStatusEntity();
                                 if (null != itemStatusEntity) {
                                     bibliographicMarcForm.setAvailability(itemStatusEntity.getStatusCode());
