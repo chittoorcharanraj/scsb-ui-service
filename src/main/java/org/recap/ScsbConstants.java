@@ -217,6 +217,7 @@ public class ScsbConstants {
     public static final String TRUE_STRING = "TRUE";
     public static final String USER_AUTHENTICATED = "user_authenticated";
     public static final String API_PATH = "api_path";
+    public static final String MVM = "MVM";
     private ScsbConstants() {
         //Do nothing
     }

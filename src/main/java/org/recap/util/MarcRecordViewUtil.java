@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
@@ -14,6 +15,7 @@ import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ public class MarcRecordViewUtil {
 
     @Autowired
     private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
+
+    @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
+    private String nonHoldInstitution;
 
     /**
      * This method used to get information about the item or bib from the scsb database for the given bib id or item id and
@@ -72,6 +77,15 @@ public class MarcRecordViewUtil {
                             bibliographicMarcForm.setMonographCollectionGroupDesignation(collectionGroupEntity.getCollectionGroupCode());
                             bibliographicMarcForm.setLocationCode(nonDeletedItemEntities.get(0).getImsLocationEntity().getImsLocationCode());
                         }
+                    } else if (!bibliographicEntity.getInstitutionEntity().getInstitutionCode().equalsIgnoreCase(nonHoldInstitution)) {
+                        if (nonDeletedItemEntities.size() > 1 && bibliographicEntity.getHoldingsEntities().size() >= 1 && ScsbCommonConstants.MONOGRAPH.equals(bibliographicMarcForm.getLeaderMaterialType())) {
+                            bibliographicMarcForm.setLeaderMaterialType(ScsbConstants.MVM);
+                        }
+                    } else {
+                        for (ItemEntity itemEntity : nonDeletedItemEntities)
+                            if (itemEntity.getCopyNumber() != null && itemEntity.getCopyNumber() > 1) {
+                                bibliographicMarcForm.setLeaderMaterialType(ScsbConstants.MVM);
+                            }
                     }
                     bibliographicMarcForm.setCallNumber(nonDeletedItemEntities.get(0).getCallNumber());
                     if (null != itemId) {
