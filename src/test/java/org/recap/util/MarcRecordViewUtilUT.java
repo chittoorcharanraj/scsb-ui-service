@@ -158,8 +158,13 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         ItemStatusEntity itemStatusEntity = new ItemStatusEntity();
         itemStatusEntity.setId(1);
         itemStatusEntity.setStatusCode(ScsbCommonConstants.AVAILABLE);
+        ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
+        imsLocationEntity.setId(1);
+        imsLocationEntity.setImsLocationCode("HD");
+        imsLocationEntity.setActive(true);
         itemEntity.setItemStatusEntity(itemStatusEntity);
         itemEntity.setCollectionGroupEntity(collectionGroupEntity);
+        itemEntity.setImsLocationEntity(imsLocationEntity);
 
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setId(1);
