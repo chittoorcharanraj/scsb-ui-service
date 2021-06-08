@@ -358,12 +358,9 @@ public class RequestService {
                                             getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
                                             deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
                                         }
-                                        Optional<InstitutionEntity> loginInstitution = institutionDetailsRepository.findById(userDetailsForm.getLoginInstitutionId());
-                                        if(loginInstitution.isPresent()) {
                                             Map<String, String> recalAvailablePropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_RECALL_FUNCTIONALITY_AVAILABLE);
-                                            isRecallAvailable = Boolean.parseBoolean(recalAvailablePropertyMap.get(loginInstitution.get().getInstitutionCode()));
+                                            isRecallAvailable = Boolean.parseBoolean(recalAvailablePropertyMap.get(institutionCode));
 
-                                        }
                                     }
                                 }
                             }
@@ -391,11 +388,21 @@ public class RequestService {
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
+                if(!isRecallAvailable) {
+                    requestTypes.remove(ScsbCommonConstants.RECALL);
+                }
+
             } else if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntityList = getRequestTypeDetailsRepository().findAllExceptEDDAndBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntityList) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
+                if(!isRecallAvailable) {
+                    requestTypes.remove(ScsbCommonConstants.RECALL);
+                }
+            }
+            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && !isRecallAvailable) {
+                requestTypes = new LinkedHashSet<>();
             }
             jsonObject.put(ScsbConstants.REQUEST_TYPES, requestTypes);
             jsonObject.put(ScsbConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.iterator().next() : "");
