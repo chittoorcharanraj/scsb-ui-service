@@ -52,12 +52,7 @@ public class SCSBValidationFilterUT extends BaseTestCaseUT {
     }
     @Test
     public void doFilterException() throws ServletException, IOException {
-        Optional<String> API_PATH = Optional.ofNullable("Header");
         Mockito.when(request.getSession(ScsbConstants.FALSE)).thenThrow(new NullPointerException());
-        Mockito.when(request.getHeader(ScsbConstants.API_PATH)).thenReturn("Header");
-        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.AUTH_PATH + API_PATH.get())).thenReturn(Boolean.TRUE);
-        Mockito.when(scsbValidationFilter.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.doNothing().when(filterChain).doFilter(any(), any());
         scsbValidationFilter.doFilter(request,servletResponse,filterChain);
     }
 
