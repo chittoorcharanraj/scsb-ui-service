@@ -98,6 +98,8 @@ public class LoginController extends AbstractController {
                 if (null != additionalInformation) {
                     username = (String) additionalInformation.get("sub");
                     Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
+                    cookieUserName.setHttpOnly(true);
+                    cookieUserName.setSecure(true);
                     HelperUtil.setCookieProperties(cookieUserName);
                     response.addCookie(cookieUserName);
                 }
