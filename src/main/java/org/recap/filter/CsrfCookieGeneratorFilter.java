@@ -23,6 +23,7 @@ public class CsrfCookieGeneratorFilter extends OncePerRequestFilter {
         if (actualToken == null || !actualToken.equals(csrfToken.getToken())) {
             String pCookieName = "CSRF-TOKEN";
             Cookie cookie = new Cookie(pCookieName, csrfToken.getToken());
+            cookie.setSecure(true);
             HelperUtil.setCookieProperties(cookie);
             response.addCookie(cookie);
         }
