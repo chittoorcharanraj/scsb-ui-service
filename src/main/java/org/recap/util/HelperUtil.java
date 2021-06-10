@@ -136,7 +136,7 @@ public class HelperUtil {
 
     public static void setCookieProperties(Cookie cookie) {
         cookie.setMaxAge(-1);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setPath("/");
     }
 }

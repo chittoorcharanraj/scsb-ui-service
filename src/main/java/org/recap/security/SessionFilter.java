@@ -48,19 +48,19 @@ public class SessionFilter implements Filter{
                 HttpServletRequest request = (HttpServletRequest) req;
                 HttpServletResponse response = (HttpServletResponse) res;
                 Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, authentication.getName());
+                cookieUserName.setHttpOnly(true);
                 HelperUtil.setCookieProperties(cookieUserName);
                 response.addCookie(cookieUserName);
                 Cookie cookie = new Cookie(ScsbConstants.IS_USER_AUTHENTICATED, "Y");
+                cookie.setHttpOnly(true);
                 HelperUtil.setCookieProperties(cookie);
                 response.addCookie(cookie);
 
                 UserInstitutionCache userInstitutionCache = HelperUtil.getBean(UserInstitutionCache.class);
-
                 String requestedSessionId = request.getSession().getId();
-
                 String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
-
                 Cookie institutionCodeCookies = new Cookie(ScsbConstants.LOGGED_IN_INSTITUTION, institutionCode);
+                institutionCodeCookies.setHttpOnly(true);
                 HelperUtil.setCookieProperties(institutionCodeCookies);
                 response.addCookie(institutionCodeCookies);
 
