@@ -237,6 +237,27 @@ public class ReportsUtil {
         return new ResponseEntity<>(submitCollectionReprot, HttpStatus.OK);
     }
 
+    /**
+     *
+     * @param submitCollectionReprot
+     * @return SubmitCOllectionReport
+     */
+    public ResponseEntity<SubmitCollectionReport> accessionReport(SubmitCollectionReport submitCollectionReprot){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+        HttpEntity<SubmitCollectionReport> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
+        ResponseEntity<SubmitCollectionReport> submitCollectionReprotResponseEntity = null;
+        try {
+            submitCollectionReprotResponseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_REPORTS_ACCESSION_RESULTS_URL, HttpMethod.POST, httpEntity, SubmitCollectionReport.class);
+            submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
+            if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
+                submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }catch (Exception e) {
+            submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        }
+        return new ResponseEntity<>(submitCollectionReprot, HttpStatus.OK);
+    }
+
     private void writeRow(IncompleteReportResultsRow incompleteReportResultsRow, CsvWriter csvOutput) throws IOException {
         csvOutput.write(incompleteReportResultsRow.getTitle());
         csvOutput.write(incompleteReportResultsRow.getAuthor());

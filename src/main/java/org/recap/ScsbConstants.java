@@ -71,7 +71,7 @@ public class ScsbConstants {
     public static final String SCSB_REPORTS_CGD_ITEM_COUNTS_URL = "reportsService/cgdItemCounts";
     public static final String SCSB_REPORTS_DEACCESSION_RESULTS_URL = "reportsService/deaccessionResults";
     public static final String SCSB_REPORTS_SUBMIT_RESULTS_URL = "reportsService/submitCollection";
-
+    public static final String SCSB_REPORTS_ACCESSION_RESULTS_URL = "reportsService/accessionReports";
     public static final String SCSB_SHIRO_AUTHENTICATE_URL = "userAuth/authService";
     public static final String SCSB_SHIRO_SEARCH_URL = "auth/search";
     public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL = "auth/touchExistingSession";

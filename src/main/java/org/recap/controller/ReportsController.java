@@ -304,6 +304,14 @@ public class ReportsController extends AbstractController {
         return reportsUtil.submitCollectionReport(submitCollectionReprot);
     }
 
+    @PostMapping("/accessionReport")
+    public ResponseEntity<SubmitCollectionReport> accessionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
+        submitCollectionReprot.setFrom(dateMap.get("fromDate"));
+        submitCollectionReprot.setTo(dateMap.get("toDate"));
+        return reportsUtil.accessionReport(submitCollectionReprot);
+    }
+
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {
         List<IncompleteReportResultsRow> incompleteReportResultsRows = getReportsUtil().incompleteRecordsReportFieldsInformation(reportsForm);
         if (incompleteReportResultsRows.isEmpty()) {
