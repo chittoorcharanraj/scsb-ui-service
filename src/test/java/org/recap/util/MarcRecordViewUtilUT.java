@@ -40,9 +40,31 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
         Integer bibId = 1;
         Integer itemId = 1;
         UserDetailsForm userDetailsForm = getUserDetailsForm();
-
         Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(getBibEntityWithHoldingsAndItem());
         Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Arrays.asList(getBibEntityWithHoldingsAndItem().getItemEntities().get(0)));
+        BibliographicMarcForm bibliographicMarcForm =mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+    @Test
+    public void buildBibliographicMarcFormEmptyItemEntity() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 1;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(getBibEntityWithHoldingsAndItem());
+        Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Collections.EMPTY_LIST);
+        BibliographicMarcForm bibliographicMarcForm =mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
+        assertNotNull(bibliographicMarcForm);
+    }
+    @Test
+    public void buildBibliographicMarcFormWithoutInstitutionEntity() throws Exception {
+        Integer bibId = 1;
+        Integer itemId = 1;
+        UserDetailsForm userDetailsForm = getUserDetailsForm();
+        userDetailsForm.setSuperAdmin(true);
+        BibliographicEntity bibliographicEntity = getBibEntityWithHoldingsAndItem();
+        bibliographicEntity.setInstitutionEntity(null);
+        Mockito.when(bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, ScsbCommonConstants.COMPLETE_STATUS)).thenReturn(bibliographicEntity);
+        Mockito.when(bibliographicDetailsRepository.getNonDeletedItemEntities(any(), any(), any())).thenReturn(Collections.EMPTY_LIST);
         BibliographicMarcForm bibliographicMarcForm =mockMarcRecordViewUtil.buildBibliographicMarcForm(bibId,itemId,userDetailsForm);
         assertNotNull(bibliographicMarcForm);
     }

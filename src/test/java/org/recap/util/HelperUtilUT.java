@@ -11,8 +11,13 @@ import org.recap.ScsbConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
@@ -27,6 +32,9 @@ public class HelperUtilUT extends BaseTestCaseUT {
     HelperUtil mockedHelperUtil;
 
     @Mock
+    Cookie cookie;
+
+    @Mock
     HttpServletRequest httpServletRequest;
 
     @Mock
@@ -34,6 +42,9 @@ public class HelperUtilUT extends BaseTestCaseUT {
 
     @Mock
     Authentication auth;
+
+    @Mock
+    File file;
 
     @Mock
     Collection<GrantedAuthority> authorities;
@@ -72,6 +83,48 @@ public class HelperUtilUT extends BaseTestCaseUT {
         Mockito.when(auth.getName()).thenReturn(ScsbConstants.ANONYMOUS_USER);
         boolean result=mockedHelperUtil.isAnonymousUser(auth);
         assertNotNull(result);
+    }
+
+    @Test
+    public void setCookieProperties(){
+        mockedHelperUtil.setCookieProperties(cookie);
+    }
+
+    @Test
+    public void getFileContent() throws Exception {
+        File file = getBibContentFile();
+        byte[] bytes = mockedHelperUtil.getFileContent(file,"csv","test");
+        assertNotNull(bytes);
+    }
+
+    private File getBibContentFile() throws URISyntaxException {
+        URL resource = null;
+        resource = getClass().getResource("BulkRequest.csv");
+        return new File(resource.toURI());
+    }
+
+    @Test
+    public void getLogoutUrl(){
+        try {
+            String casLogoutUrl = mockedHelperUtil.getLogoutUrl("HD");
+            assertNotNull(casLogoutUrl);
+        }catch (Exception e){}
+    }
+
+    @Test
+    public void getInstitutionFromRequestIsBlank(){
+        Mockito.when(request.getParameter("institution")).thenReturn("");
+        Mockito.when(request.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE)).thenReturn("HD");
+        String institution = mockedHelperUtil.getInstitutionFromRequest(request);
+        assertNotNull(institution);
+    }
+
+    @Test
+    public void getInstitutionFromRequest(){
+        Mockito.when(request.getParameter("institution")).thenReturn("HD");
+        Mockito.when(request.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE)).thenReturn("HD");
+        String institution = mockedHelperUtil.getInstitutionFromRequest(request);
+        assertNotNull(institution);
     }
 
 }
