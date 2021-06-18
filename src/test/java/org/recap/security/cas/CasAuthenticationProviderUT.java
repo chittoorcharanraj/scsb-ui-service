@@ -1,18 +1,31 @@
 package org.recap.security.cas;
 
+import org.jasig.cas.client.validation.Assertion;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
+import org.springframework.security.cas.ServiceProperties;
+import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.authentication.StatelessTicketCache;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 
 public class CasAuthenticationProviderUT extends BaseTestCaseUT {
 
-    @Mock
+    @InjectMocks
+    @Spy
     CasAuthenticationProvider casAuthenticationProvider;
 
     @Mock
@@ -24,17 +37,86 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
     @Mock
     GrantedAuthoritiesMapper authoritiesMapper;
 
+    @Mock
+    ServiceProperties serviceProperties;
+
+    @Mock
+    UserDetails userDetails;
+
+    @Mock
+    UserDetailsService userDetailsService;
+
+    @Mock
+    Assertion assertion;
+
+    @Mock
+    AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
+
     @Test
     public void authenticate(){
-
-        Mockito.doCallRealMethod().when(casAuthenticationProvider).authenticate(authentication);
-        Authentication auth = casAuthenticationProvider.authenticate(authentication);
+        Mockito.doReturn(Boolean.TRUE).when(casAuthenticationProvider).supports(authentication.getClass());
+        try {
+            Authentication auth = casAuthenticationProvider.authenticate(authentication);
+        }catch (Exception e){}
     }
-  /* *//* @Test
+    @Test
+    public void getServiceUrlNull(){
+        try {
+            ServiceProperties serviceProperties = new ServiceProperties();
+            Mockito.when(authentication.getDetails()).thenReturn("Test");
+            ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getServiceUrl", authentication);
+        }catch (Exception e){}
+    }
+
+    @Test
+    public void getServiceUrl(){
+        try {
+            serviceProperties.setService("test");
+            Mockito.when(authentication.getDetails()).thenReturn("Test");
+            ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getServiceUrl", authentication);
+        }catch (Exception e){}
+    }
+
+    @Test
+    public void getServiceUrlServiceAsNull(){
+        try {
+            Mockito.when(authentication.getDetails()).thenReturn("Test");
+            ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getServiceUrl", authentication);
+        }catch (Exception e){}
+    }
+    @Test
+    public void authenticateNow(){
+        try {
+            ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "authenticateNow", authentication);
+        }catch (Exception e){}
+    }
+
+    @Test
+    public void loadUserByAssertion(){
+        Mockito.when(authenticationUserDetailsService.loadUserDetails(any())).thenReturn(userDetails);
+        ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "loadUserByAssertion",assertion);
+    }
+
+    @Test
+    public void setUserDetailsService(){
+        ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "setUserDetailsService",userDetailsService);
+    }
+
+    @Test
+    public void getKey(){
+        ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getKey");
+    }
+
+    @Test
+    public void getTicketValidator(){
+        ReflectionTestUtils.invokeMethod(casAuthenticationProvider,"getTicketValidator");
+    }
+
+    @Test
     public void getStatelessTicketCache(){
         StatelessTicketCache cache = casAuthenticationProvider.getStatelessTicketCache();
         assertNotNull(cache);
-    }*//*
+    }
     @Test
     public void setStatelessTicketCache(){
         casAuthenticationProvider.setStatelessTicketCache(statelessTicketCache);
@@ -45,6 +127,7 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
     }
     @Test
     public void supports(){
-        casAuthenticationProvider.supports(authentication.getClass());
-    }*/
+        Boolean result  = casAuthenticationProvider.supports(authentication.getClass());
+        assertNotNull(result);
+    }
 }

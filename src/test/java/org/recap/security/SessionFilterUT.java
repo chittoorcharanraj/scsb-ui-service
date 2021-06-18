@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -87,6 +88,15 @@ public class SessionFilterUT extends BaseTestCaseUT{
         sessionFilter.destroy();
         sessionFilter.init(filterConfig);
         assertTrue(true);
+    }
+
+    @Test
+    public void getUserAuthUtil(){
+        SessionFilter sessionFilter = new SessionFilter();
+        try {
+            UserAuthUtil userAuthUtil = sessionFilter.getUserAuthUtil();
+            assertNotNull(userAuthUtil);
+        }catch (Exception e){}
     }
 
 }
