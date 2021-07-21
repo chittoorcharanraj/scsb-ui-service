@@ -7,6 +7,7 @@ import org.recap.model.facets.FacetsForm;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
@@ -18,6 +19,7 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.SCSBService;
 import org.recap.util.HelperUtil;
+import org.recap.util.ReportsServiceUtil;
 import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,9 @@ public class ReportsController extends AbstractController {
 
     @Autowired
     private ReportsUtil reportsUtil;
+
+    @Autowired
+    private ReportsServiceUtil reportsServiceUtil;
 
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
@@ -308,6 +313,54 @@ public class ReportsController extends AbstractController {
         submitCollectionReprot.setFrom(dateMap.get("fromDate"));
         submitCollectionReprot.setTo(dateMap.get("toDate"));
         return reportsUtil.accessionReport(submitCollectionReprot);
+    }
+
+    /**
+     *
+     * @param titleMatchedReport
+     * @param fromDate
+     * @param toDate
+     * @return List of TitleMatchReports
+     * @throws Exception
+     */
+    @PostMapping("/titleMatchCount")
+    public TitleMatchedReport titleMatchCount(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
+        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
+        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.TRUE,ScsbConstants.FALSE);
+    }
+
+    /**
+     *
+     * @param titleMatchedReport
+     * @param fromDate
+     * @param toDate
+     * @return List of TitleMatchReports
+     * @throws Exception
+     */
+    @PostMapping("/titleMatchReports")
+    public TitleMatchedReport titleMatchReports(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
+        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
+        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.FALSE);
+    }
+
+    /**
+     *
+     * @param titleMatchedReport
+     * @param fromDate
+     * @param toDate
+     * @return List of TitleMatchReports
+     * @throws Exception
+     */
+    @PostMapping("/titleMatchReportExport")
+    public TitleMatchedReport titleMatchReportsExport(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+        Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
+        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
+        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.TRUE);
     }
 
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {

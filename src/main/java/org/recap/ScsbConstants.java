@@ -7,6 +7,9 @@ public class ScsbConstants {
 
     //Report Types
     public static final String MATCHING_TYPE = "Matching";
+    public static final String MATCHING_COUNT_URI = "reportsService/titleMatchCount";
+    public static final String MATCHING_REPORTS_URI = "reportsService/titleMatchReport";
+    public static final String MATCHING_REPORTS_URI_EXPORT = "reportsService/titleMatchReportExport";
     //SEARCH
     public static final String SEARCH = "Search";
     public static final String REDIRECT_SEARCH = "redirect:search";

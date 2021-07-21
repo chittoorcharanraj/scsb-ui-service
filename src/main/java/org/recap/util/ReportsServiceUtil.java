@@ -5,6 +5,7 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.search.ReportsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,5 +120,35 @@ public class ReportsServiceUtil {
             return reportsResponse;
         }
    }
+
+    public TitleMatchedReport getTitleMatchReport(TitleMatchedReport titleMatchedReport, boolean isCOUNT, boolean isExport) {
+        ResponseEntity<TitleMatchedReport> responseEntity = null;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+            HttpEntity<TitleMatchedReport> httpEntity = new HttpEntity<>(titleMatchedReport, headers);
+            if(!isExport)
+                responseEntity = (isCOUNT) ? restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_COUNT_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class)
+                    : restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
+            else
+                responseEntity =   restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI_EXPORT, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
+
+            titleMatchedReport = responseEntity.getBody();
+            if (isCOUNT) {
+                if (titleMatchedReport.getTitleMatchCounts().size() == 0) {
+                    titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
+                }
+            } else {
+                if (titleMatchedReport.getTitleMatchedReports().size() == 0) {
+                    titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
+                }
+            }
+            return titleMatchedReport;
+        } catch (Exception e) {
+            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
+            return titleMatchedReport;
+        }
+    }
 }
 
