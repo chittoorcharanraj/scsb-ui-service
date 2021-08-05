@@ -27,6 +27,8 @@ public class SearchRecordsRequest implements Serializable {
 
     private List<String> materialTypes = new ArrayList<>();
 
+    private List<String> titleMatch = new ArrayList<>();
+
     private List<String> useRestrictions = new ArrayList<>();
 
     private List<SearchResultRow> searchResultRows = new ArrayList<>();
