@@ -63,6 +63,8 @@ public class SearchRecordsRequest implements Serializable {
 
     private List<String> imsDepositoryCodes = new ArrayList<>();
 
+    private boolean barcodeSearch = true;
+
     /**
      * Instantiates a new Search records request.
      */
