@@ -210,7 +210,6 @@ public class RequestService {
 
     private void addDeliveryLocationsToMap(Map<String, String> deliveryLocationsMap, List<DeliveryCodeEntity> deliveryCodeEntities, String institution) {
         String suppressLocation = propertyUtil.getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.UI_SUPPRESS_DELIVERY_LOCATION);
-        logger.info("suppressLocation >>> " + suppressLocation);
 
         if (CollectionUtils.isNotEmpty(deliveryCodeEntities)) {
             Collections.sort(deliveryCodeEntities);
@@ -222,10 +221,7 @@ public class RequestService {
         }
         if (suppressLocation != null && suppressLocation.trim().length() > 0) {
             String[] locationArr = suppressLocation.split(",");
-            logger.info("locationArr >>> " + locationArr.toString());
-
             for (String location : locationArr) {
-                logger.info("location >>> " + location);
                 deliveryLocationsMap.remove(location);
             }
         }
