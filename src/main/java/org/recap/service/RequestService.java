@@ -184,12 +184,12 @@ public class RequestService {
             List<DeliveryCodeEntity> insDeliveryCodeEntities = new ArrayList<>();
             List<Object[]> instDeliveryCodeObjects = ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId());
             prepareDeliveryCodeEntities(insDeliveryCodeEntities, instDeliveryCodeObjects);
-            addDeliveryLocationsToMap(deliveryLocationsMap, insDeliveryCodeEntities);
+            addDeliveryLocationsToMap(deliveryLocationsMap, insDeliveryCodeEntities,requestingInstitutionEntity.getInstitutionCode());
             if (userDetailsForm.isRepositoryUser()) {
                 List<DeliveryCodeEntity> imsDeliveryCodeEntities = new ArrayList<>();
                 List<Object[]> imsDeliveryCodeObjects = ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId(), itemEntity.getImsLocationId());
                 prepareDeliveryCodeEntities(imsDeliveryCodeEntities, imsDeliveryCodeObjects);
-                addDeliveryLocationsToMap(deliveryLocationsMap, imsDeliveryCodeEntities);
+                addDeliveryLocationsToMap(deliveryLocationsMap, imsDeliveryCodeEntities, requestingInstitutionEntity.getInstitutionCode());
             }
         }
     }
@@ -208,13 +208,21 @@ public class RequestService {
         }
     }
 
-    private void addDeliveryLocationsToMap(Map<String, String> deliveryLocationsMap, List<DeliveryCodeEntity> deliveryCodeEntities) {
+    private void addDeliveryLocationsToMap(Map<String, String> deliveryLocationsMap, List<DeliveryCodeEntity> deliveryCodeEntities, String institution) {
+        String suppressLocation = propertyUtil.getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.UI_SUPPRESS_DELIVERY_LOCATION);
+
         if (CollectionUtils.isNotEmpty(deliveryCodeEntities)) {
             Collections.sort(deliveryCodeEntities);
             for (DeliveryCodeEntity deliveryCodeEntity : deliveryCodeEntities) {
                 if (deliveryCodeEntity != null) {
                     deliveryLocationsMap.put(deliveryCodeEntity.getDeliveryCode(), deliveryCodeEntity.getDescription());
                 }
+            }
+        }
+        if (suppressLocation != null && suppressLocation.trim().length() > 0) {
+            String[] locationArr = suppressLocation.split(",");
+            for (String location : locationArr) {
+                deliveryLocationsMap.remove(location);
             }
         }
     }
