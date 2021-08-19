@@ -17,6 +17,7 @@ SCSB-UI is a microservice application that provides the User Interface for the a
 2.application.properties
   
   security.oauth2.resource.jwt.key-value = XXXXXXXXXXXXXXXXXXXX
+  
 3. Create a folder called static under src/main/resources and give full access to static folder
 4. Copy the dist folder content from Phase4-UI-Angular to Phase4-scsb-ui-service/src/main/resources/static
 
