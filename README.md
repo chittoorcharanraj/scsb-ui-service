@@ -1,12 +1,13 @@
-# scsb-ui
+# SCSB-UI
 
 The SCSB Middleware codebase and components are all licensed under the Apache 2.0 license, with the exception of a set of API design components (JSF, JQuery, and Angular JS), which are licensed under MIT X11.
 
 SCSB-UI is a microservice application that provides the User Interface for the application.The User Interface has a user login on successful authentication. Based on the user’s privileges, the User Interface provides search functionality, request, reporting, batch jobs accessibility, and user management.
 
 ## Software Required
-    - Java 11
-    - Docker 19.03.13
+
+  - Java 11
+  - Docker 19.03.13
      
 ## Prerequisite
 
@@ -19,6 +20,7 @@ SCSB-UI is a microservice application that provides the User Interface for the a
   security.oauth2.resource.jwt.key-value = XXXXXXXXXXXXXXXXXXXX
   
 3.Create a folder called static under src/main/resources and give full access to static folder
+
 4.Copy the dist folder content from Phase4-UI-Angular to Phase4-scsb-ui-service/src/main/resources/static
 
 ## Build
