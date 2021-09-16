@@ -1,11 +1,14 @@
 package org.recap.util;
 
+import org.apache.commons.collections.bidimap.AbstractBidiMapDecorator;
+import org.apache.commons.collections.map.HashedMap;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.reports.TitleMatchedReport;
+import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.ReportsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -135,20 +144,43 @@ public class ReportsServiceUtil {
 
             titleMatchedReport = responseEntity.getBody();
             if (isCOUNT) {
-                if (titleMatchedReport.getTitleMatchCounts().size() == 0) {
+                if (titleMatchedReport.getTitleMatchCounts() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }
             } else {
-                if (titleMatchedReport.getTitleMatchedReports().size() == 0) {
+                if (titleMatchedReport.getTitleMatchedReports() == null && titleMatchedReport.getMessage() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }
             }
-            return titleMatchedReport;
+            if(isExport || isCOUNT)
+                return titleMatchedReport;
+            else
+                return mapData(titleMatchedReport);
         } catch (Exception e) {
             logger.error(ScsbCommonConstants.LOG_ERROR, e);
             titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
             return titleMatchedReport;
         }
+    }
+
+    private TitleMatchedReport mapData(TitleMatchedReport titleMatchedReport) {
+        int count = 0;
+        List<TitleMatchedReports> dataList = titleMatchedReport.getTitleMatchedReports();
+        titleMatchedReport.setTitleMatchedReports(null);
+        dataList.sort((TitleMatchedReports t1, TitleMatchedReports t2)->t2.getDuplicateCode().compareTo(t1.getDuplicateCode()));
+        for (int i = 0; i<dataList.size();i++){
+            if(i ==0) {
+                dataList.get(i).setId(count);
+            } else {
+                if(dataList.get(i).getDuplicateCode().equalsIgnoreCase(dataList.get(i-1).getDuplicateCode())){
+                    dataList.get(i).setId(count);
+                } else {
+                    dataList.get(i).setId(++count);
+                }
+            }
+        }
+        titleMatchedReport.setTitleMatchedReports(dataList);
+        return titleMatchedReport;
     }
 }
 
