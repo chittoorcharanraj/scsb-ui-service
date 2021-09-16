@@ -68,4 +68,5 @@ public class SearchResultRow extends AbstractSearchResultRow {
     private String status;
     private Date createdDate;
     private Date lastUpdatedDate;
+    private String matchingIdentifier;
 }
