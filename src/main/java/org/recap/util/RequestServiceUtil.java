@@ -145,7 +145,7 @@ public class RequestServiceUtil {
         listCGDCodes = validateTypeUse(transactionReports, collectionGroupEntities,listCGDCodes);
         List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatus(pageable, scsbService.getKeysByValues(transactionReports.getOwningInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getRequestingInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, scsbService.getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString()));
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString(),o[9].toString(),o[10].toString()));
         }
         return transactionReportsList;
     }
@@ -169,7 +169,7 @@ public class RequestServiceUtil {
                 : scsbService.pullCGDCodesList(collectionGroupEntities);
         List<Object[]> reportsList = requestItemDetailsRepository.findTransactionReportsByOwnAndReqInstWithStatusExport(scsbService.getKeysByValues(transactionReports.getOwningInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getRequestingInsts(),institutionList), scsbService.getKeysByValues(transactionReports.getTypeOfUses(),getRequestTypes()), fromDate, toDate, scsbService.getKeysByValues(listCGDCodes,cgdCodes));
         for (Object[] o : reportsList) {
-            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString()));
+            transactionReportsList.add(new TransactionReport(o[0].toString(), institutionList.get(Integer.parseInt(o[1].toString())), institutionList.get(Integer.parseInt(o[2].toString())), cgdCodes.get(Integer.parseInt(o[3].toString())), o[4].toString(), o[5].toString(), o[6].toString(),imsCodes.get(Integer.parseInt(o[7].toString())),o[8].toString(),o[9].toString(),o[10].toString()));
         }
         return transactionReportsList;
     }

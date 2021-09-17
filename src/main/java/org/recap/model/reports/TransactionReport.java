@@ -1,6 +1,7 @@
 package org.recap.model.reports;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,8 @@ public class TransactionReport {
     private String requestStatus;
     private String imsLocation;
     private String callNumber;
+    private String customerCode;
+    private String stopCode;
 
     public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, Long count) {
         this.requestType = requestType;
@@ -31,7 +34,7 @@ public class TransactionReport {
         this.count = count;
     }
 
-    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, String itemBarcode, String createdDate, String requestStatus,String imsLocation,String callNumber) {
+    public TransactionReport(String requestType, String requestingInst, String owningInst,  String cgd, String itemBarcode, String createdDate, String requestStatus,String imsLocation,String callNumber,String customerCode,String stopCode) {
         this.requestType = requestType;
         this.requestingInst = requestingInst;
         this.owningInst = owningInst;
@@ -41,5 +44,7 @@ public class TransactionReport {
         this.requestStatus = requestStatus;
         this.imsLocation = imsLocation;
         this.callNumber = callNumber;
+        this.customerCode = customerCode;
+        this.stopCode = stopCode;
     }
 }
