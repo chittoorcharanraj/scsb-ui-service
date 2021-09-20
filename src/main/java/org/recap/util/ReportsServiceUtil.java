@@ -39,6 +39,10 @@ public class ReportsServiceUtil {
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
 
+
+    @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_EXPORT_LIMIT + "}")
+    private Integer titleReportExportLimit;
+
     @Autowired
     private ReportsUtil reportsUtil;
 
@@ -136,12 +140,16 @@ public class ReportsServiceUtil {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = HelperUtil.getSwaggerHeaders();
             HttpEntity<TitleMatchedReport> httpEntity = new HttpEntity<>(titleMatchedReport, headers);
-            if(!isExport)
+            if(!isExport) {
                 responseEntity = (isCOUNT) ? restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_COUNT_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class)
-                    : restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
-            else
-                responseEntity =   restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI_EXPORT, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
-
+                        : restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
+            } else {
+                if (titleMatchedReport.getTotalRecordsCount() <= titleReportExportLimit) {
+                    responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI_EXPORT, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
+                } else {
+                    responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI_EXPORT_S3, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
+                }
+            }
             titleMatchedReport = responseEntity.getBody();
             if (isCOUNT) {
                 if (titleMatchedReport.getTitleMatchCounts() == null) {

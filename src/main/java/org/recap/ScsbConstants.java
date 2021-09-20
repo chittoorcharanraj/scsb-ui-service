@@ -10,6 +10,7 @@ public class ScsbConstants {
     public static final String MATCHING_COUNT_URI = "reportsService/titleMatchCount";
     public static final String MATCHING_REPORTS_URI = "reportsService/titleMatchReport";
     public static final String MATCHING_REPORTS_URI_EXPORT = "reportsService/titleMatchReportExport";
+    public static final String MATCHING_REPORTS_URI_EXPORT_S3 = "reportsService/title-match-report-export-s3";
     //SEARCH
     public static final String SEARCH = "Search";
     public static final String REDIRECT_SEARCH = "redirect:search";
