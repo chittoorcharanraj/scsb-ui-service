@@ -50,6 +50,9 @@ public class RequestServiceUT extends BaseTestCaseUT {
     @Spy
     RequestService requestService;
 
+    @InjectMocks
+    RequestService requestServiceMock;
+
     @Mock
     BindingAwareModelMap model;
 
@@ -608,6 +611,9 @@ public class RequestServiceUT extends BaseTestCaseUT {
     @Test
     public void setDefaultsToCreateRequest() {
         UserDetailsForm userDetailsForm = getUserDetailsForm();
+        HashSet<String> set = new HashSet<>();
+        set.add("Not Available");
+        Mockito.when(model.get(ScsbConstants.REQUESTED_ITEM_AVAILABILITY)).thenReturn(set);
         RequestForm requestForm = requestService.setDefaultsToCreateRequest(userDetailsForm);
         assertNotNull(requestForm);
     }
