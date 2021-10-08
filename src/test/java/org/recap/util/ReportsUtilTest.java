@@ -12,6 +12,7 @@ import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -116,6 +118,12 @@ public class ReportsUtilTest extends BaseTestCaseUT {
         assertNotNull(file);
     }
 
+    @Test
+    public void getInstitutions(){
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getInstitutionEntity()));
+        List<String> stringList = reportsUtil.getInstitutions();
+        assertNotNull(stringList);
+    }
 
     private ReportsResponse getReportsResponse() {
         ReportsResponse reportsResponse = new ReportsResponse();

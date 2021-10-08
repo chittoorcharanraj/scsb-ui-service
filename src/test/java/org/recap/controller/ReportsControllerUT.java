@@ -11,6 +11,7 @@ import org.recap.ScsbConstants;
 import org.recap.model.jpa.CollectionGroupEntity;
 import org.recap.model.jpa.ImsLocationEntity;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
@@ -22,6 +23,7 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.SCSBService;
+import org.recap.util.ReportsServiceUtil;
 import org.recap.util.ReportsUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +38,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -61,6 +64,9 @@ public class ReportsControllerUT extends BaseTestCaseUT {
 
     @Mock
     ReportsUtil reportsUtil;
+
+    @Mock
+    ReportsServiceUtil reportsServiceUtil;
 
     @Mock
     HttpSession session;
@@ -282,6 +288,50 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         assertNotNull(responseEntity);
     }
 
+    @Test
+    public void titleMatchCount() throws Exception {
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        String fromDate = new Date().toString();
+        String toDate = new Date().toString();
+        Map<String, Date> dateMap = new HashMap<>();
+        dateMap.put("1",new Date());
+        dateMap.put("2",new Date());
+        Mockito.when(scsbService.dateFormatter(fromDate, toDate)).thenReturn(dateMap);
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.TRUE,ScsbConstants.FALSE)).thenReturn(titleMatchedReport);
+        TitleMatchedReport report = reportsController.titleMatchCount(titleMatchedReport,fromDate,toDate);
+        assertNotNull(report);
+        assertEquals(titleMatchedReport,report);
+    }
+
+    @Test
+    public void titleMatchReports() throws Exception {
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        String fromDate = new Date().toString();
+        String toDate = new Date().toString();
+        Map<String, Date> dateMap = new HashMap<>();
+        dateMap.put("1",new Date());
+        dateMap.put("2",new Date());
+        Mockito.when(scsbService.dateFormatter(fromDate, toDate)).thenReturn(dateMap);
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.FALSE)).thenReturn(titleMatchedReport);
+        TitleMatchedReport report = reportsController.titleMatchReports(titleMatchedReport,fromDate,toDate);
+        assertNotNull(report);
+        assertEquals(titleMatchedReport,report);
+    }
+
+    @Test
+    public void titleMatchReportsExport() throws Exception {
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        String fromDate = new Date().toString();
+        String toDate = new Date().toString();
+        Map<String, Date> dateMap = new HashMap<>();
+        dateMap.put("1",new Date());
+        dateMap.put("2",new Date());
+        Mockito.when(scsbService.dateFormatter(fromDate, toDate)).thenReturn(dateMap);
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.TRUE)).thenReturn(titleMatchedReport);
+        TitleMatchedReport report = reportsController.titleMatchReportsExport(titleMatchedReport,fromDate,toDate);
+        assertNotNull(report);
+        assertEquals(titleMatchedReport,report);
+    }
     private File getBibContentFile() throws URISyntaxException {
         URL resource = null;
         resource = getClass().getResource("test.csv");
