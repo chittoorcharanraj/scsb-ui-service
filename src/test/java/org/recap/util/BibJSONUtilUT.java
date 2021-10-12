@@ -257,4 +257,12 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
         assertNotNull(result);
     }
 
+    @Test
+    public void getPublicationDateValue(){
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        Record marcRecord = new RecordImpl();
+        String result = bibJSONUtil.getPublicationDateValue(marcRecord);
+        assertNull(result);
+    }
+
 }

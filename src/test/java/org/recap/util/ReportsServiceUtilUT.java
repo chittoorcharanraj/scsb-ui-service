@@ -1,21 +1,25 @@
 package org.recap.util;
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+
 import org.recap.BaseTestCaseUT;
-import org.recap.PropertyKeyConstants;
+
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.ReportsForm;
+
 import org.recap.service.RestHeaderService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +36,7 @@ import static org.mockito.Mockito.doThrow;
 public class ReportsServiceUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
+    @Spy
     ReportsServiceUtil reportsServiceUtil;
 
     @Mock
@@ -176,6 +181,33 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     }
 
     @Test
+
+    public void mapData(){
+        TitleMatchedReport titleMatchedReport = getTitleMatchedReport();
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil,"mapData",titleMatchedReport);
+    }
+
+    @Test
+    public void getTitleMatchReportException(){
+        TitleMatchedReport titleMatchedReport = getTitleMatchedReport();
+        reportsServiceUtil.getTitleMatchReport(titleMatchedReport,true,true);
+    }
+
+    private TitleMatchedReport getTitleMatchedReport() {
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        TitleMatchedReports titleMatchedReports = new TitleMatchedReports();
+        titleMatchedReports.setId(1);
+        titleMatchedReports.setDuplicateCode("DB");
+        TitleMatchedReports titleMatchedReports2 = new TitleMatchedReports();
+        titleMatchedReports2.setId(1);
+        titleMatchedReports2.setDuplicateCode("DB");
+        TitleMatchedReports titleMatchedReports3 = new TitleMatchedReports();
+        titleMatchedReports3.setId(1);
+        titleMatchedReports3.setDuplicateCode("BB");
+        titleMatchedReport.setTitleMatchedReports(Arrays.asList(titleMatchedReports,titleMatchedReports2,titleMatchedReports3));
+        return titleMatchedReport;
+    }
+
     public void requestCgdItemCountsException(){
         ReportsForm reportsForm = new ReportsForm();
         reportsForm.setPageNumber(10);
