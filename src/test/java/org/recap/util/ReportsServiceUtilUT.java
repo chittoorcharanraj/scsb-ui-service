@@ -1,19 +1,18 @@
 package org.recap.util;
 
-import org.junit.Before;
+
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
-import org.recap.PropertyKeyConstants;
+
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.ReportsForm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
