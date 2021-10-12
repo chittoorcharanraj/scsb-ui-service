@@ -3,6 +3,7 @@ package org.recap.helper;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.recap.service.RestHeaderService;
 import org.recap.util.HelperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -26,6 +27,13 @@ public class RestTemplateHelper {
     private ObjectMapper objectMapper;
 
     @Autowired
+    private RestHeaderService restHeaderService;
+
+    public RestHeaderService getRestHeaderService(){
+        return restHeaderService;
+    }
+
+    @Autowired
     public RestTemplateHelper(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper) {
         this.restTemplate = restTemplateBuilder.build();
         //TODO: Need to disable the interceptor on PROD
@@ -44,7 +52,8 @@ public class RestTemplateHelper {
      * @return Generic business entity.
      */
     public <T, R> T postForEntity(Class<T> clazz, String url, R body, Object... uriVariables) {
-        HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+       // HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+        HttpHeaders headers = getRestHeaderService().getHttpHeaders();
         HttpEntity<R> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class, uriVariables);
         JavaType javaType = objectMapper.getTypeFactory().constructType(clazz);

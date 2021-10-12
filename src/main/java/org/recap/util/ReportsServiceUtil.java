@@ -10,6 +10,7 @@ import org.recap.model.reports.ReportsResponse;
 import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.ReportsForm;
+import org.recap.service.RestHeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,16 @@ public class ReportsServiceUtil {
     @Autowired
     private ReportsUtil reportsUtil;
 
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Autowired
+    private RestHeaderService restHeaderService;
+
+    public RestHeaderService getRestHeaderService(){
+        return restHeaderService;
+    }
+
     /**
      * This method will call scsb microservice to get the reports response for the accession/deaccession reports.
      *
@@ -81,10 +92,8 @@ public class ReportsServiceUtil {
         reportsRequest.setCollectionGroupDesignations(reportsForm.getCollectionGroupDesignations());
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers =  HelperUtil.getSwaggerHeaders();
+            HttpHeaders headers = getRestHeaderService().getHttpHeaders();
             HttpEntity<ReportsRequest> httpEntity = new HttpEntity<>(reportsRequest, headers);
-
             ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.SCSB_REPORTS_CGD_ITEM_COUNTS_URL, HttpMethod.POST, httpEntity, ReportsResponse.class);
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
@@ -129,8 +138,7 @@ public class ReportsServiceUtil {
     private ReportsResponse getReportsResponse(ReportsRequest reportsRequest, String reportUrl) {
         ReportsResponse reportsResponse = new ReportsResponse();
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+            HttpHeaders headers = getRestHeaderService().getHttpHeaders();
             HttpEntity<ReportsRequest> httpEntity = new HttpEntity<>(reportsRequest, headers);
             ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + reportUrl, HttpMethod.POST, httpEntity, ReportsResponse.class);
             reportsResponse = responseEntity.getBody();
@@ -145,8 +153,7 @@ public class ReportsServiceUtil {
     public TitleMatchedReport getTitleMatchReport(TitleMatchedReport titleMatchedReport, boolean isCOUNT, boolean isExport) {
         ResponseEntity<TitleMatchedReport> responseEntity = null;
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+            HttpHeaders headers = getRestHeaderService().getHttpHeaders();
             HttpEntity<TitleMatchedReport> httpEntity = new HttpEntity<>(titleMatchedReport, headers);
             if(!isExport) {
                 responseEntity = (isCOUNT) ? restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_COUNT_URI, HttpMethod.POST, httpEntity, TitleMatchedReport.class)

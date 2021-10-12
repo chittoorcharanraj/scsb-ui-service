@@ -22,8 +22,8 @@ public class CustomerCodeDetailsRepositoryUT extends BaseTestCase {
 
     @Test
     public void findByOwnerCode() throws Exception {
-        OwnerCodeEntity customerCodeEntity = getOwnerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
-        OwnerCodeEntity saveCustomerCodeEntity = ownerCodeDetailsRepository.saveAndFlush(customerCodeEntity);
+        OwnerCodeEntity customerCodeEntityfindByOwnerCodeIn = getOwnerCodeEntity("ZZ", "Desc ZZ", 3, "ZZ,YY");
+        OwnerCodeEntity saveCustomerCodeEntity = ownerCodeDetailsRepository.saveAndFlush(customerCodeEntityfindByOwnerCodeIn);
         entityManager.refresh(saveCustomerCodeEntity);
         assertNotNull(saveCustomerCodeEntity);
         assertNotNull(saveCustomerCodeEntity.getId());

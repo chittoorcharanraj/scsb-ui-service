@@ -15,6 +15,7 @@ import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.service.RestHeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,16 @@ public class ReportsUtil {
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbGatewayUrl;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Autowired
+    private RestHeaderService restHeaderService;
+
+    public RestHeaderService getRestHeaderService(){
+        return restHeaderService;
+    }
 
     /**
      * To get the item count for the physical and edd request report from the scsb database and
@@ -222,7 +233,6 @@ public class ReportsUtil {
      * @return SubmitCOllectionReport
      */
     public ResponseEntity<SubmitCollectionReport> submitCollectionReport(SubmitCollectionReport submitCollectionReprot){
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = HelperUtil.getSwaggerHeaders();
         HttpEntity<SubmitCollectionReport> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
         ResponseEntity<SubmitCollectionReport> submitCollectionReprotResponseEntity = null;
@@ -243,7 +253,6 @@ public class ReportsUtil {
      * @return SubmitCOllectionReport
      */
     public ResponseEntity<SubmitCollectionReport> accessionReport(SubmitCollectionReport submitCollectionReprot){
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = HelperUtil.getSwaggerHeaders();
         HttpEntity<SubmitCollectionReport> httpEntity = new HttpEntity<>(submitCollectionReprot, headers);
         ResponseEntity<SubmitCollectionReport> submitCollectionReprotResponseEntity = null;

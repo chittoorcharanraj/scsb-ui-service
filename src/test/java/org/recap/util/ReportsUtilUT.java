@@ -1,17 +1,33 @@
 package org.recap.util;
 
 import com.csvreader.CsvReader;
+import javassist.tools.web.BadHttpRequest;
+import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.reports.ReportsRequest;
+import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.model.submitCollection.SubmitCollectionReport;
+import org.recap.service.RestHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,6 +46,8 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 
 /**
@@ -42,6 +60,19 @@ public class ReportsUtilUT extends BaseTestCase {
 
     @PersistenceContext
     EntityManager entityManager;
+
+
+    @Mock
+    RestTemplate restTemplate;
+
+    @Mock
+    RestHeaderService restHeaderService;
+
+    @Mock
+    HttpHeaders httpHeaders;
+
+    @InjectMocks
+    ReportsUtil reportsUtilMock;
 
     @Test
     public void populatePartnersCountForRequest() throws Exception {
@@ -385,7 +416,81 @@ public class ReportsUtilUT extends BaseTestCase {
         assertEquals(csvReader.get("Title"),incompleteReportResult.getTitle());
         assertEquals(csvReader.get("Barcode"),incompleteReportResult.getBarcode());
         assertEquals(csvReader.get("Accession Date"),incompleteReportResult.getCreatedDate());
+    }
 
+    @Test
+    public void submitCollectionReportTest() throws Exception{
+        SubmitCollectionReport submitCollectionReport = new SubmitCollectionReport();
+        submitCollectionReport.setPageNumber(5);
+        submitCollectionReport.setPageSize(5);
+        submitCollectionReport.setTotalRecordsCount(1550L);
+        submitCollectionReport.setInstitutionName("CUL");
+        submitCollectionReport.setTo(new Date());
+        Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        ResponseEntity responseEntity = new ResponseEntity(submitCollectionReport, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<SubmitCollectionReport>>any());
+        reportsUtilMock.submitCollectionReport(submitCollectionReport);
+        TestCase.assertNotNull(responseEntity.getBody());
+    }
 
+    @Test
+    public void submitCollectionReportException() throws Exception{
+        SubmitCollectionReport submitCollectionReport = new SubmitCollectionReport();
+        submitCollectionReport.setPageNumber(5);
+        submitCollectionReport.setPageSize(5);
+        submitCollectionReport.setTotalRecordsCount(1550L);
+        submitCollectionReport.setInstitutionName("CUL");
+        submitCollectionReport.setTo(new Date());
+        Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        ResponseEntity responseEntity = new ResponseEntity(submitCollectionReport, HttpStatus.OK);
+        doThrow(new NullPointerException()).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<SubmitCollectionReport>>any());
+        reportsUtilMock.submitCollectionReport(submitCollectionReport);
+        TestCase.assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    public void accessionReportTest() throws Exception{
+        SubmitCollectionReport submitCollectionReport = new SubmitCollectionReport();
+        submitCollectionReport.setPageNumber(5);
+        submitCollectionReport.setPageSize(5);
+        submitCollectionReport.setTotalRecordsCount(1550L);
+        submitCollectionReport.setInstitutionName("CUL");
+        submitCollectionReport.setTo(new Date());
+        Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        ResponseEntity responseEntity = new ResponseEntity(submitCollectionReport, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<SubmitCollectionReport>>any());
+        reportsUtilMock.accessionReport(submitCollectionReport);
+        TestCase.assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    public void accessionReportException() throws Exception{
+        SubmitCollectionReport submitCollectionReport = new SubmitCollectionReport();
+        submitCollectionReport.setPageNumber(5);
+        submitCollectionReport.setPageSize(5);
+        submitCollectionReport.setTotalRecordsCount(1550L);
+        submitCollectionReport.setInstitutionName("CUL");
+        submitCollectionReport.setTo(new Date());
+        Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
+        ResponseEntity responseEntity = new ResponseEntity(submitCollectionReport, HttpStatus.OK);
+        doThrow(new NullPointerException()).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<SubmitCollectionReport>>any());
+        reportsUtilMock.accessionReport(submitCollectionReport);
+        TestCase.assertNotNull(responseEntity.getBody());
     }
 }

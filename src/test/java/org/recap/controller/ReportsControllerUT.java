@@ -1,6 +1,8 @@
 package org.recap.controller;
 
+import junit.framework.TestCase;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,6 +29,7 @@ import org.recap.util.ReportsServiceUtil;
 import org.recap.util.ReportsUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,6 +44,7 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 public class ReportsControllerUT extends BaseTestCaseUT {
 
@@ -83,6 +87,9 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
+    @Mock
+    ReportsServiceUtil reportsServiceUtil;
+
     /*@Test
     public void reports(){
         Mockito.when(request.getSession(false)).thenReturn(session);
@@ -97,6 +104,34 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         boolean response = reportsController.reports(request);
         assertFalse(response);
     }*/
+
+    @Test
+    public void titleMatchCountTest() throws Exception {
+        TitleMatchedReport titleMatchedReport = getTitleMatchReport();
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.TRUE,ScsbConstants.FALSE)).thenReturn(titleMatchedReport);
+        titleMatchedReport = reportsController.titleMatchCount(titleMatchedReport, new Date().toString(), new Date().toString());
+        assertNotNull(titleMatchedReport);
+
+    }
+
+    @Test
+    public void titleMatchReportsTest() throws Exception {
+        TitleMatchedReport titleMatchedReport = getTitleMatchReport();
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.FALSE)).thenReturn(titleMatchedReport);
+        titleMatchedReport = reportsController.titleMatchReports(titleMatchedReport, new Date().toString(), new Date().toString());
+        assertNotNull(titleMatchedReport);
+
+    }
+
+    @Test
+    public void titleMatchReportsExportTest() throws Exception {
+        TitleMatchedReport titleMatchedReport = getTitleMatchReport();
+        Mockito.when(reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.TRUE)).thenReturn(titleMatchedReport);
+        titleMatchedReport = reportsController.titleMatchReportsExport(titleMatchedReport, new Date().toString(), new Date().toString());
+        assertNotNull(titleMatchedReport);
+
+    }
+
     @Test
     public void reportCountsForPartner() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
@@ -362,5 +397,17 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         collectionGroupEntity.setCreatedDate(new Date());
         collectionGroupEntity.setLastUpdatedDate(new Date());
         return collectionGroupEntity;
+    }
+
+    private TitleMatchedReport getTitleMatchReport() {
+        TitleMatchedReport titleMatchedReport = new TitleMatchedReport();
+        titleMatchedReport.setTitleMatch("ABC");
+        titleMatchedReport.setCgd(Arrays.asList("ABC","DEF"));
+        titleMatchedReport.setMessage("Title match report");
+        titleMatchedReport.setOwningInst("PUL");
+        titleMatchedReport.setPageNumber(1);
+        titleMatchedReport.setTotalPageCount(10);
+        titleMatchedReport.setTotalRecordsCount(1000);
+        return titleMatchedReport;
     }
 }

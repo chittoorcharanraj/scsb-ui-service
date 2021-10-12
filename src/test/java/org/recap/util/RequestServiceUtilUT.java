@@ -1,28 +1,31 @@
 package org.recap.util;
 
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.*;
+import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TransactionReport;
 import org.recap.model.reports.TransactionReports;
+import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.search.RequestForm;
 import org.recap.repository.jpa.*;
 import org.recap.service.SCSBService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * Created by rajeshbabuk on 29/10/16.
@@ -253,5 +256,4 @@ public class RequestServiceUtilUT extends BaseTestCaseUT {
         requestItemEntity.setRequestingInstitutionId(2);
         return requestItemEntity;
     }
-
 }
