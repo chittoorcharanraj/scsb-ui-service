@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.FilterChain;
@@ -30,6 +31,9 @@ public class SCSBExceptionTranslationFilterUT extends BaseTestCaseUT {
 
     @InjectMocks
     SCSBExceptionTranslationFilter SCSBExceptionTranslationFilter;
+
+    @Mock
+    ThrowableAnalyzer throwableAnalyzer;
 
     @Mock
     RequestCache requestCache;
@@ -137,5 +141,10 @@ public class SCSBExceptionTranslationFilterUT extends BaseTestCaseUT {
     @Test
     public void handleSpringSecurityAccessDeniedException(){
         ReflectionTestUtils.invokeMethod(SCSBExceptionTranslationFilter,"handleSpringSecurityException",servletRequest,servletResponse,filterChain,accessDeniedException);
+    }
+
+    @Test
+    public void setThrowableAnalyzer(){
+        SCSBExceptionTranslationFilter.setThrowableAnalyzer(throwableAnalyzer);
     }
 }
