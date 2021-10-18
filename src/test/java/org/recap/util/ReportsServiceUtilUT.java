@@ -42,12 +42,6 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     @Mock
     ReportsUtil reportsUtil;
 
-    @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
-    private String supportInstitution;
-
-    @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_EXPORT_LIMIT + "}")
-    private Integer titleReportExportLimit;
-
     @Mock
     RestTemplate restTemplate;
 

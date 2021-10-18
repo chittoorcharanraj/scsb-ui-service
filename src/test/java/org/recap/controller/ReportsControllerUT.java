@@ -87,8 +87,6 @@ public class ReportsControllerUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
-    @Mock
-    ReportsServiceUtil reportsServiceUtil;
 
     /*@Test
     public void reports(){
