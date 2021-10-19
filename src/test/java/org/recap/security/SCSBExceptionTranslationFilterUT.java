@@ -33,9 +33,6 @@ public class SCSBExceptionTranslationFilterUT extends BaseTestCaseUT {
     SCSBExceptionTranslationFilter SCSBExceptionTranslationFilter;
 
     @Mock
-    ThrowableAnalyzer throwableAnalyzer;
-
-    @Mock
     RequestCache requestCache;
 
     @Mock
@@ -145,6 +142,7 @@ public class SCSBExceptionTranslationFilterUT extends BaseTestCaseUT {
 
     @Test
     public void setThrowableAnalyzer(){
+        ThrowableAnalyzer throwableAnalyzer = Mockito.mock(ThrowableAnalyzer.class);
         SCSBExceptionTranslationFilter.setThrowableAnalyzer(throwableAnalyzer);
     }
 }
