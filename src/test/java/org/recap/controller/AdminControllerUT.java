@@ -64,7 +64,7 @@ public class AdminControllerUT extends BaseTestCaseUT {
     @Test
     public void uploadFile() throws IOException, URISyntaxException {
         FileUploadEntity fileUploadEntity = new FileUploadEntity();
-        URL resource = getClass().getResource("BibContent.xml");
+        URL resource = getClass().getResource("OnBoardInstitution.xml");
         assertNotNull(resource);
         File file = new File(resource.toURI());
         assertNotNull(file);
@@ -117,7 +117,7 @@ public class AdminControllerUT extends BaseTestCaseUT {
     }
     @Test
     public void uploadIMSFile() throws IOException, URISyntaxException {
-        URL resource = getClass().getResource("BibContent.xml");
+        URL resource = getClass().getResource("OnBoardInstitution.xml");
         assertNotNull(resource);
         File file = new File(resource.toURI());
         assertNotNull(file);

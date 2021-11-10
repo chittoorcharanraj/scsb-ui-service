@@ -3,6 +3,7 @@ package org.recap.service;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +35,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 
 /**
@@ -52,6 +52,9 @@ public class RequestServiceUT extends BaseTestCaseUT {
 
     @InjectMocks
     RequestService requestServiceMock;
+
+    @Mock
+    RequestService mockrequestService;
 
     @Mock
     BindingAwareModelMap model;
@@ -564,6 +567,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
 
     @Test
     public void processCustomerAndDeliveryCodes() throws URISyntaxException, IOException {
+        List<DeliveryCodeEntity> mockDeliveryCodes = getMockDeliveryLocationsList();
         RequestForm requestForm = getRequestForm();
         Map<String, String> deliveryLocationsMap = new HashMap<>();
         UserDetailsForm userDetailsForm = getUserDetailsForm();
@@ -576,6 +580,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(requestForm.getRequestingInstitution())).thenReturn(itemEntity.getInstitutionEntity());
         Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
         Mockito.when(ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any(), any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(mockrequestService.prepareDeliveryCodeEntities(any(), any())).thenReturn(mockDeliveryCodes);
         requestService.processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
     }
 
@@ -616,6 +621,21 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(model.get(ScsbConstants.REQUESTED_ITEM_AVAILABILITY)).thenReturn(set);
         RequestForm requestForm = requestService.setDefaultsToCreateRequest(userDetailsForm);
         assertNotNull(requestForm);
+    }
+
+    @Test
+    public void testprepareDeliveryCodeEntities(){
+        List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
+        List<Object[]> deliveryCodeObjects = getDeliveryCodeObjects();
+        deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
+        Assert.assertEquals(1, deliveryCodeEntities.size());
+    }
+
+    private List<Object[]> getDeliveryCodeObjects(){
+        Object[] object = {1, "PA", "test", "test", 1, 1, 1};
+        List<Object[]> deliveryCodeObjects = new ArrayList<>();
+        deliveryCodeObjects.add(object);
+        return deliveryCodeObjects;
     }
 
     private OwnerCodeEntity getOwnerCodeEntity() {
@@ -723,5 +743,13 @@ public class RequestServiceUT extends BaseTestCaseUT {
         imsLocationEntity.setUpdatedBy("test");
         imsLocationEntity.setUpdatedDate(new Date());
         return imsLocationEntity;
+    }
+
+    public List<DeliveryCodeEntity> getMockDeliveryLocationsList(){
+        List<DeliveryCodeEntity> deliveryCodeEntityList = new ArrayList<>();
+        DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+        deliveryCodeEntity.setDeliveryCode("No");
+        deliveryCodeEntityList.add(deliveryCodeEntity);
+        return deliveryCodeEntityList;
     }
 }
