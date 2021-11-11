@@ -20,6 +20,7 @@ import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class MarcRecordViewUtil {
 
     @Autowired
     private OwnerCodeDetailsRepository ownerCodeDetailsRepository;
+
+    @Autowired
+    private RequestService requestService;
 
     @Value("${" + PropertyKeyConstants.NONHOLDINGID_INSTITUTION + "}")
     private String nonHoldInstitution;
@@ -188,24 +192,11 @@ public class MarcRecordViewUtil {
         if (null != ownerCodeEntity) {
             List<DeliveryCodeEntity> deliveryCodeEntities = new ArrayList<>();
             List<Object[]> deliveryCodeObjects = ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(ownerCodeEntity.getId(), ScsbConstants.PWD_DELIVERY_RESTRICT_TYPE);
-            prepareDeliveryCodeEntities(deliveryCodeEntities, deliveryCodeObjects);
+            deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities, deliveryCodeObjects);
             Collections.sort(deliveryCodeEntities);
             return deliveryCodeEntities;
         }
         return deliveryLocations;
     }
 
-    private void prepareDeliveryCodeEntities(List<DeliveryCodeEntity> deliveryCodeEntities, List<Object[]> deliveryCodeObjects) {
-        for (Object[] obj : deliveryCodeObjects) {
-            DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
-            deliveryCodeEntity.setId(Integer.parseInt(obj[0].toString()));
-            deliveryCodeEntity.setDeliveryCode(obj[1] != null ? obj[1].toString() : null);
-            deliveryCodeEntity.setDescription(obj[2] != null ? obj[2].toString() : null);
-            deliveryCodeEntity.setAddress(obj[3] != null ? obj[3].toString() : null);
-            deliveryCodeEntity.setOwningInstitutionId(obj[4] != null ? Integer.parseInt(obj[4].toString()) : null);
-            deliveryCodeEntity.setImsLocationId(obj[5] != null ? Integer.parseInt(obj[5].toString()) : null);
-            deliveryCodeEntity.setDeliveryCodeTypeId(obj[6] != null ? Integer.parseInt(obj[6].toString()) : null);
-            deliveryCodeEntities.add(deliveryCodeEntity);
-        }
-    }
 }

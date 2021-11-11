@@ -63,6 +63,7 @@ public class HelperUtilUT extends BaseTestCaseUT {
         String casLogoutUrl = helperUtil.getLogoutUrl(institutionCode);
         assertNotNull(casLogoutUrl);
     }
+
     @Ignore
     public void testGetLogoutUrl2() throws Exception{
         String  institutionCode = "PUL";

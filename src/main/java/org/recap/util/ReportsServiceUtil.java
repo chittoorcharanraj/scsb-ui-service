@@ -1,7 +1,5 @@
 package org.recap.util;
 
-import org.apache.commons.collections.bidimap.AbstractBidiMapDecorator;
-import org.apache.commons.collections.map.HashedMap;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -22,11 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**

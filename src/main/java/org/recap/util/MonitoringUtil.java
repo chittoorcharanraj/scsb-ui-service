@@ -5,6 +5,7 @@ import org.recap.config.MonitoringConfiguration;
 import org.recap.model.search.Monitoring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 

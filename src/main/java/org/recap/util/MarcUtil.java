@@ -7,11 +7,11 @@ import org.marc4j.MarcReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlReader;
 import org.marc4j.MarcXmlWriter;
-import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
-import org.marc4j.marc.VariableField;
-import org.marc4j.marc.Subfield;
 import org.marc4j.marc.MarcFactory;
+import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.recap.model.marc.BibMarcRecord;
 import org.recap.model.marc.HoldingsMarcRecord;
 import org.recap.model.marc.ItemMarcRecord;
@@ -82,7 +82,7 @@ public class MarcUtil {
      * @param record            the record
      * @param dataFieldStartTag the data field start tag
      * @param subFieldTags      the sub field tags
-     * @return the data field value starts with
+     * @return the data field value starts withgetDeliveryLocationsList
      */
     public String getDataFieldValueStartsWith(Record record, String dataFieldStartTag, List<Character> subFieldTags) {
         StringBuilder fieldValue = new StringBuilder();
@@ -116,7 +116,7 @@ public class MarcUtil {
      * @return the list of data field values starts with
      */
     public List<String> getListOfDataFieldValuesStartsWith(Record record, String dataFieldStartTag, List<Character> subFieldTags) {
-        List<String> fieldValues = new ArrayList<>();
+        List<String> fieldValue = new ArrayList<>();
         if (record != null) {
             List<VariableField> variableFields = record.getVariableFields();
             if (!CollectionUtils.isEmpty(variableFields)) {
@@ -129,7 +129,7 @@ public class MarcUtil {
                             if (subfield != null) {
                                 String data = subfield.getData();
                                 if (StringUtils.isNotBlank(data)){
-                                    fieldValues.add(data);
+                                    fieldValue.add(data);
                                 }
                             }
                         }
@@ -137,7 +137,7 @@ public class MarcUtil {
                 }
             }
         }
-        return fieldValues;
+        return fieldValue;
     }
 
     /**

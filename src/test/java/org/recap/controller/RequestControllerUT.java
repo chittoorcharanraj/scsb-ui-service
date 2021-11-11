@@ -4,12 +4,25 @@ import org.codehaus.jettison.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.DeliveryCodeEntity;
+import org.recap.model.jpa.ImsLocationEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.ItemStatusEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
+import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.jpa.RequestStatusEntity;
+import org.recap.model.jpa.RequestTypeEntity;
 import org.recap.model.reports.TransactionReport;
 import org.recap.model.reports.TransactionReports;
 import org.recap.model.request.ItemRequestInformation;
@@ -19,7 +32,6 @@ import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.DeliveryCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
@@ -34,14 +46,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static junit.framework.Assert.assertEquals;
@@ -85,12 +103,6 @@ public class RequestControllerUT extends BaseTestCaseUT {
     SCSBService scsbService;
 
     @Mock
-    ReportsController reportsController;
-
-    @Mock
-    OwnerCodeDetailsRepository ownerCodeDetailsRepository;
-
-    @Mock
     DeliveryCodeDetailsRepository deliveryCodeDetailsRepository;
 
     @Mock
@@ -100,8 +112,6 @@ public class RequestControllerUT extends BaseTestCaseUT {
     RequestServiceUtil requestServiceUtil;
 
     String scsbUrl = "http://localhost:9040/testurl";
-
-    String scsbShiro = "testscsb";
 
     @Test
     public void searchRequests() {
@@ -230,10 +240,21 @@ public class RequestControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void createRequestTest() throws JSONException {
+        RequestForm requestForm = getRequestForm();
+        String message = getMessage();
+        Mockito.when(request.getSession(false)).thenReturn(session);
+        Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
+        Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(message);
+        RequestForm form = requestController.createRequest(requestForm, request);
+        assertNotNull(form);
+    }
+
+    @Test
     public void createRequest() throws JSONException {
         RequestForm requestForm = getRequestForm();
+        String message = getMessage();
         ResponseEntity responseEntity1 = new ResponseEntity<>(getItemResponseInformation(), HttpStatus.OK);
-        OwnerCodeEntity customerCodeEntity = getCustomerCodeEntity();
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when((String) session.getAttribute(ScsbConstants.USER_NAME)).thenReturn("Admin");
         Mockito.when(requestService.populateItemForRequest(requestForm, request)).thenReturn(null);
@@ -248,6 +269,17 @@ public class RequestControllerUT extends BaseTestCaseUT {
                 ArgumentMatchers.<Class<ItemRequestInformation>>any());
         RequestForm form = requestController.createRequest(requestForm, request);
         assertNotNull(form);
+    }
+
+    private String getMessage() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("errorMessage","errorMessage");
+        jsonObject.put("noPermissionErrorMessage","noPermissionErrorMessage");
+        jsonObject.put("itemTitle","itemTitle");
+        jsonObject.put("itemOwningInstitution","itemOwningInstitution");
+        jsonObject.put("deliveryLocation","deliveryLocation");
+        jsonObject.put("requestTypes","requestTypes");
+        return jsonObject.toString();
     }
 
     @Test

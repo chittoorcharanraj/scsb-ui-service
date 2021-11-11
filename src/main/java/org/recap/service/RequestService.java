@@ -11,16 +11,22 @@ import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.DeliveryCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BulkRequestDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.repository.jpa.RequestStatusDetailsRepository;
+import org.recap.repository.jpa.RequestTypeDetailsRepository;
 import org.recap.util.BibJSONUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.RequestServiceUtil;
@@ -34,7 +40,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by akulak on 20/4/17.
@@ -183,18 +201,18 @@ public class RequestService {
         if (ownerCodeEntity != null) {
             List<DeliveryCodeEntity> insDeliveryCodeEntities = new ArrayList<>();
             List<Object[]> instDeliveryCodeObjects = ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId());
-            prepareDeliveryCodeEntities(insDeliveryCodeEntities, instDeliveryCodeObjects);
+            insDeliveryCodeEntities = prepareDeliveryCodeEntities(insDeliveryCodeEntities, instDeliveryCodeObjects);
             addDeliveryLocationsToMap(deliveryLocationsMap, insDeliveryCodeEntities,requestingInstitutionEntity.getInstitutionCode());
             if (userDetailsForm.isRepositoryUser()) {
                 List<DeliveryCodeEntity> imsDeliveryCodeEntities = new ArrayList<>();
                 List<Object[]> imsDeliveryCodeObjects = ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId(), itemEntity.getImsLocationId());
-                prepareDeliveryCodeEntities(imsDeliveryCodeEntities, imsDeliveryCodeObjects);
+                imsDeliveryCodeEntities = prepareDeliveryCodeEntities(imsDeliveryCodeEntities, imsDeliveryCodeObjects);
                 addDeliveryLocationsToMap(deliveryLocationsMap, imsDeliveryCodeEntities, requestingInstitutionEntity.getInstitutionCode());
             }
         }
     }
 
-    private void prepareDeliveryCodeEntities(List<DeliveryCodeEntity> deliveryCodeEntities, List<Object[]> deliveryCodeObjects) {
+    public List<DeliveryCodeEntity> prepareDeliveryCodeEntities(List<DeliveryCodeEntity> deliveryCodeEntities, List<Object[]> deliveryCodeObjects) {
         for (Object[] obj : deliveryCodeObjects) {
             DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
             deliveryCodeEntity.setId(Integer.parseInt(obj[0].toString()));
@@ -206,6 +224,7 @@ public class RequestService {
             deliveryCodeEntity.setDeliveryCodeTypeId(obj[6] != null ? Integer.parseInt(obj[6].toString()) : null);
             deliveryCodeEntities.add(deliveryCodeEntity);
         }
+        return deliveryCodeEntities;
     }
 
     private void addDeliveryLocationsToMap(Map<String, String> deliveryLocationsMap, List<DeliveryCodeEntity> deliveryCodeEntities, String institution) {
@@ -485,29 +504,7 @@ public class RequestService {
                 Object deliveryLocations = jsonObject.has(ScsbConstants.DELIVERY_LOCATION) ? jsonObject.get(ScsbConstants.DELIVERY_LOCATION) : null;
                 Object requestTypes = jsonObject.has(ScsbConstants.REQUEST_TYPES) ? jsonObject.get(ScsbConstants.REQUEST_TYPES) : null;
                 List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
-                List<String> requestTypeList = new ArrayList<>();
-                if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
-                    requestForm.setItemTitle((String) itemTitle);
-                    requestForm.setItemOwningInstitution((String) itemOwningInstitution);
-                    JSONObject deliveryLocationsJson = (JSONObject) deliveryLocations;
-                    Iterator iterator = deliveryLocationsJson.keys();
-                    while (iterator.hasNext()) {
-                        String customerCode = (String) iterator.next();
-                        String description = (String) deliveryLocationsJson.get(customerCode);
-                        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
-                        customerCodeEntity.setOwnerCode(customerCode);
-                        customerCodeEntity.setDescription(description);
-                        customerCodeEntities.add(customerCodeEntity);
-                    }
-                    requestForm.setDeliveryLocations(customerCodeEntities);
-                }
-                if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
-                    JSONArray requestTypeArray = (JSONArray) requestTypes;
-                    for (int i = 0; i < requestTypeArray.length(); i++) {
-                        requestTypeList.add(requestTypeArray.getString(i));
-                    }
-                    requestForm.setRequestTypes(requestTypeList);
-                }
+                prepareRequestForm(requestForm, itemTitle, itemOwningInstitution, deliveryLocations, requestTypes, customerCodeEntities);
             }
         }
         return requestForm;
@@ -616,4 +613,29 @@ public class RequestService {
         }
     }
 
+    public void prepareRequestForm(RequestForm requestForm, Object itemTitle, Object itemOwningInstitution, Object deliveryLocations, Object requestTypes, List<OwnerCodeEntity> customerCodeEntities) throws JSONException {
+        List<String> requestTypeList = new ArrayList<>();
+        if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
+            requestForm.setItemTitle((String) itemTitle);
+            requestForm.setItemOwningInstitution((String) itemOwningInstitution);
+            JSONObject deliveryLocationsJson = (JSONObject) deliveryLocations;
+            Iterator iterator = deliveryLocationsJson.keys();
+            while (iterator.hasNext()) {
+                String customerCode = (String) iterator.next();
+                String description = (String) deliveryLocationsJson.get(customerCode);
+                OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
+                customerCodeEntity.setOwnerCode(customerCode);
+                customerCodeEntity.setDescription(description);
+                customerCodeEntities.add(customerCodeEntity);
+            }
+            requestForm.setDeliveryLocations(customerCodeEntities);
+        }
+        if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
+            JSONArray requestTypeArray = (JSONArray) requestTypes;
+            for (int i = 0; i < requestTypeArray.length(); i++) {
+                requestTypeList.add(requestTypeArray.getString(i));
+            }
+            requestForm.setRequestTypes(requestTypeList);
+        }
+    }
 }

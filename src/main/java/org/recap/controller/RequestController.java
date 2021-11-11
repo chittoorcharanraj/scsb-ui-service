@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.recap.PropertyKeyConstants;
@@ -61,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -289,29 +287,7 @@ public class RequestController extends ScsbController {
                 Object deliveryLocations = responseJsonObject.has(ScsbConstants.DELIVERY_LOCATION) ? responseJsonObject.get(ScsbConstants.DELIVERY_LOCATION) : null;
                 Object requestTypes = responseJsonObject.has(ScsbConstants.REQUEST_TYPES) ? responseJsonObject.get(ScsbConstants.REQUEST_TYPES) : null;
                 List<OwnerCodeEntity> customerCodeEntities = new ArrayList<>();
-                List<String> requestTypeList = new ArrayList<>();
-                if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
-                    requestForm.setItemTitle((String) itemTitle);
-                    requestForm.setItemOwningInstitution((String) itemOwningInstitution);
-                    JSONObject deliveryLocationsJson = (JSONObject) deliveryLocations;
-                    Iterator iterator = deliveryLocationsJson.keys();
-                    while (iterator.hasNext()) {
-                        String customerCode = (String) iterator.next();
-                        String description = (String) deliveryLocationsJson.get(customerCode);
-                        OwnerCodeEntity customerCodeEntity = new OwnerCodeEntity();
-                        customerCodeEntity.setOwnerCode(customerCode);
-                        customerCodeEntity.setDescription(description);
-                        customerCodeEntities.add(customerCodeEntity);
-                    }
-                    requestForm.setDeliveryLocations(customerCodeEntities);
-                }
-                if (!(ScsbCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
-                    JSONArray requestTypeArray = (JSONArray) requestTypes;
-                    for (int i = 0; i < requestTypeArray.length(); i++) {
-                        requestTypeList.add(requestTypeArray.getString(i));
-                    }
-                    requestForm.setRequestTypes(requestTypeList);
-                }
+                requestService.prepareRequestForm(requestForm, itemTitle, itemOwningInstitution, deliveryLocations, requestTypes, customerCodeEntities);
                 if (noPermissionErrorMessage != null) {
                     requestForm.setErrorMessage((String) noPermissionErrorMessage);
                     requestForm.setShowRequestErrorMsg(true);

@@ -12,6 +12,7 @@ import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.service.RequestService;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -28,6 +29,9 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
 
     @InjectMocks
     MarcRecordViewUtil mockMarcRecordViewUtil;
+
+    @Mock
+    RequestService requestService;
 
     @Mock
     OwnerCodeDetailsRepository ownerCodeDetailsRepository;
@@ -105,11 +109,13 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getDeliveryLocationsList() {
+        List<DeliveryCodeEntity> mockDeliveryCodes = getMockDeliveryLocationsList();
         Object[] objects = {1, "PA", "test", "test", 1, 1, 1};
         List<Object[]> deliveryCodeObjects = new ArrayList<>();
         deliveryCodeObjects.add(objects);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(any(),any())).thenReturn(getOwnerCodeEntity());
         Mockito.when(ownerCodeDetailsRepository.findDeliveryRestrictionsByOwnerCodeIdAndDeliveryRestrictType(any(),any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(requestService.prepareDeliveryCodeEntities(any(), any())).thenReturn(mockDeliveryCodes);
         mockMarcRecordViewUtil.getDeliveryLocationsList("PA", 1);
     }
 
@@ -209,5 +215,12 @@ public class MarcRecordViewUtilUT extends BaseTestCaseUT {
     public File getHoldingsContentFile() throws URISyntaxException {
         URL resource = getClass().getResource("HoldingsContent.xml");
         return new File(resource.toURI());
+    }
+    public List<DeliveryCodeEntity> getMockDeliveryLocationsList(){
+        List<DeliveryCodeEntity> deliveryCodeEntityList = new ArrayList<>();
+        DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
+        deliveryCodeEntity.setDeliveryCode("No");
+        deliveryCodeEntityList.add(deliveryCodeEntity);
+        return deliveryCodeEntityList;
     }
 }
