@@ -585,9 +585,59 @@ public class RequestServiceUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void processCustomerAndDeliveryCodesForNull() throws URISyntaxException, IOException {
+        List<DeliveryCodeEntity> mockDeliveryCodes = getMockDeliveryLocationsList();
+        RequestForm requestForm = getRequestForm();
+        Map<String, String> deliveryLocationsMap = new HashMap<>();
+        UserDetailsForm userDetailsForm = getUserDetailsFormRepositoryUser();
+        ItemEntity itemEntity = getItemEntity();
+        Integer institutionId = 1;
+        Object[] objects = {1, "PA", "test", "test", 1, 1, 1};
+        List<Object[]> deliveryCodeObjects = new ArrayList<>();
+        deliveryCodeObjects.add(objects);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(any(), anyInt())).thenReturn(null);
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(requestForm.getRequestingInstitution())).thenReturn(itemEntity.getInstitutionEntity());
+        Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any(), any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(mockrequestService.prepareDeliveryCodeEntities(any(), any())).thenReturn(mockDeliveryCodes);
+        requestService.processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
+    }
+
+    @Test
+    public void processCustomerAndDeliveryCodesForDeliveryCodes() throws URISyntaxException, IOException {
+        List<DeliveryCodeEntity> mockDeliveryCodes = getMockDeliveryLocationsListWithNull();
+        RequestForm requestForm = getRequestForm();
+        Map<String, String> deliveryLocationsMap = new HashMap<>();
+        UserDetailsForm userDetailsForm = getUserDetailsFormRepositoryUser();
+        ItemEntity itemEntity = getItemEntity();
+        Integer institutionId = 1;
+        Object[] objects = {1, "PA", "test", "test", 1, 1, 1};
+        List<Object[]> deliveryCodeObjects = new ArrayList<>();
+        deliveryCodeObjects.add(objects);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(any(), anyInt())).thenReturn(getOwnerCodeEntity());
+        Mockito.when(institutionDetailsRepository.findByInstitutionCode(requestForm.getRequestingInstitution())).thenReturn(itemEntity.getInstitutionEntity());
+        Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any(), any())).thenReturn(deliveryCodeObjects);
+        Mockito.when(mockrequestService.prepareDeliveryCodeEntities(any(), any())).thenReturn(mockDeliveryCodes);
+        requestService.processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
+    }
+
+    @Test
     public void sortDeliveryLocationForRecapUser() {
         Map<String, String> deliveryLocationsMap = new HashMap<>();
         UserDetailsForm userDetailsForm = getUserDetailsForm();
+        deliveryLocationsMap.put("deliveryLocations", "PA");
+        deliveryLocationsMap.put("deliveryLocations", "CA");
+        deliveryLocationsMap.put("deliveryLocations", "HD");
+        deliveryLocationsMap.put("deliveryLocations", "CU");
+        Mockito.when(requestService.sortDeliveryLocations(deliveryLocationsMap)).thenReturn(deliveryLocationsMap);
+        ReflectionTestUtils.invokeMethod(requestService, "sortDeliveryLocationForRecapUser", deliveryLocationsMap, userDetailsForm);
+    }
+
+    @Test
+    public void sortDeliveryLocationForRecapUserForRepositoryUser() {
+        Map<String, String> deliveryLocationsMap = new HashMap<>();
+        UserDetailsForm userDetailsForm = getUserDetailsFormRepositoryUser();
         deliveryLocationsMap.put("deliveryLocations", "PA");
         deliveryLocationsMap.put("deliveryLocations", "CA");
         deliveryLocationsMap.put("deliveryLocations", "HD");
@@ -631,8 +681,23 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Assert.assertEquals(1, deliveryCodeEntities.size());
     }
 
+    @Test
+    public void testprepareDeliveryCodeEntitiesNegative(){
+        List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
+        List<Object[]> deliveryCodeObjects = getDeliveryCodeObjectsNegative();
+        deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
+        Assert.assertEquals(1, deliveryCodeEntities.size());
+    }
+
     private List<Object[]> getDeliveryCodeObjects(){
         Object[] object = {1, "PA", "test", "test", 1, 1, 1};
+        List<Object[]> deliveryCodeObjects = new ArrayList<>();
+        deliveryCodeObjects.add(object);
+        return deliveryCodeObjects;
+    }
+
+    private List<Object[]> getDeliveryCodeObjectsNegative(){
+        Object[] object = {1, null, null, null, null, null, null};
         List<Object[]> deliveryCodeObjects = new ArrayList<>();
         deliveryCodeObjects.add(object);
         return deliveryCodeObjects;
@@ -652,6 +717,13 @@ public class RequestServiceUT extends BaseTestCaseUT {
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setLoginInstitutionId(2);
         userDetailsForm.setRepositoryUser(true);
+        return userDetailsForm;
+    }
+    private UserDetailsForm getUserDetailsFormRepositoryUser() {
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
+        userDetailsForm.setSuperAdmin(false);
+        userDetailsForm.setLoginInstitutionId(2);
+        userDetailsForm.setRepositoryUser(false);
         return userDetailsForm;
     }
 
@@ -749,6 +821,13 @@ public class RequestServiceUT extends BaseTestCaseUT {
         List<DeliveryCodeEntity> deliveryCodeEntityList = new ArrayList<>();
         DeliveryCodeEntity deliveryCodeEntity = new DeliveryCodeEntity();
         deliveryCodeEntity.setDeliveryCode("No");
+        deliveryCodeEntityList.add(deliveryCodeEntity);
+        return deliveryCodeEntityList;
+    }
+
+    public List<DeliveryCodeEntity> getMockDeliveryLocationsListWithNull(){
+        List<DeliveryCodeEntity> deliveryCodeEntityList = new ArrayList<>();
+        DeliveryCodeEntity deliveryCodeEntity = null;
         deliveryCodeEntityList.add(deliveryCodeEntity);
         return deliveryCodeEntityList;
     }

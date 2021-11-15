@@ -3,6 +3,12 @@ package org.recap.util;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.marc4j.marc.Record;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.recap.controller.RequestController;
 import org.recap.model.marc.BibMarcRecord;
 import org.recap.model.marc.HoldingsMarcRecord;
 import org.recap.model.marc.ItemMarcRecord;
@@ -20,7 +26,16 @@ import static org.junit.Assert.assertFalse;
 /**
  * Created by pvsubrah on 6/15/16.
  */
+
 public class MarcUtilUT {
+
+    @InjectMocks
+    @Spy
+    MarcUtil marcUtil;
+
+    @Mock
+    private  MarcUtil mockMarcUtil;
+
 
     private String marcXML = "<collection xmlns=\"http://www.loc.gov/MARC21/slim\">\n" +
             "          <record>\n" +
@@ -137,6 +152,38 @@ public class MarcUtilUT {
     }
 
     @Test
+    public void getDataFieldValuesWithEmpty() throws  Exception {
+        MarcUtil marcUtil = new MarcUtil();
+
+        List<Record> records =
+                marcUtil.convertMarcXmlToRecord(marcXML);
+
+        assertNotNull(records);
+        assertTrue(records.size() == 1);
+
+
+        String title = marcUtil.getDataFieldValue(records.get(0), "245", "", "", "a");
+        assertEquals("al-BahÌ£rayn :", title);
+
+    }
+
+    @Test
+    public void getDataFieldValuesWithValues() throws  Exception {
+        MarcUtil marcUtil = new MarcUtil();
+
+        List<Record> records =
+                marcUtil.convertMarcXmlToRecord(marcXML);
+
+        assertNotNull(records);
+        assertTrue(records.size() == 1);
+
+
+        String title = marcUtil.getDataFieldValue(records.get(0), "245", "test", "test", "a");
+        assertEquals("", title);
+
+    }
+
+    @Test
     public void getDataFieldValueStartsWith(){
         MarcUtil marcUtil = new MarcUtil();
 
@@ -152,6 +199,24 @@ public class MarcUtilUT {
         assertEquals(".b100000241 m a - ara le  3 1 *OFK 84-1944" , fieldVaule);
         String subFieldValue = marcUtil.getDataFieldValueStartsWith(records.get(0),"9",subFields);
         assertEquals(".b100000241 3 *OFK 84-1944",subFieldValue);
+    }
+
+    @Test
+    public void getDataFieldValueStartsWithNoRecords(){
+        MarcUtil marcUtil = new MarcUtil();
+
+        List<Record> records =
+                marcUtil.convertMarcXmlToRecord(marcXML);
+        List<Character> subFields = new ArrayList<>();
+        subFields.add('a');
+        subFields.add('h');
+
+        assertNotNull(records);
+        assertTrue(records.size() == 1);
+        String fieldVaule = marcUtil.getDataFieldValueStartsWith(null,"9");
+        assertEquals("" , fieldVaule);
+        String subFieldValue = marcUtil.getDataFieldValueStartsWith(null,"9",subFields);
+        assertEquals("",subFieldValue);
     }
 
     @Test
