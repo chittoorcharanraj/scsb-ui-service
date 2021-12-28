@@ -126,17 +126,6 @@ public class Main {
         return Sampler.ALWAYS_SAMPLE;
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Lists.newArrayList("*"));
-        configuration.setAllowedMethods(Lists.newArrayList("GET", "POST", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**/**", configuration);
-        return source;
-    }
-
     private static class ContextSecurityCustomizer implements TomcatContextCustomizer {
         @Override
         public void customize(Context context) {

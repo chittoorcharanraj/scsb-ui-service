@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.eclipse.sisu.EagerSingleton;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
@@ -10,14 +11,20 @@ import org.recap.service.CustomUserDetailsService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -37,6 +44,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableOAuth2Sso
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${" + PropertyKeyConstants.CAS_DEFAULT_URL_PREFIX + "}")
@@ -190,7 +198,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     public SCSBHttpSessionEventPublisher httpSessionEventPublisher() {
         return new SCSBHttpSessionEventPublisher();
     }
-
+/*
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -201,7 +209,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                         .allowedHeaders("*");
             }
         };
-    }
+    }*/
 
 }
 
