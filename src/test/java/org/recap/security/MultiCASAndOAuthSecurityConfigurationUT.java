@@ -101,9 +101,9 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
         assertNotNull(scsbHttpSessionEventPublisher);
     }
 
-    @Test
+  /*  @Test
     public void corsConfigurer(){
         WebMvcConfigurer webMvcConfigurer = multiCASAndOAuthSecurityConfiguration.corsConfigurer();
         assertNotNull(webMvcConfigurer);
-    }
+    }*/
 }
