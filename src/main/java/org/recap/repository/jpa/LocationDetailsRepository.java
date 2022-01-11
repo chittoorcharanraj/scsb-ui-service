@@ -1,10 +1,6 @@
 package org.recap.repository.jpa;
 
-import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.LocationEntity;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 
 public interface LocationDetailsRepository extends BaseRepository<LocationEntity> {

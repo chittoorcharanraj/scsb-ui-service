@@ -1,7 +1,6 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.model.jpa.RequestItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

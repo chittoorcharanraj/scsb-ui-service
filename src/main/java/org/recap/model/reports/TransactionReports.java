@@ -1,6 +1,5 @@
 package org.recap.model.reports;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

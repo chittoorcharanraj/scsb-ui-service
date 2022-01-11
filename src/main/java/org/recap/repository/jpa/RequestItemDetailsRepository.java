@@ -1,14 +1,11 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.reports.TransactionReport;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
