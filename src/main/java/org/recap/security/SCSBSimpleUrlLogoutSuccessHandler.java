@@ -44,7 +44,10 @@ public class SCSBSimpleUrlLogoutSuccessHandler extends SimpleUrlLogoutSuccessHan
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
         String logoutUrl = null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
+        String institution = null;
+        if(requestAttributes != null) {
+            institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
+        }
         if (StringUtils.isNotBlank(institution)) {
             logoutUrl = HelperUtil.getLogoutUrl(institution);
         }

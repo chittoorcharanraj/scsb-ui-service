@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.CheckForNull;
+
 @Getter
 @Setter
 public class AbstractController {
@@ -34,6 +36,7 @@ public class AbstractController {
      *
      * @return the rest template
      */
+    @CheckForNull
     public RestTemplate getRestTemplate(){
         return new RestTemplate();
     }

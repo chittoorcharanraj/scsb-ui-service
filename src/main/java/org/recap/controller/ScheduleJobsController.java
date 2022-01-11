@@ -111,7 +111,10 @@ public class ScheduleJobsController extends AbstractController {
 
             ResponseEntity<ScheduleJobResponse> responseEntity = getRestTemplate().exchange(getScsbUrl() + ScsbCommonConstants.URL_SCHEDULE_JOBS, HttpMethod.POST, httpEntity, ScheduleJobResponse.class);
             scheduleJobResponse = responseEntity.getBody() != null ? responseEntity.getBody() : new ScheduleJobResponse();
-            String message = scheduleJobResponse.getMessage();
+            String message = null;
+            if (scheduleJobResponse != null) {
+                message = scheduleJobResponse.getMessage();
+            }
             if (StringUtils.containsIgnoreCase(message, ScsbCommonConstants.SUCCESS)) {
                 saveJob(scheduleJobsForm, scheduleJobResponse.getNextRunTime());
                 scheduleJobsForm.setMessage(scheduleJobResponse.getMessage());

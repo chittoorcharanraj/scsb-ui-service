@@ -377,9 +377,11 @@ public class RequestController extends ScsbController {
             HttpEntity requestEntity = new HttpEntity<>(getRestHeaderService().getHttpHeaders());
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getScsbUrl() + ScsbConstants.URL_REQUEST_CANCEL).queryParam(ScsbCommonConstants.REQUEST_ID, requestForm.getRequestId());
             HttpEntity<CancelRequestResponse> responseEntity = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, CancelRequestResponse.class);
-            CancelRequestResponse cancelRequestResponse = responseEntity.getBody();
-            jsonObject.put(ScsbCommonConstants.MESSAGE, cancelRequestResponse.getScreenMessage());
-            jsonObject.put(ScsbCommonConstants.STATUS, cancelRequestResponse.isSuccess());
+            if(responseEntity != null) {
+                CancelRequestResponse cancelRequestResponse = responseEntity.getBody();
+                jsonObject.put(ScsbCommonConstants.MESSAGE, cancelRequestResponse.getScreenMessage());
+                jsonObject.put(ScsbCommonConstants.STATUS, cancelRequestResponse.isSuccess());
+            }
             Optional<RequestItemEntity> requestItemEntity = requestItemDetailsRepository.findById(requestForm.getRequestId());
             if (requestItemEntity.isPresent()) {
                 requestStatus = requestItemEntity.get().getRequestStatusEntity().getRequestStatusDescription();
