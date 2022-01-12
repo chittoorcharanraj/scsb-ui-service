@@ -238,7 +238,9 @@ public class ReportsUtil {
         ResponseEntity<SubmitCollectionReport> submitCollectionReprotResponseEntity = null;
         try {
              submitCollectionReprotResponseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_REPORTS_SUBMIT_RESULTS_URL, HttpMethod.POST, httpEntity, SubmitCollectionReport.class);
-             submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
+            if (submitCollectionReprotResponseEntity != null) {
+                submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
+            }
              if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
                  submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }catch (Exception e) {

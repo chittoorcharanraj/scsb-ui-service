@@ -159,12 +159,13 @@ public class ReportsServiceUtil {
                     responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.MATCHING_REPORTS_URI_EXPORT_S3, HttpMethod.POST, httpEntity, TitleMatchedReport.class);
                 }
             }
-            titleMatchedReport = responseEntity.getBody();
+            if (responseEntity != null)
+                titleMatchedReport = responseEntity.getBody();
             if (isCOUNT) {
                 if (titleMatchedReport.getTitleMatchCounts() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }
-            }else {
+            } else {
                 if (titleMatchedReport.getTitleMatchedReports() == null && titleMatchedReport.getMessage() == null && titleMatchedReport.getReportMessage() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }

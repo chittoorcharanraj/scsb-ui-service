@@ -1,6 +1,5 @@
 package org.recap.filter;
 
-import com.ctc.wstx.util.StringUtil;
 import org.apache.http.HttpStatus;
 import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;

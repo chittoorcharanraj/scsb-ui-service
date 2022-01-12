@@ -1,9 +1,7 @@
 package org.recap;
 
 import brave.sampler.Sampler;
-import com.google.common.collect.Lists;
 import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.recap.filter.XSSFilter;
@@ -11,7 +9,6 @@ import org.recap.security.SessionFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactory;
@@ -21,9 +18,6 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.HashSet;
 import java.util.Set;

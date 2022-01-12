@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,6 +75,9 @@ public class ReportsController extends AbstractController {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
+    private static final String FROM_DATE = "fromDate";
+    private static final String TO_DATE = "toDate";
+
 
     /**
      * Gets reports util.
@@ -95,7 +97,6 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/submit")
     public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm,HttpServletRequest request) throws Exception {
-        HttpSession session = request.getSession(false);
         if (reportsForm.getRequestType().equalsIgnoreCase(ScsbCommonConstants.REPORTS_REQUEST)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ScsbCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());
@@ -239,7 +240,7 @@ public class ReportsController extends AbstractController {
         FacetsForm facetsForm = new FacetsForm();
         List<String> instList = new ArrayList<>();
         List<String> storageLocationsList = new ArrayList<>();
-        List<String> cgdCodesList = new ArrayList<>();
+        List<String> cgdCodesList;
         List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution);
         List<ImsLocationEntity> imsLocationEntities = imsLocationDetailRepository.findAll();
         List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
@@ -300,18 +301,18 @@ public class ReportsController extends AbstractController {
     }
 
     @PostMapping("/submitCollcetionReport")
-    public ResponseEntity<SubmitCollectionReport> submitCollectionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public ResponseEntity<SubmitCollectionReport> submitCollectionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam(FROM_DATE) String fromDate, @RequestParam(TO_DATE) String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
-        submitCollectionReprot.setFrom(dateMap.get("fromDate"));
-        submitCollectionReprot.setTo(dateMap.get("toDate"));
+        submitCollectionReprot.setFrom(dateMap.get(FROM_DATE));
+        submitCollectionReprot.setTo(dateMap.get(TO_DATE));
         return reportsUtil.submitCollectionReport(submitCollectionReprot);
     }
 
     @PostMapping("/accessionReport")
-    public ResponseEntity<SubmitCollectionReport> accessionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public ResponseEntity<SubmitCollectionReport> accessionReport(@RequestBody SubmitCollectionReport submitCollectionReprot, @RequestParam(FROM_DATE) String fromDate, @RequestParam(TO_DATE) String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
-        submitCollectionReprot.setFrom(dateMap.get("fromDate"));
-        submitCollectionReprot.setTo(dateMap.get("toDate"));
+        submitCollectionReprot.setFrom(dateMap.get(FROM_DATE));
+        submitCollectionReprot.setTo(dateMap.get(TO_DATE));
         return reportsUtil.accessionReport(submitCollectionReprot);
     }
 
@@ -324,10 +325,10 @@ public class ReportsController extends AbstractController {
      * @throws Exception
      */
     @PostMapping("/titleMatchCount")
-    public TitleMatchedReport titleMatchCount(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public TitleMatchedReport titleMatchCount(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam(FROM_DATE) String fromDate, @RequestParam(TO_DATE) String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
-        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
-        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        titleMatchedReport.setFromDate(dateMap.get(FROM_DATE));
+        titleMatchedReport.setToDate(dateMap.get(TO_DATE));
         return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.TRUE,ScsbConstants.FALSE);
     }
 
@@ -340,10 +341,10 @@ public class ReportsController extends AbstractController {
      * @throws Exception
      */
     @PostMapping("/titleMatchReports")
-    public TitleMatchedReport titleMatchReports(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public TitleMatchedReport titleMatchReports(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam(FROM_DATE) String fromDate, @RequestParam(TO_DATE) String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
-        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
-        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        titleMatchedReport.setFromDate(dateMap.get(FROM_DATE));
+        titleMatchedReport.setToDate(dateMap.get(TO_DATE));
         return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.FALSE);
     }
 
@@ -356,10 +357,10 @@ public class ReportsController extends AbstractController {
      * @throws Exception
      */
     @PostMapping("/titleMatchReportExport")
-    public TitleMatchedReport titleMatchReportsExport(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) throws Exception {
+    public TitleMatchedReport titleMatchReportsExport(@RequestBody TitleMatchedReport titleMatchedReport, @RequestParam(FROM_DATE) String fromDate, @RequestParam(TO_DATE) String toDate) throws Exception {
         Map<String, Date> dateMap = scsbService.dateFormatter(fromDate, toDate);
-        titleMatchedReport.setFromDate(dateMap.get("fromDate"));
-        titleMatchedReport.setToDate(dateMap.get("toDate"));
+        titleMatchedReport.setFromDate(dateMap.get(FROM_DATE));
+        titleMatchedReport.setToDate(dateMap.get(TO_DATE));
         return reportsServiceUtil.getTitleMatchReport(titleMatchedReport,ScsbConstants.FALSE,ScsbConstants.TRUE);
     }
 

@@ -7,9 +7,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.JoinColumn;
 
 /**
  * Created by pvsubrah on 6/11/16.

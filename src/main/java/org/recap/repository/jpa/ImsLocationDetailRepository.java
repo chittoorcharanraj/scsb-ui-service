@@ -2,8 +2,6 @@ package org.recap.repository.jpa;
 
 import org.recap.model.jpa.ImsLocationEntity;
 
-import java.util.List;
-
 /**
  * @author dinakar on 30/04/21
  */

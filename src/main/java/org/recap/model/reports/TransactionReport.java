@@ -1,12 +1,6 @@
 package org.recap.model.reports;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
 
 /**
  * @author dinakar on 11/04/21

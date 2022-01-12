@@ -172,16 +172,6 @@ public class SearchRecordsController extends ScsbController {
         return searchRecordsResponseNew;
     }
 
-    private boolean isEmptyField(SearchRecordsRequest searchRecordsRequest) {
-        return StringUtils.isBlank(searchRecordsRequest.getFieldName()) && StringUtils.isNotBlank(searchRecordsRequest.getFieldValue());
-    }
-
-    private boolean isItemField(SearchRecordsRequest searchRecordsRequest) {
-        return (StringUtils.isNotBlank(searchRecordsRequest.getFieldName())
-                && (searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.BARCODE) ||
-                searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbCommonConstants.CALL_NUMBER)));
-    }
-
     private void processRequest(SearchRecordsRequest searchRecordsRequest, UserDetailsForm userDetailsForm, RedirectAttributes redirectAttributes) {
         String userInstitution = null;
         Optional<InstitutionEntity> institutionEntity = getInstitutionDetailsRepository().findById(userDetailsForm.getLoginInstitutionId());

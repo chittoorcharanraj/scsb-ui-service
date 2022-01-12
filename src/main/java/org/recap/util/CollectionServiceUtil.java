@@ -126,7 +126,9 @@ public class CollectionServiceUtil {
                     .queryParam(ScsbCommonConstants.USER_NAME, bibliographicMarcForm.getUsername());
 
             ResponseEntity<String> responseEntity = getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, requestEntity, String.class);
-            statusResponse = responseEntity.getBody();
+            if(responseEntity != null) {
+                statusResponse = responseEntity.getBody();
+            }
             if (ScsbCommonConstants.SUCCESS.equals(statusResponse)) {
                 bibliographicMarcForm.setSubmitted(true);
                 bibliographicMarcForm.setMessage(ScsbCommonConstants.CGD_UPDATE_SUCCESSFUL);
@@ -169,11 +171,13 @@ public class CollectionServiceUtil {
             String jsonString = objectMapper.writeValueAsString(deAccessionRequest);
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, getRestHeaderService().getHttpHeaders());
             Map<String, String> resultMap = getRestTemplate().postForObject(getScsbUrl() + ScsbConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class);
-            for (Map.Entry<String, String> entry : new HashSet<>(resultMap.entrySet())) {
-                String trimmedBarcode = entry.getKey().replaceAll(", $", "").trim();
-                if (!trimmedBarcode.equals(entry.getKey())) {
-                    resultMap.remove(entry.getKey());
-                    resultMap.put(trimmedBarcode, entry.getValue());
+            if(resultMap != null) {
+                for (Map.Entry<String, String> entry : new HashSet<>(resultMap.entrySet())) {
+                    String trimmedBarcode = entry.getKey().replaceAll(", $", "").trim();
+                    if (!trimmedBarcode.equals(entry.getKey())) {
+                        resultMap.remove(entry.getKey());
+                        resultMap.put(trimmedBarcode, entry.getValue());
+                    }
                 }
             }
             String resultMessage = resultMap.get(itemBarcode);
