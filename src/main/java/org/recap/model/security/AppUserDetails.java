@@ -1,7 +1,8 @@
 package org.recap.model.security;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,8 +13,9 @@ import java.util.List;
 /**
  * Created by sheiks on 17/01/17.
  */
-@Getter
-@Setter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class AppUserDetails implements UserDetails {
 
     private static final long serialVersionUID = -4777124807325532850L;

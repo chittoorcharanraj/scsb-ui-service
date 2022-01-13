@@ -1,15 +1,12 @@
 package org.recap.model.usermanagement;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by dharmendrag on 28/12/16.
  */
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsForm {

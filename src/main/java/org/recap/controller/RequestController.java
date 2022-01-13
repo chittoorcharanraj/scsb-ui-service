@@ -1,7 +1,8 @@
 package org.recap.controller;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -33,8 +34,6 @@ import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.service.SCSBService;
 import org.recap.util.SecurityUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -68,14 +67,14 @@ import java.util.stream.Collectors;
 /**
  * Created by rajeshbabuk on 13/10/16.
  */
-
+@Slf4j
 @RestController
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 @RequestMapping("/request")
 public class RequestController extends ScsbController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
+
     @Autowired
     ReportsController reportsController;
     @Autowired
@@ -130,8 +129,8 @@ public class RequestController extends ScsbController {
         try {
             requestForm = setSearch(requestForm);
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
-            logger.debug(exception.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.debug(exception.getMessage());
         }
         return requestForm;
     }
@@ -152,8 +151,8 @@ public class RequestController extends ScsbController {
             requestForm.setItemBarcode("");
             requestForm = searchAndSetResults(requestForm);
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
-            logger.debug(exception.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.debug(exception.getMessage());
         }
         return requestForm;
     }
@@ -259,7 +258,7 @@ public class RequestController extends ScsbController {
         try {
             return requestService.populateItemForRequest(requestForm, request);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             return jsonObject.put(ScsbConstants.ERROR_MESSAGE, e.getMessage()).toString();
         }
     }
@@ -332,7 +331,7 @@ public class RequestController extends ScsbController {
             }
 
             HttpEntity<ItemRequestInformation> requestEntity = new HttpEntity<>(itemRequestInformation, getRestHeaderService().getHttpHeaders());
-            logger.info("Item Request Info DL : {}", itemRequestInformation.getDeliveryLocation());
+            log.info("Item Request Info DL : {}", itemRequestInformation.getDeliveryLocation());
             ResponseEntity<ItemResponseInformation> itemResponseEntity = getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class);
             ItemResponseInformation itemResponseInformation = itemResponseEntity.getBody();
             if (null != itemResponseInformation && !itemResponseInformation.isSuccess()) {
@@ -341,12 +340,12 @@ public class RequestController extends ScsbController {
                 requestForm.setShowRequestErrorMsg(true);
             }
         } catch (HttpClientErrorException httpException) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, httpException);
+            log.error(ScsbCommonConstants.LOG_ERROR, httpException);
             String responseBodyAsString = httpException.getResponseBodyAsString();
             requestForm.setErrorMessage(responseBodyAsString);
             requestForm.setShowRequestErrorMsg(true);
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
             requestForm.setErrorMessage(exception.getMessage());
             requestForm.setShowRequestErrorMsg(true);
         }
@@ -390,8 +389,8 @@ public class RequestController extends ScsbController {
             jsonObject.put(ScsbCommonConstants.REQUEST_STATUS, requestStatus);
             jsonObject.put(ScsbConstants.REQUEST_NOTES, requestNotes);
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
-            logger.debug(exception.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.debug(exception.getMessage());
         }
         return jsonObject.toString();
     }
@@ -423,10 +422,10 @@ public class RequestController extends ScsbController {
                 jsonObject.put(ScsbCommonConstants.STATUS, false);
             }
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
-            logger.debug(exception.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.debug(exception.getMessage());
         }
-        logger.info(jsonObject.toString());
+        log.info(jsonObject.toString());
         return jsonObject.toString();
     }
 
@@ -446,7 +445,7 @@ public class RequestController extends ScsbController {
                 requestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         requestForm.setShowResults(true);
         return requestForm;
@@ -464,7 +463,7 @@ public class RequestController extends ScsbController {
                         populateRequestResults(searchResultRows, requestItemEntity);
                     }
                 } catch (Exception e) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
             }
             return searchResultRows;
@@ -507,7 +506,7 @@ public class RequestController extends ScsbController {
                 pageNumber = totalPagesCount - 1;
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return pageNumber;
     }
@@ -608,7 +607,7 @@ public class RequestController extends ScsbController {
                 searchResultRows = buildSearchResultRows(requestItemEntitiesList, requestForm);
             }
         } catch (Exception e) {
-            logger.info(ScsbConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_LOGS_REQUEST_EXCEPTIONS, e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(searchResultRows)) {
             if (!isExport) {
@@ -665,7 +664,7 @@ public class RequestController extends ScsbController {
                 transactionReportsList =  getRequestServiceUtil().getTransactionReportsExport(transactionReports,dateMap.get("fromDate"), dateMap.get("toDate"));
             }
         } catch (Exception e) {
-            logger.info(ScsbConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
+            log.info(ScsbConstants.EXCEPTION_LOGS_TRANSACTION,e.getMessage());
         }
         if (CollectionUtils.isNotEmpty(transactionReportsList)) {
             transactionReports.setTransactionReportList(transactionReportsList);

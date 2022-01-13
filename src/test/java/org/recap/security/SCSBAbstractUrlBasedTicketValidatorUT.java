@@ -1,22 +1,21 @@
 package org.recap.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 
 
+@Slf4j
 public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
 
     @Mock
@@ -25,7 +24,7 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
     @Mock
     HttpURLConnectionFactory httpURLConnectionFactory;
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     @Test
     public void constructValidationUrl(){
@@ -37,7 +36,7 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
         SCSBAbstractUrlBasedTicketValidator.setCustomParameters(customParameters);
         SCSBAbstractUrlBasedTicketValidator.setRenew(true);
         SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
-        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",logger);
+        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
         String validateUrl = SCSBAbstractUrlBasedTicketValidator.constructValidationUrl(ticket,serviceUrl);
         assertNotNull(validateUrl);
     }
@@ -53,7 +52,7 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
         SCSBAbstractUrlBasedTicketValidator.setRenew(true);
         SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
         SCSBAbstractUrlBasedTicketValidator.setURLConnectionFactory(httpURLConnectionFactory);
-        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",logger);
+        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
         try {
             Mockito.when(SCSBAbstractUrlBasedTicketValidator.validate(ticket,serviceUrl)).thenCallRealMethod();
             SCSBAbstractUrlBasedTicketValidator.validate(ticket, serviceUrl);

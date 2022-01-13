@@ -1,7 +1,8 @@
 package org.recap.model.jpa;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -20,8 +21,8 @@ import java.util.List;
 @Entity
 @Table(name = "bulk_request_item_t", catalog = "")
 @AttributeOverride(name = "id", column = @Column(name = "BULK_REQUEST_ID"))
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BulkRequestItemEntity extends BulkRequestItemAbstractEntity {
 
     @OneToMany(cascade = CascadeType.MERGE)

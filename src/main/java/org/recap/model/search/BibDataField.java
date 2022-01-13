@@ -1,15 +1,16 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.util.Comparator;
 
 /**
  * Created by rajeshbabuk on 25/7/16.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BibDataField implements Comparable<BibDataField>{
 
     private String dataFieldTag;

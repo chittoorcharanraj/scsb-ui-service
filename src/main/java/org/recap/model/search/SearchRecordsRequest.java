@@ -1,7 +1,8 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import org.recap.ScsbCommonConstants;
 
 import java.io.Serializable;
@@ -11,8 +12,9 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 6/7/16.
  */
-@Setter
-@Getter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class SearchRecordsRequest implements Serializable {
 
     private String fieldValue = "";

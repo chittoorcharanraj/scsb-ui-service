@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.PropertyKeyConstants;
@@ -9,8 +10,6 @@ import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,10 +30,10 @@ import java.util.Map;
 /**
  * Created by dinakar on 23/12/20.
  */
+@Slf4j
 @Controller
 public class LoginController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 
     @Autowired
@@ -108,14 +107,14 @@ public class LoginController extends AbstractController {
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
             if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
                 String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
-                logger.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+                log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
                 return ScsbConstants.REDIRECT_USER;
             }
             setSessionValues(session, resultMap, token);
 
         } catch (Exception exception) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, exception);
-            logger.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
             return ScsbConstants.REDIRECT_HOME;
         }
         return ScsbConstants.REDIRECT_SEARCH;
@@ -145,7 +144,7 @@ public class LoginController extends AbstractController {
      */
     @GetMapping("/logout")
     public String logoutUser(HttpServletRequest request) {
-        logger.info("Subject Logged out");
+        log.info("Subject Logged out");
         HttpSession session = null;
         try {
             session = request.getSession(false);

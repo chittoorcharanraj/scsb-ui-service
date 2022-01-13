@@ -1,13 +1,14 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 /**
  * Created by akulak on 8/3/17.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class IncompleteReportResultsRow {
     private String author;
     private String createdDate;

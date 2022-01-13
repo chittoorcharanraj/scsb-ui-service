@@ -1,8 +1,7 @@
 package org.recap.filter;
 
-import org.recap.controller.RequestController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,16 +15,17 @@ import java.io.IOException;
 /**
  * Created by angelind on 27/9/17.
  */
+@Slf4j
 public class XSSFilter implements Filter {
-    private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.info("init method called");
+        log.info("init method called");
     }
 
     @Override
     public void destroy() {
-        logger.info("Destroyed");
+        log.info("Destroyed");
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -31,8 +32,6 @@ import org.recap.util.BibJSONUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,10 +56,11 @@ import java.util.Set;
 /**
  * Created by akulak on 20/4/17.
  */
+@Slf4j
 @Service
 public class RequestService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestService.class);
+
 
     @Autowired
     private RequestServiceUtil requestServiceUtil;
@@ -318,7 +318,7 @@ public class RequestService {
             jsonObject.put(ScsbCommonConstants.STATUS, responseMap);
             jsonObject.put(ScsbCommonConstants.NOTES, responseMapForNotes);
         } catch (JSONException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return jsonObject.toString();
     }

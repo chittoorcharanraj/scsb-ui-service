@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.MarcException;
@@ -25,8 +26,6 @@ import org.recap.service.SCSBService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,11 +44,12 @@ import java.util.Set;
 /**
  * Created by rajeshbabuk on 12/10/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/collection")
 public class CollectionController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionController.class);
+
 
     @Autowired
     private SearchUtil searchUtil;
@@ -127,7 +127,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/openMarcView")
     public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws MarcException {
-        logger.info(ScsbConstants.COLLECTION_OMV_CALLED);
+        log.info(ScsbConstants.COLLECTION_OMV_CALLED);
         UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
@@ -144,7 +144,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/collectionUpdate")
     public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
-        logger.info(ScsbConstants.COLLECTION_UPDATE_CALLED);
+        log.info(ScsbConstants.COLLECTION_UPDATE_CALLED);
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
         collectionForm.setUsername(username);
@@ -166,7 +166,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/checkCrossInstitutionBorrowed")
     public CollectionForm checkCrossInstitutionBorrowed(@RequestBody CollectionForm collectionForm) {
-        logger.info(ScsbConstants.COLLECTION_CCIB_CALLED);
+        log.info(ScsbConstants.COLLECTION_CCIB_CALLED);
         String itemBarcode = collectionForm.getBarcode();
         String warningMessage = null;
         List<ItemEntity> itemEntities = itemDetailsRepository.findByBarcode(itemBarcode);

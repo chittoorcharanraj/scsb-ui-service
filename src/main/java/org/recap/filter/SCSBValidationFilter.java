@@ -4,8 +4,6 @@ import org.apache.http.HttpStatus;
 import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
 import org.recap.util.UserAuthUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,7 +18,7 @@ import java.util.Optional;
 
 
 public class SCSBValidationFilter implements Filter {
-    public static final Logger LOGGER = LoggerFactory.getLogger(SCSBValidationFilter.class);
+
 
     UserAuthUtil userAuthUtil;
 

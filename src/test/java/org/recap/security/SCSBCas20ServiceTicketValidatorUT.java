@@ -1,6 +1,7 @@
 package org.recap.security;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
 import org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl;
 import org.jasig.cas.client.proxy.ProxyRetriever;
@@ -9,8 +10,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@Slf4j
 public class SCSBCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
 
     @Mock
@@ -32,8 +32,7 @@ public class SCSBCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
     @Mock
     HttpServletResponse httpServletResponse;
 
-    @Mock
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     @Test
     public void parseResponseFromServerTicketValidation() throws Exception{
@@ -97,7 +96,7 @@ public class SCSBCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
     @Test
     public void extractCustomAttributesException() throws Exception{
         String xml = "testXML";
-        ReflectionTestUtils.setField(reCAPCas20ServiceTicketValidator,"logger",logger);
+        ReflectionTestUtils.setField(reCAPCas20ServiceTicketValidator,"logger",log);
         Mockito.doCallRealMethod().when(reCAPCas20ServiceTicketValidator).extractCustomAttributes(xml);
         Map<String, Object> result = reCAPCas20ServiceTicketValidator.extractCustomAttributes(xml);
         assertNotNull(result);

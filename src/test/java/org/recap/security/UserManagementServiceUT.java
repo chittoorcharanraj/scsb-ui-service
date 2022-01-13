@@ -1,10 +1,9 @@
 package org.recap.security;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.recap.BaseTestCase;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpSession;
@@ -15,13 +14,13 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by hemalathas on 30/3/17.
  */
+@Slf4j
 public class UserManagementServiceUT extends BaseTestCase{
 
     @Autowired
     HttpSession httpSession;
 
-    @Mock
-    Logger logger;
+
 
     @Autowired
     UserManagementService userManagementService;
@@ -34,7 +33,7 @@ public class UserManagementServiceUT extends BaseTestCase{
 
     @Test
     public void testUnAuthorizedUser(){
-        boolean response = userManagementService.unAuthorizedUser(httpSession,"test",logger);
+        boolean response = userManagementService.unAuthorizedUser(httpSession,"test",log);
         assertNotNull(response);
         assertEquals(response,false);
     }

@@ -1,7 +1,6 @@
 package org.springframework.security.cas.authentication;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.proxy.Cas20ProxyRetriever;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
@@ -13,6 +12,7 @@ import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
@@ -40,12 +40,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * Created by sheiks on 20/01/17.
  */
+@Slf4j
 public class CasAuthenticationProvider implements AuthenticationProvider,
         InitializingBean, MessageSourceAware {
     // ~ Static fields/initializers
     // =====================================================================================
 
-    private static final Log logger = LogFactory.getLog(CasAuthenticationProvider.class);
+
 
     // ~ Instance fields
     // ================================================================================================
@@ -188,8 +189,8 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
         } else {
             serviceUrl = serviceProperties.getService();
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("serviceUrl = " + serviceUrl);
+        if (log.isDebugEnabled()) {
+            log.debug("serviceUrl = " + serviceUrl);
         }
         return serviceUrl;
     }

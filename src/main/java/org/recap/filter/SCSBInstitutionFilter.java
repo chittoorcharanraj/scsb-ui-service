@@ -1,11 +1,10 @@
 package org.recap.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,9 +17,10 @@ import java.io.IOException;
 /**
  * Created by sheiks on 23/01/17.
  */
+@Slf4j
 public class SCSBInstitutionFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(SCSBInstitutionFilter.class);
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

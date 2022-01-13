@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -21,8 +22,6 @@ import org.recap.service.SCSBService;
 import org.recap.util.HelperUtil;
 import org.recap.util.ReportsServiceUtil;
 import org.recap.util.ReportsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +44,12 @@ import java.util.Map;
 /**
  * Created by rajeshbabuk on 13/10/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/reports")
 public class ReportsController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
+
 
     @Autowired
     private ReportsUtil reportsUtil;
@@ -255,7 +255,7 @@ public class ReportsController extends AbstractController {
         facetsForm.setInstitutionList(instList);
         facetsForm.setStorageLocationsList(storageLocationsList);
         facetsForm.setCgdCodesList(cgdCodesList);
-        logger.info("Institutions List Returned");
+        log.info("Institutions List Returned");
         return facetsForm;
     }
 

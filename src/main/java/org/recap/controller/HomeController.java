@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -9,8 +10,6 @@ import org.recap.security.UserInstitutionCache;
 import org.recap.security.UserManagementService;
 import org.recap.util.PropertyUtil;
 import org.recap.util.ReportsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -25,11 +24,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class HomeController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private ReportsUtil reportsUtil;
@@ -71,7 +70,7 @@ public class HomeController extends AbstractController {
         try {
             InstitutionCodes = institutionDetailsRepository.getInstitutionCodes(supportInstitution);
         } catch (Exception e) {
-            logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
+            log.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
         }
         return InstitutionCodes;
     }
@@ -107,8 +106,8 @@ public class HomeController extends AbstractController {
             resultMap.put(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE));
             resultMap.put(ScsbConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
-            logger.info("Exception Occurred while User Validation :: {}", e.getMessage());
-            isAuthenticated = userManagementService.unAuthorizedUser(session, ScsbConstants.LOGIN_USER, logger);
+            log.info("Exception Occurred while User Validation :: {}", e.getMessage());
+            isAuthenticated = userManagementService.unAuthorizedUser(session, ScsbConstants.LOGIN_USER, log);
             resultMap.put(ScsbConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;

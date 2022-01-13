@@ -1,12 +1,11 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.service.RestHeaderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,10 +20,11 @@ import java.util.Map;
 /**
  * Created by dharmendrag on 4/1/17.
  */
+@Slf4j
 @Service
 public class UserAuthUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserAuthUtil.class);
+
     @Autowired
     RestHeaderService restHeaderService;
     @Value("${" + PropertyKeyConstants.SCSB_AUTH_URL + "}")
@@ -63,7 +63,7 @@ public class UserAuthUtil {
             statusResponse = restTemplate.postForObject(scsbShiro + serviceURL, requestEntity, Boolean.class);
         } catch (Exception e) {
             if (serviceURL.contains(ScsbConstants.LOGOUT))
-                logger.info(ScsbConstants.LOG_USER_LOGOUT_SUCCESS + " :: {}", token != null ? token.getUsername() : null);
+                log.info(ScsbConstants.LOG_USER_LOGOUT_SUCCESS + " :: {}", token != null ? token.getUsername() : null);
         }
         return statusResponse;
     }

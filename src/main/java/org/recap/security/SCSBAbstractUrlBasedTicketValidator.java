@@ -1,5 +1,8 @@
 package org.recap.security;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.ssl.HttpsURLConnectionFactory;
 import org.jasig.cas.client.util.CommonUtils;
@@ -7,8 +10,7 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.recap.ScsbCommonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -20,9 +22,12 @@ import java.util.Map;
 /**
  * Created by sheiks on 25/01/17.
  */
+@Slf4j
+@Data
+@EqualsAndHashCode(callSuper = false)
 public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValidator {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     /**
      * URLConnection factory instance to use when making validation requests to the CAS server.
@@ -85,7 +90,7 @@ public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValid
     protected final String constructValidationUrl(final String ticket, final String serviceUrl) {
         final Map<String, String> urlParameters = new HashMap<>();
 
-        logger.debug("Placing URL parameters in map.");
+        log.debug("Placing URL parameters in map.");
         urlParameters.put("ticket", ticket);
         urlParameters.put("service", serviceUrl);
 
@@ -93,10 +98,10 @@ public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValid
             urlParameters.put("renew", "true");
         }
 
-        logger.debug("Calling template URL attribute map.");
+        log.debug("Calling template URL attribute map.");
         populateUrlAttributeMap(urlParameters);
 
-        logger.debug("Loading custom parameters from configuration.");
+        log.debug("Loading custom parameters from configuration.");
         if (this.customParameters != null) {
             urlParameters.putAll(this.customParameters);
         }
@@ -144,7 +149,7 @@ public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValid
         try {
             return URLEncoder.encode(url, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             return url;
         }
     }
@@ -172,17 +177,17 @@ public abstract class SCSBAbstractUrlBasedTicketValidator implements TicketValid
     @Override
     public final Assertion validate(final String ticket, final String service) throws TicketValidationException {
         final String validationUrl = constructValidationUrl(ticket, service);
-        logger.debug("Constructing validation url: {}", validationUrl);
+        log.debug("Constructing validation url: {}", validationUrl);
 
         try {
-            logger.debug("Retrieving response from server.");
+            log.debug("Retrieving response from server.");
             final String serverResponse = retrieveResponseFromServer(new URL(validationUrl), ticket);
 
             if (serverResponse == null) {
                 throw new TicketValidationException("The CAS server returned no response.");
             }
 
-            logger.debug("Server response: {}", serverResponse);
+            log.debug("Server response: {}", serverResponse);
 
             return parseResponseFromServer(serverResponse);
         } catch (final MalformedURLException e) {

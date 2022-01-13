@@ -1,13 +1,14 @@
 package org.recap.model.schedule;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 /**
  * Created by rajeshbabuk on 5/4/17.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class ScheduleJobRequest {
 
     private Integer jobId;

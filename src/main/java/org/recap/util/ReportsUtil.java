@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import com.csvreader.CsvWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -16,8 +17,6 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.service.RestHeaderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -40,10 +39,9 @@ import java.util.stream.Collectors;
 /**
  * Created by akulak on 21/12/16.
  */
+@Slf4j
 @Component
 public class ReportsUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(ReportsUtil.class);
 
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
@@ -215,7 +213,7 @@ public class ReportsUtil {
                     }
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             }
             finally {
                 if(csvOutput!=null) {

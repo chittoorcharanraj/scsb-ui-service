@@ -1,11 +1,9 @@
 package org.recap.util;
 
-import com.csvreader.CsvWriter;
+import com.csvreader.CsvWriter;import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchResultRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -17,10 +15,11 @@ import java.util.List;
 /**
  * Created by chenchulakshmig on 4/7/16.
  */
+@Slf4j
 @Component
 public class CsvUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(CsvUtil.class);
+
 
     /**
      * Exports the selected search result rows into a csv file in the search UI page.
@@ -56,7 +55,7 @@ public class CsvUtil {
                     }
                 }
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR,e);
+                log.error(ScsbCommonConstants.LOG_ERROR,e);
             } finally {
                 if(csvOutput!=null) {
                     csvOutput.flush();

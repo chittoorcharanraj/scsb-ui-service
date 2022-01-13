@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbCommonConstants;
@@ -15,8 +16,6 @@ import org.recap.security.UserManagementService;
 import org.recap.util.CsvUtil;
 import org.recap.util.HelperUtil;
 import org.recap.util.SearchUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -43,10 +42,10 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/search")
-
+@Slf4j
 public class SearchRecordsController extends ScsbController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRecordsController.class);
+
     @Autowired
     private SearchUtil searchUtil;
     @Autowired
@@ -94,7 +93,7 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("searchPrevious called");
+        log.info("searchPrevious called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -106,7 +105,7 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("searchNext  Called");
+        log.info("searchNext  Called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -118,7 +117,7 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/first")
     public SearchRecordsResponse searchFirst(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("searchFirst  Called");
+        log.info("searchFirst  Called");
         searchRecordsRequest.setPageNumber(0);
         return searchUtil.searchRecord(searchRecordsRequest);
     }
@@ -131,7 +130,7 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("searchLast  Called");
+        log.info("searchLast  Called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -144,7 +143,7 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/export")
     public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest) throws Exception {
-        logger.info("exportRecords  Called");
+        log.info("exportRecords  Called");
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = "ExportRecords_" + dateFormat.format(new Date()) + ".csv";
         File csvFile = csvUtil.writeSearchResultsToCsv(searchRecordsRequest.getSearchResultRows(), fileNameWithExtension);
@@ -159,7 +158,7 @@ public class SearchRecordsController extends ScsbController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("showEntries size changed calling with size: {}", searchRecordsRequest.getPageSize());
+        log.info("showEntries size changed calling with size: {}", searchRecordsRequest.getPageSize());
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);

@@ -1,5 +1,6 @@
 package org.recap.controller.version;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.recap.PropertyKeyConstants;
 import org.recap.controller.ScsbController;
@@ -17,6 +18,7 @@ import java.util.Map;
 /**
  * Created by dinakarn on 27/01/21.
  */
+@Slf4j
 @RestController
 @RequestMapping("/validation")
 public class DashBoardController extends ScsbController {

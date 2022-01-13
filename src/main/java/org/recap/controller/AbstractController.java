@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.recap.PropertyKeyConstants;
 import org.recap.service.RestHeaderService;
 import org.recap.util.RequestServiceUtil;
@@ -12,8 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.CheckForNull;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class AbstractController {
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
