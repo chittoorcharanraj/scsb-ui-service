@@ -1,12 +1,13 @@
 package org.recap.model.dataexportinfo;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.util.Date;
 
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class S3RecentDataExportInfo {
 
     private String institution;

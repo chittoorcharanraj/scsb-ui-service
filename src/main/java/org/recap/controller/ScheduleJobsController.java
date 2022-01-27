@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
@@ -15,8 +16,6 @@ import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.JobDetailsRepository;
 import org.recap.repository.jpa.JobParamDetailRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -38,12 +37,11 @@ import java.util.stream.Collectors;
 /**
  * Created by rajeshbabuk on 4/4/17.
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/jobs")
 public class ScheduleJobsController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleJobsController.class);
 
     @Autowired
     private JobDetailsRepository jobDetailsRepository;
@@ -122,7 +120,7 @@ public class ScheduleJobsController extends AbstractController {
                 scheduleJobsForm.setErrorMessage(scheduleJobResponse.getMessage());
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             scheduleJobsForm.setErrorMessage(e.getMessage());
         }
         return scheduleJobsForm;
@@ -148,7 +146,7 @@ public class ScheduleJobsController extends AbstractController {
                 }
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             scheduleJobsForm.setErrorMessage(e.getMessage());
         }
         return scheduleJobsForm;

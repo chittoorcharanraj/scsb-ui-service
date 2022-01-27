@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
@@ -14,8 +15,6 @@ import org.recap.repository.jpa.LocationDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.SCSBPropertiesDetailRepository;
 import org.recap.service.FileUploadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,10 +41,11 @@ import java.util.Objects;
 /**
  * Created by dinakar on 24/11/20.
  */
+@Slf4j
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
     @Autowired
@@ -66,7 +66,7 @@ public class AdminController {
         try {
             fileuploadResponse = loadInitialData(file);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -77,13 +77,13 @@ public class AdminController {
         try {
             fileuploadResponse = loadIMSData(file);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
 
     private Map<String, String> loadIMSData(MultipartFile multipartFile) {
-        logger.info("Load IMS Locations");
+        log.info("Load IMS Locations");
         InstitutionEntity institutionEntity = new InstitutionEntity();
         try {
             File file = convertMultiPartToFile(multipartFile);
@@ -105,7 +105,7 @@ public class AdminController {
             loadLocationData(institutionEntity, locationNodeList);
 
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return fileuploadResponse;
     }
@@ -121,7 +121,7 @@ public class AdminController {
     private Map<String, String> loadInitialData(MultipartFile multipartFile) {
         boolean status = true;
         InstitutionEntity institutionEntity = new InstitutionEntity();
-        logger.info("loadInitialData -->");
+        log.info("loadInitialData -->");
         try {
             File file = convertMultiPartToFile(multipartFile);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -144,12 +144,12 @@ public class AdminController {
                 fileuploadResponse.put("Upload XML File Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
                 fileuploadResponse.put("Upload XML File Status", ScsbConstants.FAILED);
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
             NodeList configNodeList = document.getElementsByTagName("entry");
             loadConfigData(institutionEntity, configNodeList);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
 
         for (Map.Entry<String, String> entry : fileuploadResponse.entrySet()) {
@@ -164,7 +164,7 @@ public class AdminController {
                 fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.SUCCESSED);
             } catch (Exception e) {
                 fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.FAILED);
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         } else {
             fileuploadResponse.put(ScsbConstants.ON_BOARD_INSTITUTION_STATUS, ScsbConstants.FAILED);
@@ -187,7 +187,7 @@ public class AdminController {
                     fileuploadResponse.put("Institution Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
                     fileuploadResponse.put("Institution Added Status", ScsbConstants.FAILED);
-                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
 
             }
@@ -217,7 +217,7 @@ public class AdminController {
                     fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
                     fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.FAILED);
-                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
             }
         }
@@ -243,7 +243,7 @@ public class AdminController {
                     fileuploadResponse.put("Locations Added Status", ScsbConstants.SUCCESSED);
                 } catch (Exception e) {
                     fileuploadResponse.put("Locations Added Status", ScsbConstants.FAILED);
-                    logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                    log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
                 if (locationNode.hasChildNodes()) {
                     NodeList nodeList = locationNode.getChildNodes();
@@ -295,7 +295,7 @@ public class AdminController {
                 fileuploadResponse.put("Customer Code Added Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
                 fileuploadResponse.put("Customer Code Added Status", ScsbConstants.FAILED);
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
     }
@@ -313,7 +313,7 @@ public class AdminController {
                 fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.SUCCESSED);
             } catch (Exception e) {
                 fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.FAILED);
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         }
     }

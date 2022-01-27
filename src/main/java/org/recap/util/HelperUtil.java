@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -9,8 +10,6 @@ import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.spring.SwaggerAPIProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
@@ -27,9 +26,9 @@ import java.util.Iterator;
 /**
  * Created by sheiks on 20/01/17.
  */
+@Slf4j
 public class HelperUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(HelperUtil.class);
 
     /**
      * Gets attribute value from request.
@@ -100,7 +99,7 @@ public class HelperUtil {
                 UserAuthUtil userAuthUtil = HelperUtil.getBean(UserAuthUtil.class);
                 userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) attribute);
             } catch (Exception e) {
-                logger.error("Logout", e);
+                log.error("Logout", e);
             }
         }
     }

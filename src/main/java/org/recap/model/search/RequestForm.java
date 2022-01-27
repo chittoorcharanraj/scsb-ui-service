@@ -1,7 +1,8 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import org.recap.model.jpa.OwnerCodeEntity;
 
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 13/10/16.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class RequestForm {
 
     private Integer requestId;

@@ -1,13 +1,12 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchRecordsResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,10 +18,11 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by rajeshbabuk on 2/1/17.
  */
+@Slf4j
 @Service
 public class SearchUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
+
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbGatewayUrl;
@@ -44,7 +44,7 @@ public class SearchUtil {
             searchRecordsResponse = responseEntity.getBody();
             return searchRecordsResponse;
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             return searchRecordsResponse;
         }
     }

@@ -1,9 +1,10 @@
 package org.recap.service;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbConstants;
 import org.recap.model.security.AppUserDetails;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,9 +19,12 @@ import java.util.Set;
 /**
  * Created by sheiks on 17/01/17.
  */
+@Slf4j
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class CustomUserDetailsService implements AuthenticationUserDetailsService<CasAssertionAuthenticationToken> {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
 
     private Set<String> admins;
 

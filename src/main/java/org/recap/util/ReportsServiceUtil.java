@@ -1,5 +1,6 @@
 package org.recap.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -9,8 +10,6 @@ import org.recap.model.reports.TitleMatchedReport;
 import org.recap.model.reports.TitleMatchedReports;
 import org.recap.model.search.ReportsForm;
 import org.recap.service.RestHeaderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,10 +25,11 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 13/1/17.
  */
+@Slf4j
 @Service
 public class ReportsServiceUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsServiceUtil.class);
+
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
@@ -92,7 +92,7 @@ public class ReportsServiceUtil {
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
         }
@@ -138,7 +138,7 @@ public class ReportsServiceUtil {
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
         }
@@ -175,7 +175,7 @@ public class ReportsServiceUtil {
             else
                 return mapData(titleMatchedReport);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
             return titleMatchedReport;
         }

@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -9,8 +10,6 @@ import org.recap.model.jpa.InstitutionEntity;
 import org.recap.security.UserManagementService;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -31,11 +30,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/dataExport")
 public class DataExportsRecentInfoController {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataExportsRecentInfoController.class);
     @Autowired
     HomeController homeController;
     @Value("${" + PropertyKeyConstants.SCSB_ETL_URL + "}")
@@ -61,7 +60,7 @@ public class DataExportsRecentInfoController {
                 s3RecentDataExportInfoList = responseEntity.getBody();
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
         }
         return s3RecentDataExportInfoList;
     }
@@ -90,7 +89,7 @@ public class DataExportsRecentInfoController {
                 dataExportResponse.setErrorMessage(responseEntity.getBody());
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
+            log.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
             dataExportResponse.setErrorMessage(e.getMessage());
         }
         return dataExportResponse;

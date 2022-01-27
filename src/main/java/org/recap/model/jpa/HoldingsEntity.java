@@ -1,7 +1,10 @@
 package org.recap.model.jpa;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;

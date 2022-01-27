@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.proxy.Cas20ProxyRetriever;
@@ -28,6 +29,7 @@ import java.util.Map;
 /**
  * Created by sheiks on 18/01/17.
  */
+@Slf4j
 public class SCSBCas20ServiceTicketValidator extends SCSBAbstractCasProtocolUrlBasedTicketValidator {
 
     /** The CAS 2.0 protocol proxy callback url. */
@@ -129,7 +131,7 @@ public class SCSBCas20ServiceTicketValidator extends SCSBAbstractCasProtocolUrlB
             xmlReader.parse(new InputSource(new StringReader(xml)));
             return handler.getAttributes();
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             return Collections.emptyMap();
         }
     }

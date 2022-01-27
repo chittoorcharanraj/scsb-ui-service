@@ -1,15 +1,17 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.util.Date;
 
 /**
  * Created by akulak on 25/9/17.
  */
-@Setter
-@Getter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BulkSearchResultRow {
 
     private Integer bulkRequestId;

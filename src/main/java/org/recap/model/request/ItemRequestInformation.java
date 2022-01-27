@@ -1,7 +1,8 @@
 package org.recap.model.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.util.List;
 
@@ -9,8 +10,9 @@ import java.util.List;
  * Created by rajeshbabuk on 27/12/16.
  */
 //@JsonIgnoreProperties({"itemBarcodes", "titleIdentifier", "patronBarcode","patronBarcode","emailAddress","requestingInstitution","requestingInstitution","requestType","deliveryLocation","requestNotes","startPage","endPage","chapterTitle"})
-@Setter
-@Getter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class ItemRequestInformation {
 
     private List<String> itemBarcodes;

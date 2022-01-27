@@ -1,7 +1,8 @@
 package org.recap.model.usermanagement;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,9 @@ import java.util.List;
  * Created by dharmendrag on 23/12/16.
  */
 
-@Setter
-@Getter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class UserRoleForm {
 
     private int userId;

@@ -1,7 +1,7 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.List;
  * Created by hemalathas on 22/12/16.
  */
 
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class RolesForm {
     private String roleName;
     private String roleDescription;

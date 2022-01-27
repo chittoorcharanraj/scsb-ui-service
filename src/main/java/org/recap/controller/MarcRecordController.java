@@ -1,9 +1,8 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.util.MarcRecordViewUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by rajeshbabuk on 22/7/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/openMarcRecordByBibId")
 public class MarcRecordController {
-    private static final Logger logger = LoggerFactory.getLogger(MarcRecordController.class);
+
     @Autowired
     private MarcRecordViewUtil marcRecordViewUtil;
 
@@ -28,7 +28,7 @@ public class MarcRecordController {
      */
     @GetMapping("")
     public BibliographicMarcForm openMarcRecord(@RequestParam("bibId") Integer bibId) {
-        logger.info("openMarcRecord --> Called");
+        log.info("openMarcRecord --> Called");
         BibliographicMarcForm bibliographicMarcForm = marcRecordViewUtil.buildBibliographicMarcForm(bibId, null, null);
         return bibliographicMarcForm;
     }

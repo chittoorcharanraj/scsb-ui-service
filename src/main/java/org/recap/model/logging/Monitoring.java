@@ -1,10 +1,11 @@
 package org.recap.model.logging;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Setter
-@Getter
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class Monitoring {
     String loggingurl;
 }

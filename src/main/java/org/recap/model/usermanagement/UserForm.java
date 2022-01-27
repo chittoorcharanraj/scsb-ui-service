@@ -1,7 +1,8 @@
 package org.recap.model.usermanagement;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -10,8 +11,8 @@ import java.util.Set;
 /**
  * Created by dharmendrag on 29/11/16.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class UserForm implements Serializable {
 
     private Integer userId;

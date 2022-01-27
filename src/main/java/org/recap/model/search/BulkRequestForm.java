@@ -1,7 +1,8 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,8 +12,8 @@ import java.util.List;
 /**
  * Created by akulak on 19/9/17.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BulkRequestForm {
 
     private Integer requestId;

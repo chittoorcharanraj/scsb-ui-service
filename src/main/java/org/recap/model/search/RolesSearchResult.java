@@ -1,13 +1,14 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 /**
  * Created by hemalathas on 22/12/16.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class RolesSearchResult {
 
     private String rolesName;

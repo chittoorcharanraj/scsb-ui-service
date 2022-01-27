@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.PermissionEntity;
@@ -9,8 +10,6 @@ import org.recap.model.search.RolesSearchResult;
 import org.recap.repository.jpa.PermissionsDetailsRepository;
 import org.recap.repository.jpa.RolesDetailsRepositorty;
 import org.recap.security.UserManagementService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,11 +42,11 @@ import java.util.regex.Pattern;
 /**
  * Created by hemalathas on 22/12/16.
  */
+@Slf4j
 @RestController
 @RequestMapping("/roles")
 public class RolesController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RolesController.class);
 
     @Autowired
     private RolesDetailsRepositorty rolesDetailsRepositorty;
@@ -67,7 +66,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/searchRoles")
     public RolesForm search(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        logger.info("searchRoles calling with the following payload :: {}", rolesForm);
+        log.info("searchRoles calling with the following payload :: {}", rolesForm);
         return setRolesFormSearchResults(rolesForm);
     }
 
@@ -90,7 +89,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/createRole")
     public RolesForm newRole(@RequestBody RolesForm rolesForm, HttpServletRequest request) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
-        logger.info("create Role calling with the following payload: {}", rolesForm);
+        log.info("create Role calling with the following payload: {}", rolesForm);
         if (!specialCharacterCheck) {
             rolesForm.setErrorMessage(ScsbConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
@@ -147,7 +146,7 @@ public class RolesController extends AbstractController {
                                     @RequestParam("roleName") String roleName,
                                     @RequestParam("roleDescription") String roleDescription,
                                     @RequestParam("editPermissionNames") String[] editPermissionNames, HttpServletRequest request) {
-        logger.info("edit Role calling: {}", roleName);
+        log.info("edit Role calling: {}", roleName);
         RolesForm rolesForm = new RolesForm();
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(ScsbConstants.USER_NAME);
@@ -215,7 +214,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/delete")
     public RolesForm delete(@RequestBody RolesForm rolesForm) {
-        logger.info("deleting Role calling : {}", rolesForm);
+        log.info("deleting Role calling : {}", rolesForm);
         Optional<RoleEntity> roleEntity = rolesDetailsRepositorty.findById(rolesForm.getRoleId());
         if (roleEntity.isPresent()) {
             try {
@@ -229,10 +228,10 @@ public class RolesController extends AbstractController {
                 setRolesFormSearchResults(rolesForm);
                 rolesForm.setMessage(rolesForm.getRoleNameForDelete() + ScsbConstants.DELETED_SUCCESSFULLY);
             } catch (Exception e) {
-                logger.error(ScsbCommonConstants.LOG_ERROR, e);
+                log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
         } else {
-            logger.error(ScsbCommonConstants.LOG_ERROR + "{}", "Role is Null");
+            log.error(ScsbCommonConstants.LOG_ERROR + "{}", "Role is Null");
         }
         rolesForm.setShowResults(true);
         return rolesForm;
@@ -521,7 +520,7 @@ public class RolesController extends AbstractController {
             roleEntity1.setPermissions(rolesSet);
             roleEntity = rolesDetailsRepositorty.save(roleEntity1);
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return roleEntity;
     }

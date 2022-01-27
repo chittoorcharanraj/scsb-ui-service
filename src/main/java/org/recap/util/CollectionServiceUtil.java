@@ -1,6 +1,7 @@
 package org.recap.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -13,7 +14,6 @@ import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.service.RestHeaderService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -30,10 +30,11 @@ import java.util.Map;
 /**
  * Created by rajeshbabuk on 19/10/16.
  */
+@Slf4j
 @Service
 public class CollectionServiceUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionServiceUtil.class);
+
 
     @Value("${" + PropertyKeyConstants.SCSB_GATEWAY_URL + "}")
     private String scsbUrl;
@@ -77,7 +78,7 @@ public class CollectionServiceUtil {
      * @return the logger
      */
     public static Logger getLogger() {
-        return logger;
+        return log;
     }
 
     /**
@@ -136,7 +137,7 @@ public class CollectionServiceUtil {
                 bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + statusResponse.replace(ScsbCommonConstants.FAILURE + "-", ""));
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + e.getMessage());
         }
     }
@@ -199,7 +200,7 @@ public class CollectionServiceUtil {
                 }
             }
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
             bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.DEACCESSION_FAILED + " - " + e.getMessage());
         }
     }

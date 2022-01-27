@@ -1,13 +1,14 @@
 package org.recap.model.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 
 /**
  * Created by rajeshbabuk on 15/11/17.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class ReplaceRequest {
 
     private String replaceRequestByType;

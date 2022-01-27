@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
@@ -14,8 +15,6 @@ import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
 import org.recap.service.RequestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
@@ -44,11 +43,11 @@ import java.util.stream.Collectors;
 /**
  * Created by akulak on 19/9/17.
  */
+@Slf4j
 @RestController
 @RequestMapping("/bulkRequest")
 public class BulkRequestController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BulkRequestController.class);
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
     @Autowired
@@ -88,7 +87,7 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         bulkRequestForm.setRequestNotes(notes);
-        logger.info(ScsbConstants.CREATE_BULKREQUEST_CALLED);
+        log.info(ScsbConstants.CREATE_BULKREQUEST_CALLED);
         HashMap<String, String> resStatus = new HashMap<>();
         try {
             BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
@@ -97,7 +96,7 @@ public class BulkRequestController extends AbstractController {
             else
                 resStatus.put(ScsbConstants.STATUS, res.getErrorMessage());
         } catch (Exception e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
             resStatus.put(ScsbConstants.STATUS, e.getMessage());
         }
         JSONObject recvObj = new JSONObject(resStatus);

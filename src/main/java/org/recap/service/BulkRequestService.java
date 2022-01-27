@@ -1,5 +1,6 @@
 package org.recap.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
@@ -19,8 +20,6 @@ import org.recap.repository.jpa.BulkRequestDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.UserDetailsRepository;
 import org.recap.util.SecurityUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -48,10 +47,11 @@ import java.util.stream.Collectors;
 /**
  * Created by akulak on 22/9/17.
  */
+@Slf4j
 @Service
 public class BulkRequestService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BulkRequestService.class);
+
 
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
@@ -123,7 +123,7 @@ public class BulkRequestService {
                 bulkRequestForm.setErrorMessage("Patron Barcode is incorrect");
             }
         } catch (IOException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR, e);
+            log.error(ScsbCommonConstants.LOG_ERROR, e);
         }
         return bulkRequestForm;
     }
@@ -149,7 +149,7 @@ public class BulkRequestService {
                 bulkRequestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }catch (Exception e){
             bulkRequestForm.setMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bulkRequestForm;
     }
@@ -160,7 +160,7 @@ public class BulkRequestService {
             bulkRequestForm.setPageNumber(getPageNumberOnPageSizeChange(bulkRequestForm));
             bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
         } catch (ParseException e) {
-            logger.error(ScsbCommonConstants.LOG_ERROR,e);
+            log.error(ScsbCommonConstants.LOG_ERROR,e);
         }
         return bulkRequestForm;
     }
@@ -194,7 +194,7 @@ public class BulkRequestService {
                     bulkSearchResultRow.setImsLocation(bulkRequestItemEntity.getImsLocationEntity().getImsLocationCode());
                     bulkSearchResultRows.add(bulkSearchResultRow);
                 } catch (Exception ex) {
-                    logger.error(ScsbCommonConstants.LOG_ERROR, ex);
+                    log.error(ScsbCommonConstants.LOG_ERROR, ex);
                 }
             }
             bulkRequestForm.setTotalRecordsCount(String.valueOf(bulkRequestItemEntities.getTotalElements()));
@@ -260,7 +260,7 @@ public class BulkRequestService {
             }
         }else{
             BulkRequestItemEntity notFoundEntity = new BulkRequestItemEntity();
-            logger.info("bulk request id requested {}",bulkRequestId);
+            log.info("bulk request id requested {}",bulkRequestId);
             notFoundEntity.setBulkRequestFileData("Unable to generate bulk request report".getBytes());
             return  notFoundEntity;
         }

@@ -1,7 +1,8 @@
 package org.recap.model.search;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 import org.recap.model.jpa.DeliveryCodeEntity;
 
 import java.util.ArrayList;
@@ -10,8 +11,8 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 22/7/16.
  */
-@Setter
-@Getter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class BibliographicMarcForm {
 
     private Integer bibId;
