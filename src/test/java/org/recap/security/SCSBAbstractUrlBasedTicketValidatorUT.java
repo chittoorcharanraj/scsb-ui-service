@@ -36,7 +36,7 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
         SCSBAbstractUrlBasedTicketValidator.setCustomParameters(customParameters);
         SCSBAbstractUrlBasedTicketValidator.setRenew(true);
         SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
-        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
+        //ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
         String validateUrl = SCSBAbstractUrlBasedTicketValidator.constructValidationUrl(ticket,serviceUrl);
         assertNotNull(validateUrl);
     }
@@ -52,7 +52,7 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
         SCSBAbstractUrlBasedTicketValidator.setRenew(true);
         SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
         SCSBAbstractUrlBasedTicketValidator.setURLConnectionFactory(httpURLConnectionFactory);
-        ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
+        //ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
         try {
             Mockito.when(SCSBAbstractUrlBasedTicketValidator.validate(ticket,serviceUrl)).thenCallRealMethod();
             SCSBAbstractUrlBasedTicketValidator.validate(ticket, serviceUrl);
