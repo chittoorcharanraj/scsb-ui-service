@@ -96,7 +96,7 @@ public class SCSBCas20ServiceTicketValidatorUT extends BaseTestCaseUT {
     @Test
     public void extractCustomAttributesException() throws Exception{
         String xml = "testXML";
-        ReflectionTestUtils.setField(reCAPCas20ServiceTicketValidator,"logger",log);
+        //ReflectionTestUtils.setField(reCAPCas20ServiceTicketValidator,"logger",log);
         Mockito.doCallRealMethod().when(reCAPCas20ServiceTicketValidator).extractCustomAttributes(xml);
         Map<String, Object> result = reCAPCas20ServiceTicketValidator.extractCustomAttributes(xml);
         assertNotNull(result);

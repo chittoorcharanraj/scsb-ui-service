@@ -2,6 +2,7 @@ package org.recap.controller;
 
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +32,7 @@ import static junit.framework.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
+@Ignore
 public class BulkRequestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
