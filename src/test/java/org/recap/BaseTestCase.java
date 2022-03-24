@@ -1,21 +1,26 @@
 package org.recap;
 
-import org.apache.shiro.mgt.SecurityManager;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BibliographicDetailsRepository;
+import org.recap.repository.jpa.CollectionGroupDetailsRepository;
+import org.recap.repository.jpa.HoldingsDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
+import org.recap.repository.jpa.ItemDetailsRepository;
+import org.recap.repository.jpa.ItemStatusDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.repository.jpa.PermissionsDetailsRepository;
+import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.repository.jpa.RolesDetailsRepositorty;
+import org.recap.repository.jpa.UserDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Main.class)

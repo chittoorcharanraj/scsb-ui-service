@@ -1,21 +1,17 @@
 package org.recap.util;
 
 
-import info.freelibrary.marc4j.impl.LeaderImpl;
 import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.marc4j.marc.Leader;
 import org.marc4j.marc.Record;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
 
 /**

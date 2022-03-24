@@ -1,15 +1,22 @@
 package org.recap.service;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.powermock.api.mockito.PowerMockito;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.BulkCustomerCodeEntity;
+import org.recap.model.jpa.BulkRequestItemEntity;
+import org.recap.model.jpa.ImsLocationEntity;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.RequestItemEntity;
+import org.recap.model.jpa.RequestStatusEntity;
+import org.recap.model.jpa.UsersEntity;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
@@ -24,8 +31,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,16 +40,21 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-@Ignore
+
 public class BulkRequestServiceUT extends BaseTestCaseUT {
 
-    @Mock
+    @InjectMocks
+    @Spy
     BulkRequestService bulkRequestService;
 
     @Mock
@@ -97,17 +107,12 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
         getMocked(bulkRequestForm, bulkCustomerCodeEntity, usersEntity, bulkRequestItemEntity, responseEntity);
         BulkRequestForm form = null;
-        Boolean status = false;
         try {
             form = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+            assertNotNull(form);
         } catch (Exception e) {
             e.printStackTrace();
             assertNull(form);
-            status = true;
-        }
-        if(status) {
-            form = new BulkRequestForm();
-            assertNotNull(form);
         }
     }
 
@@ -120,22 +125,18 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(Boolean.FALSE, HttpStatus.OK);
         getMocked(bulkRequestForm, bulkCustomerCodeEntity, usersEntity, bulkRequestItemEntity, responseEntity);
         BulkRequestForm form = null;
-        Boolean status = false;
         try {
             form = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+            assertNotNull(form);
         } catch (Exception e) {
             e.printStackTrace();
             assertNull(form);
-            status = true;
-        }
-        if(status) {
-            form = new BulkRequestForm();
-            assertNotNull(form);
         }
     }
 
     private void getMocked(BulkRequestForm bulkRequestForm, BulkCustomerCodeEntity bulkCustomerCodeEntity, UsersEntity usersEntity, BulkRequestItemEntity bulkRequestItemEntity, ResponseEntity<Boolean> responseEntity) {
         ReflectionTestUtils.setField(bulkRequestService, "scsbUrl", "http://test/scsburl");
+        ReflectionTestUtils.setField(bulkRequestService, "supportInstitution", "test");
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.when(session.getAttribute(ScsbConstants.USER_ID)).thenReturn(1);
         Mockito.when(restHeaderService.getHttpHeaders()).thenReturn(httpHeaders);
@@ -271,8 +272,8 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
     private InstitutionEntity getInstitutionEntity() {
         InstitutionEntity institutionEntity = new InstitutionEntity();
         institutionEntity.setId(1);
-        institutionEntity.setInstitutionCode("UC");
-        institutionEntity.setInstitutionName("University of Chicago");
+        institutionEntity.setInstitutionCode("test");
+        institutionEntity.setInstitutionName("test");
         return institutionEntity;
     }
 
@@ -286,13 +287,13 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         bulkRequestForm.setDisableSearchInstitution(true);
         bulkRequestForm.setErrorMessage("ERROR");
         bulkRequestForm.setFileName("test");
-        bulkRequestForm.setInstitution("NYPL");
+        bulkRequestForm.setInstitution("test");
         bulkRequestForm.setItemBarcode("123");
         bulkRequestForm.setPatronBarcode("23456");
         bulkRequestForm.setPatronBarcodeInRequest("23456");
-        bulkRequestForm.setItemOwningInstitution("PUL");
-        bulkRequestForm.setRequestingInstitution("PUL");
-        bulkRequestForm.setRequestingInstituionHidden("PUL");
+        bulkRequestForm.setItemOwningInstitution("test");
+        bulkRequestForm.setRequestingInstitution("test");
+        bulkRequestForm.setRequestingInstituionHidden("test");
         bulkRequestForm.setRequestId(1);
         bulkRequestForm.setRequestIdSearch("1");
         bulkRequestForm.setItemTitle("test");
@@ -304,6 +305,9 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         bulkRequestForm.setStatus("PROCESSED");
         bulkRequestForm.setSubmitted(true);
         bulkRequestForm.setFile(new MockMultipartFile("test", new byte[1]));
+        bulkRequestForm.setRequestIdSearch("test");
+        bulkRequestForm.setPatronBarcodeSearch("test");
+        bulkRequestForm.setRequestNameSearch("test");
         return bulkRequestForm;
     }
 
@@ -319,7 +323,7 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         bulkSearchResultRow.setDeliveryLocation("test");
         bulkSearchResultRow.setFileName("test");
         bulkSearchResultRow.setPatronBarcode("123");
-        bulkSearchResultRow.setRequestingInstitution("PUL");
+        bulkSearchResultRow.setRequestingInstitution("test");
         bulkSearchResultRow.setStatus("SUCCESS");
         bulkSearchResultRow.setImsLocation("HD");
         return bulkSearchResultRow;
@@ -341,7 +345,7 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         bulkRequestItemEntity.setBulkRequestFileData(new byte[1]);
         ImsLocationEntity imsLocationEntity = new ImsLocationEntity();
         imsLocationEntity.setId(1);
-        imsLocationEntity.setImsLocationCode("HD");
+        imsLocationEntity.setImsLocationCode("test");
         bulkRequestItemEntity.setImsLocationEntity(imsLocationEntity);
         return bulkRequestItemEntity;
     }

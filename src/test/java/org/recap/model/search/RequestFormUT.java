@@ -1,14 +1,16 @@
 package org.recap.model.search;
 
 import org.junit.Test;
-import org.recap.BaseTestCase;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.OwnerCodeEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by hemalathas on 29/3/17.

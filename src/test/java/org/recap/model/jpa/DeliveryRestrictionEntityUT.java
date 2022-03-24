@@ -1,11 +1,6 @@
 package org.recap.model.jpa;
 
-import org.junit.Test;
 import org.recap.BaseTestCase;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by hemalathas on 17/7/17.

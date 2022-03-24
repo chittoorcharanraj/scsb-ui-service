@@ -2,7 +2,9 @@ package org.recap.model.jpa;
 
 import org.junit.Test;
 import org.recap.BaseTestCase;
+
 import java.util.Date;
+
 import static junit.framework.TestCase.assertNotNull;
 public class BulkRequestItemEntityUT extends BaseTestCase {
 

@@ -8,7 +8,11 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.repository.jpa.*;
+import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.repository.jpa.LocationDetailsRepository;
+import org.recap.repository.jpa.OwnerCodeDetailsRepository;
+import org.recap.repository.jpa.SCSBPropertiesDetailRepository;
 import org.recap.service.FileUploadService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -26,8 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class AdminControllerUT extends BaseTestCaseUT {
 
