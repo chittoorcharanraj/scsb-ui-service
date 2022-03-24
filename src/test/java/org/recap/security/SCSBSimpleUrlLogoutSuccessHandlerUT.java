@@ -10,8 +10,6 @@ import org.springframework.security.core.Authentication;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.assertNotNull;
-
 
 
 public class SCSBSimpleUrlLogoutSuccessHandlerUT extends BaseTestCase{

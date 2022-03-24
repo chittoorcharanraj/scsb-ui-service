@@ -3,7 +3,10 @@ package org.recap.model.search;
 import org.junit.Test;
 import org.recap.BaseTestCaseUT;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class RolesFormUT extends BaseTestCaseUT {
 

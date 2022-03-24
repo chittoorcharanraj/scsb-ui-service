@@ -1,11 +1,9 @@
 package org.recap.util;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
 import org.springframework.security.core.Authentication;
@@ -13,12 +11,10 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -56,7 +52,7 @@ public class HelperUtilUT extends BaseTestCaseUT {
         assertNull(response);
     }
 
-    @Ignore
+    @Test
     public void testGetLogoutUrl() throws Exception{
         String  institutionCode = "NYPL";
         HelperUtil helperUtil = new HelperUtil();
@@ -64,7 +60,7 @@ public class HelperUtilUT extends BaseTestCaseUT {
         assertNotNull(casLogoutUrl);
     }
 
-    @Ignore
+    @Test
     public void testGetLogoutUrl2() throws Exception{
         String  institutionCode = "PUL";
         HelperUtil helperUtil = new HelperUtil();

@@ -1,9 +1,12 @@
 package org.recap.util;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionRequest;
@@ -24,10 +27,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
-@Ignore
 public class CollectionServiceUtilUT extends BaseTestCaseUT {
 
-    @Mock
+    @InjectMocks
+    @Spy
     CollectionServiceUtil collectionServiceUtil;
 
     @Mock
@@ -90,8 +93,6 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
 
     @Test
     public void getDeAccessionRequest(){
-        DeAccessionRequest deAccessionRequest1 = new DeAccessionRequest();
-        Mockito.when(collectionServiceUtil.getDeAccessionRequest()).thenReturn(deAccessionRequest1);
         DeAccessionRequest deAccessionRequest = collectionServiceUtil.getDeAccessionRequest();
         assertNotNull(deAccessionRequest);
     }

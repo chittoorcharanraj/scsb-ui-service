@@ -1,7 +1,6 @@
 package org.recap.util;
 
 import com.csvreader.CsvReader;
-import javassist.tools.web.BadHttpRequest;
 import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -14,8 +13,6 @@ import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.reports.ReportsRequest;
-import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
@@ -26,7 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
@@ -37,10 +33,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;

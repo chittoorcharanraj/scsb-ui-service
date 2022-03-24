@@ -9,11 +9,11 @@ import org.recap.model.jpa.ReportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 

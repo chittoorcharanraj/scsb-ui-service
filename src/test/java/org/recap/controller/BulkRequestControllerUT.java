@@ -2,7 +2,6 @@ package org.recap.controller;
 
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,11 +27,11 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
-@Ignore
+
 public class BulkRequestControllerUT extends BaseTestCaseUT {
 
     @InjectMocks
