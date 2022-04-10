@@ -105,9 +105,13 @@ public class LoginController extends AbstractController {
             }
             UsernamePasswordToken token = new UsernamePasswordToken(username + ScsbConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
-            if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
-                String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
-                log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+            if(userHasRoles(resultMap)) {
+                if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
+                    String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
+                    log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+                    return ScsbConstants.REDIRECT_USER;
+                }
+            } else {
                 return ScsbConstants.REDIRECT_USER;
             }
             setSessionValues(session, resultMap, token);
@@ -118,6 +122,10 @@ public class LoginController extends AbstractController {
             return ScsbConstants.REDIRECT_HOME;
         }
         return ScsbConstants.REDIRECT_SEARCH;
+    }
+
+    private boolean userHasRoles(Map<String, Object> resultMap) {
+        return (Boolean) resultMap.get(ScsbConstants.SEARCH_PRIVILEGE);
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
