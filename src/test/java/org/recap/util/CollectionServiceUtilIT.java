@@ -1,10 +1,14 @@
 package org.recap.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.BaseTestCase;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -28,6 +32,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
@@ -55,6 +62,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by rajeshbabuk on 19/10/16.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource("classpath:application.properties")
 public class CollectionServiceUtilIT extends BaseTestCase {
 
     private MockMvc mockMvc;
@@ -66,7 +75,8 @@ public class CollectionServiceUtilIT extends BaseTestCase {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
+    @InjectMocks
+    @Spy
     private CollectionServiceUtil collectionServiceUtil;
 
     @Autowired
@@ -218,7 +228,7 @@ public class CollectionServiceUtilIT extends BaseTestCase {
         Mockito.when(collectionServiceUtil.getItemDetailsRepository()).thenReturn(mockedItemDetailsRepository);
         Mockito.when(collectionServiceUtil.getItemDetailsRepository().findByBarcode(itemBarcode)).thenReturn(Arrays.asList(fetchedItemEntity));
         Mockito.when(collectionServiceUtil.getItemChangeLogDetailsRepository()).thenReturn(mockedItemChangeLogDetailsRepository);
-        Mockito.when(restTemplate.postForObject(scsbUrl + ScsbConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class)).thenReturn(map);
+        Mockito.when(restTemplate.postForObject(collectionServiceUtil.getScsbUrl() + ScsbConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class)).thenReturn(map);
         Mockito.doCallRealMethod().when(collectionServiceUtil).deAccessionItem(bibliographicMarcForm);
         collectionServiceUtil.deAccessionItem(bibliographicMarcForm);
 

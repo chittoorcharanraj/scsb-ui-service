@@ -9,10 +9,7 @@ import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.JobEntity;
-import org.recap.model.jpa.JobParamDataEntity;
-import org.recap.model.jpa.JobParamEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
 import org.recap.model.search.ScheduleJobsForm;
@@ -23,26 +20,18 @@ import org.recap.repository.jpa.JobParamDetailRepository;
 import org.recap.service.RestHeaderService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ScheduleJobsControllerUT extends BaseTestCaseUT {
 
@@ -76,6 +65,9 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
 
     @Mock
     HttpHeaders httpHeaders;
+
+    @Mock
+    HttpEntity<ScheduleJobRequest> httpEntity;
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
@@ -245,4 +237,19 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         scheduleJobsForm.setScheduleType("UNSCHEDULE");
         return scheduleJobsForm;
     }
+
+    @Test
+    public void saveJobTest() {
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        Date nextRunTime = new Date();
+        JobEntity jobEntity = getJobEntity();
+        JobParamEntity jobParamEntity = getJobParamEntity();
+        Mockito.when(jobDetailsRepository.findByJobName(any())).thenReturn(jobEntity);
+        Mockito.when(jobDetailsRepository.save(any())).thenReturn(jobEntity);
+        Mockito.when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
+        Mockito.when(jobParamDetailRepository.save(any())).thenReturn(jobParamEntity);
+        ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", scheduleJobsForm, nextRunTime);
+    }
+
+
 }

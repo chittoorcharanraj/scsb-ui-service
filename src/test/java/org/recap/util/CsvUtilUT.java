@@ -2,11 +2,13 @@ package org.recap.util;
 
 import com.csvreader.CsvReader;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.recap.BaseTestCase;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchResultRow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -121,5 +123,13 @@ public class CsvUtilUT extends BaseTestCase {
         searchResultRows.add(searchResultRow2);
         searchRecordsRequest.setSearchResultRows(searchResultRows);
         return searchRecordsRequest;
+    }
+
+    @Test
+    public void isAnyItemSelectedTest(){
+        List<SearchItemResultRow> searchItemResultRows = new ArrayList<>();
+        ReflectionTestUtils.invokeMethod(csvUtil, "isAnyItemSelected", searchItemResultRows);
+
+
     }
 }

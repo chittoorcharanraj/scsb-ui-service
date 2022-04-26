@@ -49,7 +49,8 @@ import java.util.Optional;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
+
 
 public class BulkRequestServiceUT extends BaseTestCaseUT {
 
@@ -348,5 +349,38 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         imsLocationEntity.setImsLocationCode("test");
         bulkRequestItemEntity.setImsLocationEntity(imsLocationEntity);
         return bulkRequestItemEntity;
+    }
+
+    @Test
+    public void bulkRequestItemEntityTest()  {
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Optional<UsersEntity> usersEntity = Optional.empty();
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        when(session.getAttribute(ScsbConstants.USER_ID)).thenReturn(1);
+        BulkCustomerCodeEntity bulkCustomerCodeEntity = new BulkCustomerCodeEntity();
+        when(institutionDetailsRepository.findByInstitutionCode(any())).thenReturn(institutionEntity);
+        when(bulkCustomerCodeDetailsRepository.findByCustomerCode(any())).thenReturn(bulkCustomerCodeEntity);
+        when(userDetailsRepository.findById(any())).thenReturn(usersEntity);
+        BulkRequestItemEntity bulkRequestItemEntity = getBulkRequestItemEntity();
+        when(bulkRequestDetailsRepository.save(any())).thenReturn(bulkRequestItemEntity);
+        when(bulkRequestService.getRestTemplate()).thenReturn(restTemplate);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                any(HttpMethod.class),
+                any(),
+                ArgumentMatchers.<Class<Boolean>>any());
+    }
+
+    @Test
+    public void processPatronValidationTest(){
+        BulkRequestForm bulkRequestForm = getBulkRequestForm();
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        when(bulkRequestService.getRestTemplate()).thenReturn(restTemplate);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<Boolean>>any());
+        ReflectionTestUtils.invokeMethod(bulkRequestService, "processPatronValidation", bulkRequestForm);
     }
 }
