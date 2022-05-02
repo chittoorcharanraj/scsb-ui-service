@@ -313,4 +313,30 @@ public class LoginControllerUT extends BaseTestCaseUT {
         OAuth2Authentication oauth = new OAuth2Authentication(oAuth2Request,auth);
         return oauth;
     }
+
+    @Test
+    public void setSessionValues() {
+        Map<String, Object> map = getAuthMap();
+        UsernamePasswordToken token = new UsernamePasswordToken();
+        Mockito.when(session.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(token);
+        Mockito.when(session.getAttribute(ScsbConstants.USER_AUTH)).thenReturn(map);
+        Mockito.when(userDetailsRepository.findByLoginId(any())).thenReturn(new UsersEntity());
+        Mockito.when(session.getAttribute(any())).thenReturn(Boolean.FALSE);
+        ReflectionTestUtils.invokeMethod(loginController, "setSessionValues", session, map, token);
+    }
+
+    @Test
+    public void setSessionValuesTest() {
+        Map<String, Object> map = getAuthMap();
+        UsernamePasswordToken token = new UsernamePasswordToken();
+        Mockito.when(session.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(token);
+        Mockito.when(session.getAttribute(ScsbConstants.USER_AUTH)).thenReturn(map);
+        Mockito.when(userDetailsRepository.findByLoginId(any())).thenReturn(new UsersEntity());
+        Mockito.when(session.getAttribute(any())).thenReturn(Boolean.TRUE);
+        ReflectionTestUtils.invokeMethod(loginController, "setSessionValues", session, map, token);
+    }
+
+
+
+
 }

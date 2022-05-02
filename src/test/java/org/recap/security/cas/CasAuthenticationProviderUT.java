@@ -1,12 +1,14 @@
 package org.recap.security.cas;
 
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
+import org.springframework.context.MessageSource;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
@@ -17,6 +19,8 @@ import org.springframework.security.core.userdetails.AuthenticationUserDetailsSe
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.security.Key;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,6 +56,15 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
     @Mock
     AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
 
+    @Mock
+    Key key;
+
+    @Mock
+    TicketValidator ticketValidator;
+
+    @Mock
+    MessageSource messageSource;
+
     @Test
     public void authenticate(){
         Mockito.doReturn(Boolean.TRUE).when(casAuthenticationProvider).supports(authentication.getClass());
@@ -59,6 +72,7 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
             Authentication auth = casAuthenticationProvider.authenticate(authentication);
         }catch (Exception e){}
     }
+
     @Test
     public void getServiceUrlNull(){
         try {
@@ -84,6 +98,7 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
             ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getServiceUrl", authentication);
         }catch (Exception e){}
     }
+
     @Test
     public void authenticateNow(){
         try {
@@ -130,4 +145,23 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
         Boolean result  = casAuthenticationProvider.supports(authentication.getClass());
         assertNotNull(result);
     }
+
+    @Test
+    public void setKey(){
+       casAuthenticationProvider.setKey(String.valueOf(key));
+    }
+
+    @Test
+    public void setTicketValidator(){
+        casAuthenticationProvider.setTicketValidator(ticketValidator);
+    }
+
+    @Test
+    public void setMessageSource(){
+        casAuthenticationProvider.setMessageSource(messageSource);
+    }
+
+
+
+
 }
