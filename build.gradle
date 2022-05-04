@@ -28,7 +28,7 @@ test {
 }
 
 bootJar {
-	archiveBaseName = 'Phase4-SCSB-UI'
+	archiveBaseName = 'SCSB-UI'
 	archiveVersion = '0.0.1-SNAPSHOT'
 	// layered()
 }
