@@ -37,6 +37,10 @@ public class ScsbConstants {
     public static final String BULK_REQUEST_CHECK = "BulkRequest";
     public static final String VALIDATE_REQUEST_ITEM_URL = "requestItem/validateItemRequestInformations";
     public static final String REQUEST_ITEM_URL = "requestItem/requestItem";
+
+    public static final String REQUEST_ITEM_LOG_URL = "request-log/reports";
+
+    public static final String REQUEST_ITEM_LOG_SUBMIT_URL = "request-log/submit";
     public static final String BULK_REQUEST_ITEM_URL = "requestItem/bulkRequest";
     public static final String URL_REQUEST_CANCEL = "requestItem/cancelRequest";
     public static final String URL_REQUEST_RESUBMIT = "requestItem/replaceRequest";
@@ -194,9 +198,13 @@ public class ScsbConstants {
     public static final String IN_PROCESS = "IN PROCESS";
     public static final String SCSB_SHIRO_BULK_REQUEST_URL = "auth/bulkRequest";
     public static final String EXCEPTION = "EXCEPTION";
+
     public static final String MONITORING = "isMonitoring";
     public static final String LOGGING = "isLogging";
+
     public static final String DATA_EXPORT = "isDataExport";
+
+    public static final String REQUESTLOG = "isRequestLog";
     public static final String SCSB_UI = "scsb_ui";
     public static final String SCSB_AUTH = "scsb_auth";
     public static final String SCSB_GATEWAY = "scsb_gateway";

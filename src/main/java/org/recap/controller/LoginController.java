@@ -186,6 +186,7 @@ public class LoginController extends AbstractController {
         session.setAttribute(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, authMap.get(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE));
         session.setAttribute(ScsbConstants.MONITORING, authMap.get(ScsbConstants.MONITORING));
         session.setAttribute(ScsbConstants.LOGGING, authMap.get(ScsbConstants.LOGGING));
+        session.setAttribute(ScsbConstants.REQUESTLOG, authMap.get(ScsbConstants.REQUESTLOG));
         session.setAttribute(ScsbConstants.DATA_EXPORT, authMap.get(ScsbConstants.DATA_EXPORT));
         Object isSuperAdmin = session.getAttribute(ScsbConstants.SUPER_ADMIN_USER);
         if ((boolean) isSuperAdmin) {

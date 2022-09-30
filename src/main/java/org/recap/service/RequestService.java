@@ -10,56 +10,34 @@ import org.marc4j.marc.Record;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.model.jpa.DeliveryCodeEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.controller.AbstractController;
+import org.recap.model.jpa.*;
+import org.recap.model.request.RequestLogReportRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.BulkRequestDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
-import org.recap.util.BibJSONUtil;
-import org.recap.util.PropertyUtil;
-import org.recap.util.RequestServiceUtil;
-import org.recap.util.UserAuthUtil;
+import org.recap.repository.jpa.*;
+import org.recap.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
+import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.CheckForNull;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by akulak on 20/4/17.
  */
 @Slf4j
 @Service
-public class RequestService {
-
+public class RequestService extends AbstractController {
 
 
     @Autowired
@@ -97,6 +75,11 @@ public class RequestService {
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
+
+    @CheckForNull
+    public RestTemplate getRestTemplate(){
+        return new RestTemplate();
+    }
 
     /**
      * Gets request item details repository.
@@ -637,5 +620,23 @@ public class RequestService {
             }
             requestForm.setRequestTypes(requestTypeList);
         }
+    }
+
+    public RequestLogReportRequest getRequestReports(RequestLogReportRequest requestLogReportRequest) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+        HttpEntity<RequestLogReportRequest> httpEntity = new HttpEntity<>(requestLogReportRequest, headers);
+        String requestLogUrl = getScsbUrl() + ScsbConstants.REQUEST_ITEM_LOG_URL;
+        ResponseEntity<RequestLogReportRequest> requestLogResponse = restTemplate.exchange(requestLogUrl, HttpMethod.POST, httpEntity, RequestLogReportRequest.class);
+        return requestLogResponse.getBody();
+    }
+
+    public RequestLogReportRequest submitRequestReports(RequestLogReportRequest requestLogReportRequest) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = HelperUtil.getSwaggerHeaders();
+        HttpEntity<RequestLogReportRequest> httpEntity = new HttpEntity<>(requestLogReportRequest, headers);
+        String requestLogUrl = getScsbUrl() + ScsbConstants.REQUEST_ITEM_LOG_SUBMIT_URL;
+        ResponseEntity<RequestLogReportRequest> requestLogSumitResponse = restTemplate.exchange(requestLogUrl, HttpMethod.POST, httpEntity, RequestLogReportRequest.class);
+        return requestLogSumitResponse.getBody();
     }
 }
