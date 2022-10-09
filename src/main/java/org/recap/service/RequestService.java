@@ -44,6 +44,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.CheckForNull;
@@ -657,7 +658,14 @@ public class RequestService extends AbstractController {
         HttpHeaders headers = HelperUtil.getSwaggerHeaders();
         HttpEntity<RequestLogReportRequest> httpEntity = new HttpEntity<>(requestLogReportRequest, headers);
         String requestLogUrl = getScsbUrl() + ScsbConstants.REQUEST_ITEM_LOG_URL;
-        ResponseEntity<RequestLogReportRequest> requestLogResponse = restTemplate.exchange(requestLogUrl, HttpMethod.POST, httpEntity, RequestLogReportRequest.class);
+        ResponseEntity<RequestLogReportRequest> requestLogResponse = null;
+        try {
+            requestLogResponse = restTemplate.exchange(requestLogUrl, HttpMethod.POST, httpEntity, RequestLogReportRequest.class);
+        } catch (Exception e) {
+            RequestLogReportRequest requestLogReportResponse = new RequestLogReportRequest();
+            requestLogReportResponse.setStatus("No records found");
+            return requestLogReportResponse;
+        }
         return requestLogResponse.getBody();
     }
 
