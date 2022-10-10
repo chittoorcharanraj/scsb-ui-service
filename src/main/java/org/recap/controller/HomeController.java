@@ -104,6 +104,7 @@ public class HomeController extends AbstractController {
             resultMap.put(ScsbConstants.DATA_EXPORT, request.getSession().getAttribute(ScsbConstants.DATA_EXPORT));
             resultMap.put(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE, request.getSession().getAttribute(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE));
             resultMap.put(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE,request.getSession().getAttribute(ScsbConstants.RESUBMIT_REQUEST_PRIVILEGE));
+            resultMap.put(ScsbConstants.REQUESTLOG, request.getSession().getAttribute(ScsbConstants.REQUESTLOG));
             resultMap.put(ScsbConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
             log.info("Exception Occurred while User Validation :: {}", e.getMessage());
