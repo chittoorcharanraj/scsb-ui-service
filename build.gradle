@@ -45,8 +45,8 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-	implementation group: 'org.json', name: 'json', version: '20220320'
-	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+	implementation group: 'org.json', name: 'json', version: '20230227'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
 	implementation('commons-beanutils:commons-beanutils:1.9.4')
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -61,26 +61,26 @@ dependencies {
 	implementation('org.springframework.security:spring-security-oauth2-client:5.7.3')
 	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
-	implementation('org.codehaus.jettison:jettison:1.5.0')
+	implementation('org.codehaus.jettison:jettison:1.5.3')
 	implementation('org.springframework.data:spring-data-commons')
 	implementation('org.springframework.data:spring-data-jpa')
 	implementation('com.google.guava:guava:31.1-jre') {exclude module: "solr-solrj"}
-	implementation('org.apache.solr:solr-solrj:8.11.1')
+	implementation('org.apache.solr:solr-solrj:8.11.2')
 	implementation('info.freelibrary:freelib-marc4j:2.6.12')
 	implementation(group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0')
 	implementation('io.springfox:springfox-swagger2:3.0.0')
 	implementation('org.apache.shiro:shiro-core:1.5.2')
 	implementation('javax.validation:validation-api:2.0.1.Final')
-	implementation('org.projectlombok:lombok:1.18.24')
+	implementation('org.projectlombok:lombok:1.18.26')
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
 	implementation 'org.springframework.amqp:spring-rabbit'
-	implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
-	annotationProcessor('org.projectlombok:lombok:1.18.24')
-	testImplementation('org.projectlombok:lombok:1.18.24')
-	testAnnotationProcessor('org.projectlombok:lombok:1.18.24')
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+	annotationProcessor('org.projectlombok:lombok:1.18.26')
+	testImplementation('org.projectlombok:lombok:1.18.26')
+	testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
 
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
@@ -94,7 +94,7 @@ dependencies {
 configurations.all {
 	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
 		if (details.requested.group == 'org.apache.logging.log4j') {
-			details.useVersion '2.18.0'
+			details.useVersion '2.20.0'
 		}
 	}
 }
