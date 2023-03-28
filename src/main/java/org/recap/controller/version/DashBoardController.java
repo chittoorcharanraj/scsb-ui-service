@@ -26,6 +26,9 @@ public class DashBoardController extends ScsbController {
     @Value("${" + PropertyKeyConstants.VERSION_NUMBER + "}")
     private String versionNumberService;
 
+    @Value("${" + PropertyKeyConstants.FOOTER_YEAR + "}")
+    private String footerYear;
+
     @Value("${" + PropertyKeyConstants.SCSB_EMAIL_ASSIST_TO + "}")
     private String recapAssistanceEmailTo;
 
@@ -41,6 +44,7 @@ public class DashBoardController extends ScsbController {
     public String getVersionNumberService() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("versionNumber", versionNumberService);
+        jsonObject.put("footerYear", footerYear);
         return jsonObject.toString();
     }
 

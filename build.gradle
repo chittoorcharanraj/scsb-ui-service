@@ -58,7 +58,7 @@ dependencies {
 	implementation('org.springframework.security:spring-security-cas')
 	implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.6.8')
 	implementation('org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE')
-	implementation('org.springframework.security:spring-security-oauth2-client:5.7.3')
+	implementation('org.springframework.security:spring-security-oauth2-client:5.7.6')
 	implementation('org.springframework.data:spring-data-solr:4.3.15')
 			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
 	implementation('org.codehaus.jettison:jettison:1.5.3')
