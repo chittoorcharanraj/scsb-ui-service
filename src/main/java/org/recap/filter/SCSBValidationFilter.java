@@ -32,9 +32,10 @@ public class SCSBValidationFilter implements Filter {
         var user_authenticated = ScsbConstants.FALSE_STRING;
         try {
             PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
-            httpServletResponse.addHeader("Content-Security-Policy",
-                    "default-src "+propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL)+"; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; font-src 'self' data:;" +
-                            " img-src 'self' data: https:; style-src http: https: 'unsafe-inline'; connect-src http: https: ws:;");
+            if (propertyValueProvider.getProperty(ScsbConstants.CSP_ENABLE).equals(Boolean.TRUE)) {
+                httpServletResponse.addHeader(ScsbConstants.CSP,
+                        "default-src " + propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL) + propertyValueProvider.getProperty(ScsbConstants.CSP_VALUE));
+            }
             HttpSession session = httpServletRequest.getSession(ScsbConstants.FALSE);
             Optional<String> API_PATH = Optional.ofNullable(httpServletRequest.getHeader(ScsbConstants.API_PATH));
             API_PATH = (API_PATH.isEmpty()) ? Optional.ofNullable(ScsbConstants.SEARCH.toLowerCase()) : API_PATH;
