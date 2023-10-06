@@ -34,7 +34,7 @@ public class SCSBValidationFilter implements Filter {
             PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
             if (propertyValueProvider.getProperty(ScsbConstants.CSP_ENABLE).equals(Boolean.TRUE)) {
                 httpServletResponse.addHeader(ScsbConstants.CSP,
-                        "default-src " + propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL) + propertyValueProvider.getProperty(ScsbConstants.CSP_VALUE));
+                        "default-src " + propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL) + " " + propertyValueProvider.getProperty(ScsbConstants.CSP_VALUE));
             }
             HttpSession session = httpServletRequest.getSession(ScsbConstants.FALSE);
             Optional<String> API_PATH = Optional.ofNullable(httpServletRequest.getHeader(ScsbConstants.API_PATH));
