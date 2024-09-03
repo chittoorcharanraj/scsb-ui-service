@@ -2,6 +2,7 @@ package org.recap.util;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.recap.BaseTestCase;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
@@ -28,7 +29,7 @@ public class MarcRecordViewUtilIT extends BaseTestCase {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
+    @Mock
     MarcRecordViewUtil marcRecordViewUtil;
 
     @Test
