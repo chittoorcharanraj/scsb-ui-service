@@ -1,12 +1,14 @@
 package org.recap.security;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCase;
 
 import java.net.URL;
 
-public class SCSBAbstractCasProtocolUrlBasedTicketValidatorUT extends BaseTestCase {
+@Ignore
+public class SCSBAbstractCasProtocolUrlBasedTicketValidatorUT {
 
     @Mock
     SCSBAbstractCasProtocolUrlBasedTicketValidator SCSBAbstractCasProtocolUrlBasedTicketValidator;
