@@ -20,28 +20,38 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SessionFilterUT{
     @InjectMocks
     SessionFilter sessionFilter;
+
     @Mock
     HttpServletRequest request;
+
     @Mock
     HttpServletResponse response;
+
     @Mock
     FilterChain filterChain;
+
     @Mock
     Authentication authentication;
+
     @Mock
     SecurityContext context;
+
     @Mock
     UserAuthUtil userAuthUtil;
 
@@ -60,6 +70,12 @@ public class SessionFilterUT{
     @Mock
     ApplicationContextProvider applicationContextProvider;
 
+    @Mock
+    SecurityContextHolder securityContextHolder;
+
+    @Mock
+    HelperUtil helperUtil;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -69,10 +85,10 @@ public class SessionFilterUT{
     public void doFilter() throws Exception {
         try {
             Mockito.when(context.getAuthentication()).thenReturn(authentication);
-//        PowerMockito.mockStatic(HelperUtil.class);
-//        PowerMockito.mockStatic(SecurityContextHolder.class);
-//            Mockito.when(HelperUtil.isAnonymousUser(Mockito.any())).thenReturn(false);
-//            Mockito.when(HelperUtil.getBean(Mockito.any())).thenReturn(userInstitutionCache);
+            Mockito.mockStatic(HelperUtil.class);
+            Mockito.mockStatic(SecurityContextHolder.class);
+            Mockito.when(HelperUtil.isAnonymousUser(Mockito.any())).thenReturn(false);
+            Mockito.when(HelperUtil.getBean(Mockito.any())).thenReturn(userInstitutionCache);
             Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(Mockito.anyString())).thenReturn("PUL");
             Mockito.when(SecurityContextHolder.getContext()).thenReturn(context);
             Mockito.when(request.getSession()).thenReturn(httpSession);
@@ -89,10 +105,10 @@ public class SessionFilterUT{
     public void doFilterTest() throws Exception {
         try {
             Mockito.when(context.getAuthentication()).thenReturn(authentication);
-//        PowerMockito.mockStatic(HelperUtil.class);
-//        PowerMockito.mockStatic(SecurityContextHolder.class);
-//            Mockito.when(HelperUtil.isAnonymousUser(Mockito.any())).thenReturn(false);
-//            Mockito.when(HelperUtil.getBean(Mockito.any())).thenReturn(userInstitutionCache);
+        Mockito.mockStatic(HelperUtil.class);
+            Mockito.mockStatic(SecurityContextHolder.class);
+            Mockito.when(HelperUtil.isAnonymousUser(Mockito.any())).thenReturn(false);
+            Mockito.when(HelperUtil.getBean(Mockito.any())).thenReturn(userInstitutionCache);
             Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(Mockito.anyString())).thenReturn("PUL");
             Mockito.when(SecurityContextHolder.getContext()).thenReturn(context);
             Mockito.when(request.getSession()).thenReturn(httpSession);
@@ -118,6 +134,12 @@ public class SessionFilterUT{
             UserAuthUtil userAuthUtil = sessionFilter.getUserAuthUtil();
             assertNotNull(userAuthUtil);
         }catch (Exception e){}
+    }
+
+    @Test
+    public void doFiltertTest() throws ServletException, IOException {
+        Mockito.when(context.getAuthentication()).thenReturn(null);
+        sessionFilter.doFilter(request, response, filterChain);
     }
 
 }

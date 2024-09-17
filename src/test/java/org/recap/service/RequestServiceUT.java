@@ -3,14 +3,10 @@ package org.recap.service;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
@@ -26,6 +22,7 @@ import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.request.RequestLogReportRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
@@ -35,11 +32,14 @@ import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.RequestStatusDetailsRepository;
 import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.support.BindingAwareModelMap;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -56,11 +56,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 
 /**
  * Created by akulak on 24/4/17.
@@ -153,6 +153,15 @@ public class RequestServiceUT{
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
+
+    @Mock
+    HelperUtil helperUtil;
+
+    @Mock
+    RestTemplate restTemplate;
+
+    @Mock
+    HttpHeaders headers;
 
     @Before
     public void setup() {
@@ -714,7 +723,7 @@ public class RequestServiceUT{
         List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
         List<Object[]> deliveryCodeObjects = getDeliveryCodeObjects();
         deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
-        Assert.assertEquals(1, deliveryCodeEntities.size());
+        assertEquals(1, deliveryCodeEntities.size());
     }
 
     @Test
@@ -722,7 +731,7 @@ public class RequestServiceUT{
         List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
         List<Object[]> deliveryCodeObjects = getDeliveryCodeObjectsNegative();
         deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
-        Assert.assertEquals(1, deliveryCodeEntities.size());
+        assertEquals(1, deliveryCodeEntities.size());
     }
 
     private List<Object[]> getDeliveryCodeObjects(){
@@ -867,4 +876,23 @@ public class RequestServiceUT{
         deliveryCodeEntityList.add(deliveryCodeEntity);
         return deliveryCodeEntityList;
     }
+
+    @Test
+    public void getRequestReportsTest(){
+        try {
+      requestServiceMock.getRequestReports(new RequestLogReportRequest());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void submitRequestReportsTest(){
+        try {
+            requestServiceMock.submitRequestReports(new RequestLogReportRequest());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
 }
