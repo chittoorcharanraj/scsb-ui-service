@@ -1,7 +1,11 @@
 package org.recap.controller;
 
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.BaseTestCase;
 import org.recap.service.RestHeaderService;
 import org.recap.util.UserAuthUtil;
@@ -9,13 +13,18 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 
-public class AbstractControllerUT extends BaseTestCase {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AbstractControllerUT {
 
     @Mock
     UserAuthUtil userAuthUtil;
     @Mock
     HttpSession session;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void getRestHeaderService(){

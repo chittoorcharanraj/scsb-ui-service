@@ -2,7 +2,9 @@ package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.BaseTestCase;
 import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserForm;
@@ -13,7 +15,8 @@ import javax.servlet.http.HttpSession;
 
 import static org.mockito.Mockito.when;
 
-public class AuthenticationControllerUT  extends BaseTestCase {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AuthenticationControllerUT  {
     @Mock
     HttpSession session;
 

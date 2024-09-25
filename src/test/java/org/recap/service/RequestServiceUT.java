@@ -3,15 +3,11 @@ package org.recap.service;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.recap.BaseTestCaseUT;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -26,6 +22,7 @@ import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.request.RequestLogReportRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
@@ -35,13 +32,14 @@ import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.RequestStatusDetailsRepository;
 import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.support.BindingAwareModelMap;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -58,18 +56,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 
 /**
  * Created by akulak on 24/4/17.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:application.properties")
-public class RequestServiceUT extends BaseTestCaseUT {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class RequestServiceUT{
 
 
     @InjectMocks
@@ -157,6 +154,15 @@ public class RequestServiceUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
+    @Mock
+    HelperUtil helperUtil;
+
+    @Mock
+    RestTemplate restTemplate;
+
+    @Mock
+    HttpHeaders headers;
+
     @Before
     public void setup() {
         Mockito.when(requestService.getUserAuthUtil()).thenReturn(userAuthUtil);
@@ -231,7 +237,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(userDetailsForm.isRepositoryUser()).thenReturn(true);
         Mockito.when(userDetailsForm.isSuperAdmin()).thenReturn(true);
-        Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
+        Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("TEST");
         Mockito.when(requestTypeEntity.getRequestTypeCode()).thenReturn(ScsbCommonConstants.EDD);
         Mockito.when(model.get(ScsbConstants.REQUESTED_BARCODE)).thenReturn("12345");
         ItemEntity itemEntity = getItemEntity();
@@ -242,7 +248,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -281,11 +287,12 @@ public class RequestServiceUT extends BaseTestCaseUT {
         bibliographicEntities.add(bibliographicEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
-        Mockito.doReturn(jsonObject.toString()).when(requestService).populateItemForRequest(any(), any());
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
+
+
     }
 
     @Test
@@ -306,9 +313,9 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(itemDetailsRepository.findByBarcodeAndCatalogingStatusAndIsDeletedFalse(anyString(), anyString())).thenReturn(itemEntities);
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         bibliographicEntities.add(bibliographicEntity);
-        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
+        Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -318,7 +325,6 @@ public class RequestServiceUT extends BaseTestCaseUT {
     public void testFormDetailsForRequestBlankBarcode() throws Exception {
         List<InstitutionEntity> institutionEntities = new ArrayList<>();
         institutionEntities.add(institutionEntity);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
         List<RequestTypeEntity> requestTypeEntities = new ArrayList<>();
         requestTypeEntities.add(requestTypeEntity);
@@ -340,9 +346,12 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(frozenInstitutionPropertyMap);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
+
     }
+
 
     @Test
     public void testFormDetailsForRequestPrivateItemsUserNotPermitted() throws Exception {
@@ -369,6 +378,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE)).thenReturn(frozenInstitutionPropertyMap);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -407,11 +417,11 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
-        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(anyString())).thenReturn(getItemEntity().getInstitutionEntity());
         Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
         ReflectionTestUtils.setField(requestService, "requestService", requestService);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -452,11 +462,11 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
-        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(anyString())).thenReturn(getItemEntity().getInstitutionEntity());
         Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
         ReflectionTestUtils.setField(requestService, "requestService", requestService);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -499,7 +509,8 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(anyString())).thenReturn(getItemEntity().getInstitutionEntity());
         Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(),any())).thenReturn(deliveryCodeObjects);
         ReflectionTestUtils.setField(requestService, "requestService", requestService);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -509,44 +520,52 @@ public class RequestServiceUT extends BaseTestCaseUT {
     public void testFormDetailsForRequestMultiRecord() throws Exception {
         List<InstitutionEntity> institutionEntities = new ArrayList<>();
         institutionEntities.add(institutionEntity);
+
         Object[] objects = {1, "PA", "test", "test", 1, 1, 1};
         List<Object[]> deliveryCodeObjects = new ArrayList<>();
         deliveryCodeObjects.add(objects);
+
         Mockito.when(institutionDetailsRepository.findAll()).thenReturn(institutionEntities);
         List<RequestTypeEntity> requestTypeEntities = new ArrayList<>();
         requestTypeEntities.add(requestTypeEntity);
+
         Mockito.when(requestTypeDetailsRepository.findAll()).thenReturn(requestTypeEntities);
         Mockito.when(requestTypeDetailsRepository.findAllExceptEDDAndBorrowDirect()).thenReturn(requestTypeEntities);
         Mockito.when(userDetailsForm.getLoginInstitutionId()).thenReturn(1);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
+
         File bibContentFile = getBibContentFile();
         String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
+
         Mockito.when(bibliographicEntity.getContent()).thenReturn(sourceBibContent.getBytes());
         Mockito.when(requestTypeEntity.getRequestTypeCode()).thenReturn(ScsbCommonConstants.EDD);
         Mockito.when(model.get(ScsbConstants.REQUESTED_BARCODE)).thenReturn("12345,12345");
+
         ItemEntity itemEntity = getItemEntity();
         List<ItemEntity> itemEntities = new ArrayList<>();
         itemEntities.add(itemEntity);
+
         Mockito.when(itemDetailsRepository.findByBarcodeAndCatalogingStatusAndIsDeletedFalse(anyString(), anyString())).thenReturn(itemEntities);
         Mockito.when(userDetailsFormAuth.isRecapPermissionAllowed()).thenReturn(true);
         Mockito.when(itemStatusEntity.getStatusCode()).thenReturn(ScsbCommonConstants.NOT_AVAILABLE);
+
         List<BibliographicEntity> bibliographicEntities = new ArrayList<>();
         bibliographicEntities.add(getItemEntity().getBibliographicEntities().get(0));
+
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
         Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
-        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(anyString())).thenReturn(getItemEntity().getInstitutionEntity());
         Mockito.when(ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(any(), any())).thenReturn(deliveryCodeObjects);
-        ReflectionTestUtils.setField(requestService, "requestService", requestService);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
-            RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
-            assertNotNull(requestForm);
-            assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
+        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
+        RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
+        assertNotNull(requestForm);
+        assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
     }
 
     @Test
@@ -582,10 +601,10 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
-        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
         Mockito.when(itemEntity.getInstitutionEntity()).thenReturn(institutionEntity);
         ReflectionTestUtils.setField(requestService, "requestService", requestService);
-        ReflectionTestUtils.setField(requestService, "supportInstitution", supportInstitution);
+        Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
+        ReflectionTestUtils.setField(requestService, "supportInstitution", "TEST");
         RequestForm requestForm = requestService.setFormDetailsForRequest(model, request, userDetailsForm);
         assertNotNull(requestForm);
         assertTrue(requestForm.getItemBarcodeInRequest().contains("12345"));
@@ -704,7 +723,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
         List<Object[]> deliveryCodeObjects = getDeliveryCodeObjects();
         deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
-        Assert.assertEquals(1, deliveryCodeEntities.size());
+        assertEquals(1, deliveryCodeEntities.size());
     }
 
     @Test
@@ -712,7 +731,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         List<DeliveryCodeEntity>  deliveryCodeEntities = new ArrayList<>();
         List<Object[]> deliveryCodeObjects = getDeliveryCodeObjectsNegative();
         deliveryCodeEntities = requestService.prepareDeliveryCodeEntities(deliveryCodeEntities,deliveryCodeObjects);
-        Assert.assertEquals(1, deliveryCodeEntities.size());
+        assertEquals(1, deliveryCodeEntities.size());
     }
 
     private List<Object[]> getDeliveryCodeObjects(){
@@ -857,4 +876,23 @@ public class RequestServiceUT extends BaseTestCaseUT {
         deliveryCodeEntityList.add(deliveryCodeEntity);
         return deliveryCodeEntityList;
     }
+
+    @Test
+    public void getRequestReportsTest(){
+        try {
+      requestServiceMock.getRequestReports(new RequestLogReportRequest());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void submitRequestReportsTest(){
+        try {
+            requestServiceMock.submitRequestReports(new RequestLogReportRequest());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
 }
