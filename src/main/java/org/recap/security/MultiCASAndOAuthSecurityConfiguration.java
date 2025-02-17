@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.apereo.cas.client.validation.TicketValidator;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
@@ -11,21 +12,19 @@ import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -34,10 +33,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 /**
  * Created by sheiks on 30/01/17.
  */
-@Configuration
-@EnableOAuth2Sso
+//@Configuration
+//@EnableOAuth2Sso
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+public class MultiCASAndOAuthSecurityConfiguration {
 
     @Value("${" + PropertyKeyConstants.CAS_DEFAULT_URL_PREFIX + "}")
     private String casUrlPrefix;
@@ -63,36 +63,51 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Autowired
     private UserAuthUtil userAuthUtil;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // @formatter:off
-        OAuth2SsoProperties sso = getApplicationContext().getBean(OAuth2SsoProperties.class);
-
-        LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(sso.getLoginPath());
-        SCSBExceptionTranslationFilter SCSBExceptionTranslationFilter = new SCSBExceptionTranslationFilter(casPropertyProvider, loginUrlAuthenticationEntryPoint);
         http.addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
                 .addFilterAfter(new SCSBInstitutionFilter(), CsrfCookieGeneratorFilter.class)
-                .addFilterAfter(SCSBExceptionTranslationFilter, ExceptionTranslationFilter.class)
-                .exceptionHandling()
-                .authenticationEntryPoint(loginUrlAuthenticationEntryPoint).and()
+                .addFilterAfter(new SCSBExceptionTranslationFilter(casPropertyProvider), ExceptionTranslationFilter.class)
                 .addFilter(casAuthenticationFilter())
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
 
-        http.authorizeRequests().antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
-                .antMatchers("*").authenticated().anyRequest().authenticated();
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
+                .requestMatchers("/resources/**", "/static/**", "/assets/**", "/index.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/favicon.ico","/**/*.bmp","/**/*.jpeg","/**/*.ttf","/**/*.eot","/**/*.svg","/**/*.woff","/**/*.woff2","/images/**").permitAll()
+                .requestMatchers("/collection/**","/search/**","/request/**","/reports/**","/userRoles/**","/bulkRequest/**","/roles/**","/jobs/**","/openMarcRecordByBibId/**","/admin/**","/api/**","/dataExport/**","/validation/**","/actuator/**","/monitoring/**","/request-log/**").permitAll()
+                .anyRequest().authenticated()
+        );
 
-        SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
-        httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
+        http.authenticationProvider(casAuthenticationProvider());
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/home")
+        );
+
         if (cspEnable) {
-            http.headers(headers -> headers.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives( "default-src "+ scsbUiUrl + " " + cspValue )));
+            http.headers(headers -> headers.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives("default-src " + scsbUiUrl + " " + cspValue)));
         }
-        http.logout().logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
-        // @formatter:on
-    }
 
+        http.logout(logout -> logout
+                .logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL)
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+        );
+
+        return http.build();
+    }
 
     /**
      * Register the CAS global logout filter.
@@ -129,7 +144,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
         casAuthenticationFilter.setFilterProcessesUrl("/j_spring_cas_security_check");
-        casAuthenticationFilter.setAuthenticationManager(authenticationManager());
+        casAuthenticationFilter.setAuthenticationManager(authenticationManager);
         return casAuthenticationFilter;
     }
 
@@ -140,12 +155,6 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         filterRegistrationBean.setFilter(scsbValidationFilter);
         filterRegistrationBean.addUrlPatterns("/collection/*","/search/*","/request/*","/reports/*","/userRoles/*","/bulkRequest/*","/roles/*","/jobs/*","/openMarcRecordByBibId/*","/admin/*","/dataExport/*","/request-log/*");
         return filterRegistrationBean;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .authenticationProvider(casAuthenticationProvider());
     }
 
 
@@ -159,7 +168,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
         casAuthenticationProvider.setAuthenticationUserDetailsService(authenticationUserDetailsService());
         casAuthenticationProvider.setServiceProperties(casPropertyProvider.getServiceProperties());
-        casAuthenticationProvider.setTicketValidator(cas20ServiceTicketValidator());
+        casAuthenticationProvider.setTicketValidator((TicketValidator) cas20ServiceTicketValidator());
         casAuthenticationProvider.setKey("an_id_for_this_auth_provider_only");
         return casAuthenticationProvider;
     }
@@ -185,13 +194,6 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
         return new SCSBCas20ServiceTicketValidator(casUrlPrefix);
     }
 
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**", "/static/**", "/assets/**", "/index.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/favicon.ico","/**/*.bmp","/**/*.jpeg","/**/*.ttf","/**/*.eot","/**/*.svg","/**/*.woff","/**/*.woff2","/images/**").
-                antMatchers("/collection/**","/search/**","/request/**","/reports/**","/userRoles/**","/bulkRequest/**","/roles/**","/jobs/**","/openMarcRecordByBibId/**","/admin/**","/api/**","/dataExport/**","/validation/**","/actuator/**","/monitoring/**","/request-log/**");
-    }
-
     /**
      * Register Http session event publisher for SCSB.
      *
@@ -201,18 +203,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     public SCSBHttpSessionEventPublisher httpSessionEventPublisher() {
         return new SCSBHttpSessionEventPublisher();
     }
-/*
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedOrigins("*")
-                        .allowedHeaders("*");
-            }
-        };
-    }*/
+
 
 }
 

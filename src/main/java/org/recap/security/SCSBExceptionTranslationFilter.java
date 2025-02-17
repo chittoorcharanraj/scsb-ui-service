@@ -21,12 +21,12 @@ import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -70,6 +70,9 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
         Assert.notNull(requestCache, "requestCache cannot be null");
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.requestCache = requestCache;
+    }
+
+    public SCSBExceptionTranslationFilter(CASPropertyProvider casPropertyProvider) {
     }
 
     // ~ Methods

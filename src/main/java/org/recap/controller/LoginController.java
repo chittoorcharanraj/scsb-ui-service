@@ -13,17 +13,19 @@ import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 
@@ -36,8 +38,8 @@ public class LoginController extends AbstractController {
 
 
 
-    @Autowired
-    private TokenStore tokenStore;
+//    @Autowired
+//    private TokenStore tokenStore;
 
     @Autowired
     private UserInstitutionCache userInstitutionCache;
@@ -80,7 +82,7 @@ public class LoginController extends AbstractController {
      * @param request the request
      * @return the view name
      */
-    @GetMapping(value = "/login-scsb")
+  /*  @GetMapping(value = "/login-scsb")
     public String login(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = processSessionFixation(request);
         try {
@@ -119,6 +121,50 @@ public class LoginController extends AbstractController {
         } catch (Exception exception) {
             log.error(ScsbCommonConstants.LOG_ERROR, exception);
             log.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
+            return ScsbConstants.REDIRECT_HOME;
+        }
+        return ScsbConstants.REDIRECT_SEARCH;
+    }
+*/
+    @GetMapping(value = "/login-scsb")
+    public String login(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = processSessionFixation(request);
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            String institutionFromRequest = request.getParameter("institution");
+
+            String authType = propertyUtil.getPropertyByInstitutionAndKey(
+                    institutionFromRequest, PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
+
+            if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
+                if (auth instanceof JwtAuthenticationToken jwtToken) {
+                    username = jwtToken.getName();  // Get username from JWT token
+                    Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
+                    cookieUserName.setHttpOnly(true);
+                    cookieUserName.setSecure(true);
+                    HelperUtil.setCookieProperties(cookieUserName);
+                    response.addCookie(cookieUserName);
+                }
+            }
+
+            UsernamePasswordToken token = new UsernamePasswordToken(username + ScsbConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
+            Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
+
+            if (userHasRoles(resultMap)) {
+                if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
+                    String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
+                    log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+                    return ScsbConstants.REDIRECT_USER;
+                }
+            } else {
+                return ScsbConstants.REDIRECT_USER;
+            }
+
+            setSessionValues(session, resultMap, token);
+        } catch (Exception exception) {
+            log.error(ScsbCommonConstants.LOG_ERROR, exception);
+            log.error("Exception occurred in authentication: {}", exception.getLocalizedMessage());
             return ScsbConstants.REDIRECT_HOME;
         }
         return ScsbConstants.REDIRECT_SEARCH;
