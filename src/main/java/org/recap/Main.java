@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.HashSet;
@@ -176,9 +177,14 @@ public class Main {
         return new OAuth2SsoProperties();
     }
 
- /*   @Bean
-    public RequestContextListener requestContextListener() {
-        return new RequestContextListener();
-    }*/
+
+
+    @Bean
+    public FilterRegistrationBean<RequestContextFilter> requestContextFilter() {
+        FilterRegistrationBean<RequestContextFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new RequestContextFilter());
+        return registrationBean;
+    }
+
 
 }

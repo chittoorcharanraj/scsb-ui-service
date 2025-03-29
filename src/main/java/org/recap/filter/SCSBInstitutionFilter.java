@@ -83,6 +83,7 @@ public class SCSBInstitutionFilter extends OncePerRequestFilter {
             request.setAttribute(ScsbConstants.SCSB_INSTITUTION_CODE, institutionCode);
             ServletRequestAttributes attributes = new ServletRequestAttributes(request);
             RequestContextHolder.setRequestAttributes(attributes);
+            request.getSession().setAttribute(ScsbConstants.SCSB_INSTITUTION_CODE, institutionCode);
         }
         filterChain.doFilter(request, response);
     }
