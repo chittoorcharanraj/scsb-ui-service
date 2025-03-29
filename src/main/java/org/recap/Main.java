@@ -1,8 +1,7 @@
 package org.recap;
 
-//import brave.sampler.Sampler;
-
 import brave.sampler.Sampler;
+import lombok.Getter;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
@@ -25,10 +24,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.filter.RequestContextFilter;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +33,7 @@ import java.util.Set;
  * The type Main.
  */
 @PropertySource("classpath:application.properties")
-@SpringBootApplication(scanBasePackages = {"org.recap.controller", "org.recap.*"},exclude = {SecurityFilterAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"org.recap.controller", "org.recap.*"}, exclude = {SecurityFilterAutoConfiguration.class})
 public class Main {
 
     /**
@@ -47,6 +42,7 @@ public class Main {
     @Value("${" + PropertyKeyConstants.TOMCAT_MAX_PARAMETER_COUNT + "}")
     Integer tomcatMaxParameterCount;
 
+    @Getter
     private AbstractApplicationContext applicationContext;
 
     private OAuth2SsoProperties oAuth2SsoProperties;
@@ -155,17 +151,13 @@ public class Main {
     }
 
     @Bean
-    ClientRegistrationRepository getClientRegistrationRepository(){
+    ClientRegistrationRepository getClientRegistrationRepository() {
         return new ClientRegistrationRepository() {
             @Override
             public ClientRegistration findByRegistrationId(String registrationId) {
                 return null;
             }
         };
-    }
-
-    public AbstractApplicationContext getApplicationContext() {
-        return applicationContext;
     }
 
     public void setApplicationContext(AbstractApplicationContext applicationContext) {
@@ -175,15 +167,6 @@ public class Main {
     @Bean
     OAuth2SsoProperties getOAuth2SsoProperties() {
         return new OAuth2SsoProperties();
-    }
-
-
-
-    @Bean
-    public FilterRegistrationBean<RequestContextFilter> requestContextFilter() {
-        FilterRegistrationBean<RequestContextFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new RequestContextFilter());
-        return registrationBean;
     }
 
 

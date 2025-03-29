@@ -113,7 +113,6 @@ public class CasAuthenticationProvider implements AuthenticationProvider, Initia
             if(institution == null){
                  institution = (String) request.getSession().getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
             }
-            log.info("Institution code: {}", institution);
 
             String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_PREFIX);
             SCSBCas20ServiceTicketValidator ticketValidator = (SCSBCas20ServiceTicketValidator) this.ticketValidator;

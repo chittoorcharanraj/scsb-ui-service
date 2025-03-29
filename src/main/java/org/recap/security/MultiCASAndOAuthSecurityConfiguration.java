@@ -1,11 +1,12 @@
 package org.recap.security;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
-import org.recap.filter.*;
+import org.recap.filter.CsrfCookieGeneratorFilter;
+import org.recap.filter.SCSBInstitutionFilter;
+import org.recap.filter.SCSBLogoutFilter;
+import org.recap.filter.SCSBValidationFilter;
 import org.recap.service.CustomUserDetailsService;
-import org.recap.spring.ApplicationContextProvider;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,8 +102,6 @@ public class MultiCASAndOAuthSecurityConfiguration {
         }
         http.logout().logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
-        // @formatter:on
-
         return http.build();
     }
 
