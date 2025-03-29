@@ -7,7 +7,7 @@ import org.recap.service.RestHeaderService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class AbstractControllerUT extends BaseTestCase {
 

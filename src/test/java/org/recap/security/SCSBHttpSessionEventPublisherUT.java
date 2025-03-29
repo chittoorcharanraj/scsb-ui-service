@@ -7,8 +7,8 @@ import org.recap.ScsbConstants;
 import org.recap.util.HelperUtil;
 
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
 import java.util.HashMap;
 import java.util.Map;
 

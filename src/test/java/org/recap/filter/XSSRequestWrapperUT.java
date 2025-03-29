@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpSession;
 import java.util.Enumeration;
 
 import static org.junit.Assert.assertNotNull;

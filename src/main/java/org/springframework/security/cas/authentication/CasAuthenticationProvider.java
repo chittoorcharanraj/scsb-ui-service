@@ -1,18 +1,18 @@
 package org.springframework.security.cas.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jasig.cas.client.proxy.Cas20ProxyRetriever;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.TicketValidationException;
-import org.jasig.cas.client.validation.TicketValidator;
+import org.apereo.cas.client.proxy.Cas20ProxyRetriever;
+import org.apereo.cas.client.validation.Assertion;
+import org.apereo.cas.client.validation.TicketValidationException;
+import org.apereo.cas.client.validation.TicketValidator;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.security.SCSBCas20ServiceTicketValidator;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
@@ -20,7 +20,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.cas.ServiceProperties;
-import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.cas.web.authentication.ServiceAuthenticationDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -43,6 +42,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Slf4j
 public class CasAuthenticationProvider implements AuthenticationProvider,
         InitializingBean, MessageSourceAware {
+
     // ~ Static fields/initializers
     // =====================================================================================
 
@@ -61,6 +61,7 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
     private TicketValidator ticketValidator;
     private ServiceProperties serviceProperties;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+
 
     // ~ Methods
     // ========================================================================================================
@@ -83,10 +84,8 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
         }
 
         if (authentication instanceof UsernamePasswordAuthenticationToken
-                && (!CasAuthenticationFilter.CAS_STATEFUL_IDENTIFIER
-                .equals(authentication.getPrincipal().toString()) && !CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER
-                .equals(authentication.getPrincipal().toString()))) {
-            // UsernamePasswordAuthenticationToken not CAS related
+                && (!"_cas_stateful_".equals(authentication.getPrincipal().toString()) && !"_cas_stateless_"
+                .equals(authentication.getPrincipal().toString()))){
             return null;
         }
 
@@ -111,9 +110,10 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
         }
 
         boolean stateless = false;
+        stateless = (authentication instanceof CasServiceTicketAuthenticationToken token && token.isStateless());
 
         if (authentication instanceof UsernamePasswordAuthenticationToken
-                && CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER.equals(authentication
+                && "_cas_stateless_".equals(authentication
                 .getPrincipal())) {
             stateless = true;
         }
@@ -150,7 +150,8 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE);
 
-            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_PREFIX);
+            log.info("Institution code: {}",institution);
+            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey("HTC", PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_PREFIX);
 
             SCSBCas20ServiceTicketValidator ticketValidator = (SCSBCas20ServiceTicketValidator) this.ticketValidator;
             ticketValidator.setCasServerUrlPrefix(casServerUrl);
@@ -314,6 +315,8 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
                 .isAssignableFrom(authentication))
                 || (CasAuthenticationToken.class.isAssignableFrom(authentication))
                 || (CasAssertionAuthenticationToken.class
+                .isAssignableFrom(authentication) )
+                || (CasServiceTicketAuthenticationToken.class
                 .isAssignableFrom(authentication));
     }
 }

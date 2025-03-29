@@ -5,13 +5,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -19,8 +22,6 @@ import java.io.IOException;
  */
 @Slf4j
 public class SCSBInstitutionFilter extends OncePerRequestFilter {
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -80,6 +81,8 @@ public class SCSBInstitutionFilter extends OncePerRequestFilter {
         String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
         if (StringUtils.isNotBlank(institutionCode)) {
             request.setAttribute(ScsbConstants.SCSB_INSTITUTION_CODE, institutionCode);
+            ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+            RequestContextHolder.setRequestAttributes(attributes);
         }
         filterChain.doFilter(request, response);
     }

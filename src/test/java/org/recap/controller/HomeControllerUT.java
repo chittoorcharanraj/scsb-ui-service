@@ -16,8 +16,8 @@ import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.anyString;

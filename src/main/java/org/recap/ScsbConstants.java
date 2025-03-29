@@ -136,7 +136,7 @@ public class ScsbConstants {
     public static final String USER = "ROLE_USER";
     public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
     public static final String ANONYMOUS_USER = "anonymousUser";
-    public static final String SCSB_INSTITUTION_CODE = "RECAP_INSTITUTION_CODE";
+    public static final String SCSB_INSTITUTION_CODE = "INSTITUTION";
     public static final String STATUS = "status";
     public static final String CREATED = "CREATED";
     public static final String SEARCH_REQUEST_ACTIVE = "active";

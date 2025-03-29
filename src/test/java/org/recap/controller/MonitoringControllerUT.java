@@ -9,8 +9,8 @@ import org.recap.security.UserManagementService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
