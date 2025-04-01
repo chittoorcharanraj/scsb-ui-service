@@ -18,8 +18,8 @@ import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;

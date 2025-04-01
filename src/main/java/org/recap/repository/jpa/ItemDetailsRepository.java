@@ -79,7 +79,7 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      */
     @Modifying
     @Transactional
-    @Query("update ItemEntity item set item.collectionGroupId = :collectionGroupId, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate where item.id = :itemId")
+    @Query(value = "update ItemEntity item set item.collectionGroupId = :collectionGroupId, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate where item.id = :itemId",nativeQuery = true)
     int updateCollectionGroupIdById(@Param("collectionGroupId") Integer collectionGroupId, @Param("itemId") Integer itemId, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
 
     /**
@@ -88,7 +88,7 @@ public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
      * @param barcode the barcode
      * @return the item status by barcode and is deleted false
      */
-    @Query(value = "select itemStatus.statusCode from ItemEntity item, ItemStatusEntity itemStatus where item.itemAvailabilityStatusId = itemStatus.id and item.barcode = :barcode and item.isDeleted = 0")
+    @Query(value = "select itemStatus.statusCode from ItemEntity item, ItemStatusEntity itemStatus where item.itemAvailabilityStatusId = itemStatus.id and item.barcode = :barcode and item.isDeleted = 0",nativeQuery = true)
     String getItemStatusByBarcodeAndIsDeletedFalse(@Param("barcode") String barcode);
 
 

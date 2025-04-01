@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

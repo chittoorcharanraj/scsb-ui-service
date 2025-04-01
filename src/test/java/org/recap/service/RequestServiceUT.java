@@ -41,8 +41,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;

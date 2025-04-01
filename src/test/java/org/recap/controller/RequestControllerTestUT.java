@@ -58,9 +58,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpSession;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -117,7 +117,7 @@ public class RequestControllerTestUT  {
     HttpSession session;
 
     @Mock
-    javax.servlet.http.HttpServletRequest request;
+    jakarta.servlet.http.HttpServletRequest request;
 
     @Mock
     private UserAuthUtil userAuthUtil;

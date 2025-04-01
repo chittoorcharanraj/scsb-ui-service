@@ -46,14 +46,14 @@
 				</stackHash>
 				<provider class="org.recap.CustomStackTraceJsonProvider">
 					<fieldName>stack_trace</fieldName>
-					<throwableConverter
+					<!--<throwableConverter
 						class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
 						<shortenedClassNameLength>short</shortenedClassNameLength>
 						<maxDepthPerThrowable>short</maxDepthPerThrowable>
 						<maxLength>short</maxLength>
 						<rootCauseFirst>true</rootCauseFirst>
 						<exclude>sun\.reflect\..*\.invoke.*</exclude>
-					</throwableConverter>
+					</throwableConverter>-->
 				</provider>
 			</providers>
 		</encoder>
@@ -63,7 +63,7 @@
         <file>/recap-vol/logs/scsb-ui/scsb-ui.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>/recap-vol/logs/scsb-ui/scsb-ui-%d{yyyyMMMdd}.%i.log</fileNamePattern>
+           // <fileNamePattern>/recap-vol/logs/scsb-ui/scsb-ui-%d{yyyyMMMdd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
             <!-- or whenever the file size reaches 5MB -->
             <maxFileSize>10MB</maxFileSize>
