@@ -1,18 +1,27 @@
 package org.recap.model.jpa;
 
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.recap.BaseTestCase;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertNotNull;
 
-public class FileUploadEntityUT extends BaseTestCase {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class FileUploadEntityUT {
 
     @InjectMocks
     FileUploadEntity upload;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void testFileUploadEntity(){

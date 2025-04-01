@@ -2,14 +2,13 @@ package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.recap.BaseTestCaseUT;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.UsersEntity;
@@ -21,7 +20,6 @@ import org.recap.util.UserAuthUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -41,9 +39,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SecurityContextHolder.class)
-public class LoginControllerUT extends BaseTestCaseUT {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class LoginControllerUT {
 
     @InjectMocks
     LoginController loginController;
@@ -84,8 +81,9 @@ public class LoginControllerUT extends BaseTestCaseUT {
     @Mock
     UserDetailsRepository userDetailsRepository;
 
-    @Test
+    @BeforeEach
     public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -128,8 +126,6 @@ public class LoginControllerUT extends BaseTestCaseUT {
         Mockito.when(session.getId()).thenReturn("66");
         Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
         Mockito.when(request.getParameter("institution")).thenReturn("PUL");
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
@@ -156,8 +152,6 @@ public class LoginControllerUT extends BaseTestCaseUT {
         Mockito.when(session.getId()).thenReturn("66");
         Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
         Mockito.when(request.getParameter("institution")).thenReturn("PUL");
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
@@ -186,8 +180,6 @@ public class LoginControllerUT extends BaseTestCaseUT {
         Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(Boolean.TRUE);
         Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
         Mockito.when(request.getParameter("institution")).thenReturn("PUL");
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());
@@ -216,8 +208,6 @@ public class LoginControllerUT extends BaseTestCaseUT {
         Mockito.when(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER)).thenReturn(Boolean.FALSE);
         Mockito.when(oAuth2AuthenticationDetails.getTokenValue()).thenReturn("token");
         Mockito.when(request.getParameter("institution")).thenReturn("PUL");
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        PowerMockito.when(SecurityContextHolder.getContext()).thenReturn(securityContext);
         Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
         Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(any())).thenReturn("PUL");
         Mockito.doNothing().when(userInstitutionCache).removeSessionId(any());

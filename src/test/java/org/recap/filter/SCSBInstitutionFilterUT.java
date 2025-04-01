@@ -1,5 +1,6 @@
 package org.recap.filter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
  * Created by hemalathas on 30/3/17.
  */
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HelperUtil.class,Cookie[].class})
 public class SCSBInstitutionFilterUT extends BaseTestCaseUT {

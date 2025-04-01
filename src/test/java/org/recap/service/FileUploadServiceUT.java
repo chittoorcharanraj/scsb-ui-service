@@ -1,10 +1,13 @@
 package org.recap.service;
 
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.repository.jpa.FileUploadRepository;
 import org.springframework.test.context.TestPropertySource;
@@ -13,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Date;
 
 import static junit.framework.Assert.assertNotNull;
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 @TestPropertySource("classpath:application.properties")
 public class FileUploadServiceUT {
 
@@ -25,6 +28,11 @@ public class FileUploadServiceUT {
 
     @Mock
     FileUploadRepository fileUploadRepository;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
 
     @Test

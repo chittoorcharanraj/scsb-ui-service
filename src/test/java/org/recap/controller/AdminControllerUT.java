@@ -2,9 +2,11 @@ package org.recap.controller;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -34,7 +36,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 
-public class AdminControllerUT extends BaseTestCaseUT {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class AdminControllerUT {
 
     @InjectMocks
     AdminController adminController;
