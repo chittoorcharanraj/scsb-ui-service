@@ -18,14 +18,10 @@ public class JobParamDetailRepositoryUT extends BaseTestCase {
     JobParamDetailRepository jobParamDetailRepository;
 
     @Test
-    public void findByJobName() {
+    public void findByJobName() throws Exception {
         JobParamEntity byJobName = jobParamDetailRepository.findByJobName(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB);
-//        assertNotNull(byJobName);
-        try {
-            assertNotNull(byJobName.getJobName());
-            assertEquals(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB, byJobName.getJobName());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        assertNotNull(byJobName);
+        assertNotNull(byJobName.getJobName());
+        assertEquals(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB, byJobName.getJobName());
     }
 }

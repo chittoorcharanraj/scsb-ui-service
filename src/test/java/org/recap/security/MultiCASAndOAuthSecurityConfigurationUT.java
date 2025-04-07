@@ -63,16 +63,16 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
         LogoutFilter logoutFilter = multiCASAndOAuthSecurityConfiguration.requestCasGlobalLogoutFilter();
         assertNotNull(logoutFilter);
     }
-/*
+
     @Test
     public void casAuthenticationFilter() throws Exception {
-//        ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"localConfigureAuthenticationBldr",authenticationManagerBuilder);
+        ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"localConfigureAuthenticationBldr",authenticationManagerBuilder);
         ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"disableLocalConfigureAuthenticationBldr",Boolean.TRUE);
         ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"authenticationConfiguration",authenticationConfiguration);
         Mockito.when(authenticationConfiguration.getAuthenticationManager()).thenReturn(authenticationManager);
         CasAuthenticationFilter casAuthenticationFilter = multiCASAndOAuthSecurityConfiguration.casAuthenticationFilter();
         assertNotNull(casAuthenticationFilter);
-    }*/
+    }
 
     @Test
     public void filterRegistrationBean(){
@@ -86,13 +86,13 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
         assertNotNull(scsbLogoutFilter);
     }
 
-    /*@Test
+    @Test
     public void configure() throws Exception {
         WebSecurity webSecurity = new WebSecurity(objectPostProcessor);
         try {
             multiCASAndOAuthSecurityConfiguration.configure(webSecurity);
         }catch (Exception e){}
-    }*/
+    }
 
     @Test
     public void httpSessionEventPublisher(){

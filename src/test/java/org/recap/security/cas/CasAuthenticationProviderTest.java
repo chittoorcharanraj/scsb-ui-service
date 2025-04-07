@@ -1,6 +1,6 @@
 package org.recap.security.cas;
 
-import org.apereo.cas.client.validation.TicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +45,7 @@ public class CasAuthenticationProviderTest {
         casAuthenticationProvider.setTicketValidator(ticketValidator);
         casAuthenticationProvider.setServiceProperties(serviceProperties);
         statelessTicketCache = new NullStatelessTicketCache();
-//        casAuthenticationProvider.setStatelessTicketCache(statelessTicketCache);
+        casAuthenticationProvider.setStatelessTicketCache(statelessTicketCache);
         casAuthenticationProvider.setAuthenticationUserDetailsService(authenticationUserDetailsService);
     }
 
@@ -76,7 +76,7 @@ public class CasAuthenticationProviderTest {
         casAuthenticationProvider.setKey("someKey");
         assertThrows(BadCredentialsException.class, () -> casAuthenticationProvider.authenticate(casToken));
     }
-/*
+
     @Test
     public void testAuthenticateNoServiceTicket() {
         Authentication authentication = new UsernamePasswordAuthenticationToken(CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER, null);
@@ -92,9 +92,9 @@ public class CasAuthenticationProviderTest {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
-   /* @Test
+    @Test
     public void testAuthenticateStatelessTokenNotInCache() {
         try {
             Authentication authentication = new UsernamePasswordAuthenticationToken(CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER, "ticket");
@@ -105,5 +105,5 @@ public class CasAuthenticationProviderTest {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

@@ -1,7 +1,7 @@
 package org.recap.security.cas;
 
-import org.apereo.cas.client.validation.Assertion;
-import org.apereo.cas.client.validation.TicketValidationException;
+import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.TicketValidationException;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -65,7 +65,7 @@ public class AuthenticateNowTest {
         RequestContextHolder.setRequestAttributes(requestAttributes);
         Authentication authentication = mock(Authentication.class);
         when(authentication.getCredentials()).thenReturn("serviceTicket");
-//        when(ticketValidator.validate(anyString(), anyString())).thenReturn(assertion);
+        when(ticketValidator.validate(anyString(), anyString())).thenReturn(assertion);
         ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "loadUserByAssertion", assertion);
         when(userDetails.getAuthorities()).thenReturn(Collections.emptyList());
         doNothing().when(userDetailsChecker).check(userDetails);
@@ -87,7 +87,7 @@ public class AuthenticateNowTest {
             RequestContextHolder.setRequestAttributes(requestAttributes);
             Authentication authentication = mock(Authentication.class);
             when(authentication.getCredentials()).thenReturn("serviceTicket");
-//            when(ticketValidator.validate(anyString(), anyString())).thenThrow(new TicketValidationException("Invalid Ticket"));
+            when(ticketValidator.validate(anyString(), anyString())).thenThrow(new TicketValidationException("Invalid Ticket"));
             ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "authenticateNow", authentication);
             verify(ticketValidator).validate(anyString(), anyString());
         } catch (NullPointerException e) {
