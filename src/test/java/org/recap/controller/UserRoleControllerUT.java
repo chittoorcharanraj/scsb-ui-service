@@ -133,7 +133,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     @Test
     public void deleteUserExceptionTest() {
         UserRoleForm userRoleForm = new UserRoleForm();
-        Mockito.doThrow(new NullPointerException()).when(userDetailsRepository).delete(any());
+        Mockito.doThrow(new NullPointerException()).when(userDetailsRepository).delete((UsersEntity) any());
         UserRoleForm userRoleForm1 = userRoleController.deleteUser(3, userRoleForm.getSearchNetworkId(), 10, 1, 2, request);
         assertNotNull(userRoleForm1);
     }
@@ -141,7 +141,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     public void deleteUserException() {
         UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();
-        Mockito.doThrow(new NullPointerException()).when(userDetailsRepository).delete(any());
+        Mockito.doThrow(new NullPointerException()).when(userDetailsRepository).delete((UsersEntity) any());
         UserRoleForm userRoleForm1 = userRoleController.deleteUser(3, userRoleForm.getSearchNetworkId(), 10, 1, 2, request);
         assertNotNull(userRoleForm1);
     }
