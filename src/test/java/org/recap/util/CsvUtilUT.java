@@ -12,6 +12,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.reflections.Reflections.log;
 
 /**
  * Created by premkb on 29/7/16.
@@ -129,7 +132,18 @@ public class CsvUtilUT extends BaseTestCase {
     public void isAnyItemSelectedTest(){
         List<SearchItemResultRow> searchItemResultRows = new ArrayList<>();
         ReflectionTestUtils.invokeMethod(csvUtil, "isAnyItemSelected", searchItemResultRows);
-
-
     }
+
+    @Test
+    public void writeSearchResultsToCsvExceptionTest() throws Exception {
+        List<SearchResultRow> searchResultRows = new ArrayList<>();
+        SearchResultRow searchResultRow = new SearchResultRow();
+        searchResultRow.setSelected(true);
+        searchResultRows.add(searchResultRow);
+        FileWriter fileWriterMock = Mockito.mock(FileWriter.class);
+        Mockito.doThrow(new IOException()).when(fileWriterMock).write(Mockito.anyString());
+        File csvFile = csvUtil.writeSearchResultsToCsv(searchResultRows, "test.csv");
+        assertNotNull(csvFile);
+    }
+
 }
