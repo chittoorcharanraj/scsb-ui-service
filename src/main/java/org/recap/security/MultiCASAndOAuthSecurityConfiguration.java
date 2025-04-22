@@ -90,7 +90,8 @@ public class MultiCASAndOAuthSecurityConfiguration {
                 .addFilter(casAuthenticationFilter())
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
-        http.oauth2Login();
+        http.oauth2Login().defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true");;
 
         http.authorizeRequests().requestMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
                 .requestMatchers("*").authenticated().anyRequest().authenticated();
