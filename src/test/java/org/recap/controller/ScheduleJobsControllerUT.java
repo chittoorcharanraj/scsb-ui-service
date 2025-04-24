@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -204,6 +204,18 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void getJobParametersCatchBlock() {
+        ScheduleJobsForm form = new ScheduleJobsForm();
+        form.setJobName("testJob");
+        when(jobDetailsRepository.findByJobName(anyString()))
+                .thenThrow(new RuntimeException("error"));
+        ScheduleJobsForm result = scheduleJobsController.getJobParameters(form, request);
+        assertNotNull(result);
+        assertEquals("error", result.getErrorMessage());
+        assertNull(result.getJobParameter());
+    }
+
+    @Test
     public void getInstitutions() {
         List<InstitutionEntity> institutions = new ArrayList<>();
         institutions.add(getInstitutionEntity());
@@ -308,6 +320,42 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         Mockito.when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
         Mockito.when(jobParamDetailRepository.save(any())).thenReturn(jobParamEntity);
         ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", scheduleJobsForm, nextRunTime);
+    }
+
+    @Test
+    public void saveJobScheduleTypeTestCalled() {
+        ScheduleJobsForm form = new ScheduleJobsForm();
+        form.setJobName("testJob");
+        form.setScheduleType("SCHEDULE");
+        form.setCronExpression("0 0 * * *");
+        form.setJobParameter("TEST_PARAM");
+        JobEntity jobEntity = new JobEntity();
+        jobEntity.setJobName("testJob");
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        JobParamDataEntity paramData = new JobParamDataEntity();
+        paramData.setParamName("INSTITUTION");
+        jobParamEntity.setJobParamDataEntities(Collections.singletonList(paramData));
+        when(jobDetailsRepository.findByJobName("testJob")).thenReturn(jobEntity);
+        when(jobParamDetailRepository.findByJobName("testJob")).thenReturn(jobParamEntity);
+        ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", form, new Date());
+        verify(jobDetailsRepository).save(jobEntity);
+    }
+
+    @Test
+    public void testSaveJobScheduleType() {
+        ScheduleJobsForm form = new ScheduleJobsForm();
+        form.setJobName("testJob");
+        form.setScheduleType("SCHEDULE");
+        form.setCronExpression("0 0 * * *");
+        form.setJobParameter("TEST_PARAM");
+        JobEntity jobEntity = new JobEntity();
+        jobEntity.setJobName("testJob");
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        jobParamEntity.setJobParamDataEntities(null);
+        when(jobDetailsRepository.findByJobName("testJob")).thenReturn(jobEntity);
+        when(jobParamDetailRepository.findByJobName("testJob")).thenReturn(jobParamEntity);
+        ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", form, new Date());
+        verify(jobDetailsRepository).save(jobEntity);
     }
 
 }

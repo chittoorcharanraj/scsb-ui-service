@@ -2,24 +2,22 @@ package org.recap.filter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -38,10 +36,10 @@ public class SCSBInstitutionFilterTest {
     private UserInstitutionCache userInstitutionCache;
 
     @Mock
-    HttpServletRequest request;
+    MockHttpServletRequest request;
 
     @Mock
-    HttpServletResponse response;
+    MockHttpServletResponse response;
 
     @Before
     public void setUp() {
@@ -114,14 +112,25 @@ public class SCSBInstitutionFilterTest {
     }
 
     @Test
-    public void forwardChainingTest(){
-        when(userInstitutionCache.getInstitutionForRequestSessionId("requestedSessionId")).thenReturn(new String());
-        ReflectionTestUtils.invokeMethod(scsbInstitutionFilter,"forwardChaining", request, response, filterChain, userInstitutionCache, "requestedSessionId");
+    public void forwardChainingTest() throws ServletException, IOException {
+        try {
+            MockHttpSession session = new MockHttpSession();
+            request.setSession(session);
+
+            when(userInstitutionCache.getInstitutionForRequestSessionId(anyString())).thenReturn("Institution");
+            ReflectionTestUtils.invokeMethod(scsbInstitutionFilter, "forwardChaining", request, response, filterChain, userInstitutionCache, "sessionId");
+            verify(filterChain).doFilter(request, response);
+            assertEquals("Institution", request.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE));
+            assertEquals("Institution", session.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void forwardChainingException(){
-        when(userInstitutionCache.getInstitutionForRequestSessionId("")).thenReturn(new String());
-        ReflectionTestUtils.invokeMethod(scsbInstitutionFilter,"forwardChaining", request, response, filterChain, userInstitutionCache, "requestedSessionId");
-    }
+    public void forwardChainingException() throws ServletException, IOException {
+        ReflectionTestUtils.invokeMethod(scsbInstitutionFilter, "forwardChaining", request, response, filterChain, userInstitutionCache, "sessionId");
+        verify(filterChain).doFilter(request, response);    }
+
+
 }

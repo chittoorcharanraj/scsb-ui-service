@@ -16,7 +16,7 @@ import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -51,6 +51,9 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
     @Mock
     AuthenticationConfiguration authenticationConfiguration;
 
+    @Mock
+    HttpSecurity http;
+
     @Before
     public void setup(){
         ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"casServiceLogout","https://test");
@@ -63,12 +66,8 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
         LogoutFilter logoutFilter = multiCASAndOAuthSecurityConfiguration.requestCasGlobalLogoutFilter();
         assertNotNull(logoutFilter);
     }
-
     @Test
     public void casAuthenticationFilter() throws Exception {
-        ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"localConfigureAuthenticationBldr",authenticationManagerBuilder);
-        ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"disableLocalConfigureAuthenticationBldr",Boolean.TRUE);
-        ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"authenticationConfiguration",authenticationConfiguration);
         Mockito.when(authenticationConfiguration.getAuthenticationManager()).thenReturn(authenticationManager);
         CasAuthenticationFilter casAuthenticationFilter = multiCASAndOAuthSecurityConfiguration.casAuthenticationFilter();
         assertNotNull(casAuthenticationFilter);
@@ -88,9 +87,8 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
 
     @Test
     public void configure() throws Exception {
-        WebSecurity webSecurity = new WebSecurity(objectPostProcessor);
         try {
-            multiCASAndOAuthSecurityConfiguration.configure(webSecurity);
+            multiCASAndOAuthSecurityConfiguration.configure(http);
         }catch (Exception e){}
     }
 
@@ -100,9 +98,4 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
         assertNotNull(scsbHttpSessionEventPublisher);
     }
 
-  /*  @Test
-    public void corsConfigurer(){
-        WebMvcConfigurer webMvcConfigurer = multiCASAndOAuthSecurityConfiguration.corsConfigurer();
-        assertNotNull(webMvcConfigurer);
-    }*/
 }

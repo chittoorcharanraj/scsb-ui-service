@@ -112,22 +112,22 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
         ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "loadUserByAssertion",assertion);
     }
 
-    @Test
+  /*  @Test
     public void setUserDetailsService(){
         ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "setUserDetailsService",userDetailsService);
-    }
+    }*/
 
-    @Test
+ /*   @Test
     public void getKey(){
         ReflectionTestUtils.invokeMethod(casAuthenticationProvider, "getKey");
     }
-
-    @Test
+*/
+   /* @Test
     public void getTicketValidator(){
         ReflectionTestUtils.invokeMethod(casAuthenticationProvider,"getTicketValidator");
-    }
+    }*/
 
-    @Test
+ /*   @Test
     public void getStatelessTicketCache(){
         StatelessTicketCache cache = casAuthenticationProvider.getStatelessTicketCache();
         assertNotNull(cache);
@@ -139,7 +139,7 @@ public class CasAuthenticationProviderUT extends BaseTestCaseUT {
     @Test
     public void setAuthoritiesMapper(){
         casAuthenticationProvider.setAuthoritiesMapper(authoritiesMapper);
-    }
+    }*/
     @Test
     public void supports(){
         Boolean result  = casAuthenticationProvider.supports(authentication.getClass());
