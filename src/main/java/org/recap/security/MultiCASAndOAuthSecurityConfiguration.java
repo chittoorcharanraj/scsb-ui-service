@@ -74,6 +74,8 @@ public class MultiCASAndOAuthSecurityConfiguration {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//        String oauth2LoginRegistrationId = "nypl";
+//        String loginPath = "/oauth2/authorization/" + oauth2LoginRegistrationId;
         String loginPath = "/login";
 
         LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(loginPath);

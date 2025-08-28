@@ -52,22 +52,6 @@ public class Main {
     @Value("${" + PropertyKeyConstants.SERVER_SECURE + "}")
     boolean tomcatSecure;
 
-    @Value("${oauth2.client.clientid}")
-    String clientId;
-
-    @Value("${security.oauth2.client.registration-id}")
-    String registrationId;
-
-    @Value("${security.oauth2.client.authorization-uri}")
-    String authorizationUri;
-
-    @Value("${security.oauth2.client.token-uri}")
-    String tokenUri;
-
-    @Value("${oauth2.client.clientsecret}")
-    String clientSecret;
-
-
     /**
      * The entry point of application.
      *
@@ -168,20 +152,28 @@ public class Main {
 
 
     @Bean
-    ClientRegistrationRepository getClientRegistrationRepository() {
-        ClientRegistration clientRegistration = ClientRegistration
-                .withRegistrationId(registrationId)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .clientName(registrationId.toUpperCase())
+    ClientRegistrationRepository getClientRegistrationRepository(
+            @Value("${oauth2.client.clientid:htc_scsb}") String clientId,
+            @Value("${oauth2.client.clientsecret:m0Fg7xbm3ZPq5djD3gBHTu3mQYrBpf6U}") String clientSecret,
+            @Value("${security.oauth2.client.authorization-uri:https://isso.nypl.org/oauth/authorize/}") String authorizationUri,
+            @Value("${security.oauth2.client.token-uri:https://isso.nypl.org/oauth/token}") String tokenUri,
+            @Value("${security.oauth2.client.user-info-uri:https://isso.nypl.org/oauth/userinfo}") String userInfoUri
+    ) {
+        ClientRegistration nypl = ClientRegistration
+                .withRegistrationId("nypl")                         // hard-coded registrationId
+                .clientId(clientId)                                  // default: htc_scsb
+                .clientSecret(clientSecret)                          // can be overridden by property
+                .clientName("NYPL")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("{baseUrl}/login/oauth2/code/registrationId")
+                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .scope("openid", "offline_access", "login:staff", "role:client", "read:item")
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
-                .userNameAttributeName("sub")
+                .userInfoUri(userInfoUri)
+                .userNameAttributeName("sub")                        // subject claim
                 .build();
 
-        return new InMemoryClientRegistrationRepository(clientRegistration);
+        return new InMemoryClientRegistrationRepository(nypl);
     }
 
 
