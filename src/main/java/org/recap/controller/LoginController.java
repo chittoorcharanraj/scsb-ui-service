@@ -13,10 +13,8 @@ import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -36,8 +34,7 @@ public class LoginController extends AbstractController {
 
 
 
-    @Autowired(required = false)
-    private TokenStore tokenStore;
+
 
     @Autowired
     private UserInstitutionCache userInstitutionCache;
@@ -85,45 +82,65 @@ public class LoginController extends AbstractController {
         HttpSession session = processSessionFixation(request);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String username = auth.getName();
             String institutionFromRequest = request.getParameter("institution");
-            String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest,  PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
-            if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
-                OAuth2Authentication oauth = (OAuth2Authentication) auth;
-                String tokenString = ((OAuth2AuthenticationDetails) oauth.getDetails()).getTokenValue();
-                OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenString);
+            String authType = propertyUtil.getPropertyByInstitutionAndKey(
+                    institutionFromRequest, PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
 
-                Map<String, Object> additionalInformation = accessToken.getAdditionalInformation();
-                if (null != additionalInformation) {
-                    username = (String) additionalInformation.get("sub");
-                    Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
-                    cookieUserName.setHttpOnly(true);
-                    cookieUserName.setSecure(true);
-                    HelperUtil.setCookieProperties(cookieUserName);
-                    response.addCookie(cookieUserName);
+            if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
+//                if (auth == null || HelperUtil.isAnonymousUser(auth)) {
+//                    return "redirect:/oauth2/authorization/nypl";
+//                }
+                if (auth instanceof OAuth2AuthenticationToken oauth2Token) {
+                    OAuth2User principal = oauth2Token.getPrincipal();
+                    Map<String, Object> attrs = principal.getAttributes();
+
+                    String username = firstNonBlank(
+                            asString(attrs.get("preferred_username")),
+                            asString(attrs.get("sub")),
+                            asString(attrs.get("email")),
+                            asString(attrs.get("upn")),
+                            auth.getName()
+                    );
+
+                    if (StringUtils.isNotBlank(username)) {
+                        Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
+                        cookieUserName.setHttpOnly(true);
+                        cookieUserName.setSecure(true);
+                        HelperUtil.setCookieProperties(cookieUserName);
+                        response.addCookie(cookieUserName);
+                        UsernamePasswordToken token = new UsernamePasswordToken(
+                                username + ScsbConstants.TOKEN_SPLITER + institutionFromRequest,
+                                "", true
+                        );
+
+                        Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
+
+                        if (userHasRoles(resultMap)) {
+                            if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
+                                String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
+                                log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
+                                return ScsbConstants.REDIRECT_USER;
+                            }
+                        } else {
+                            return ScsbConstants.REDIRECT_USER;
+                        }
+
+                        setSessionValues(session, resultMap, token);
+                        return ScsbConstants.REDIRECT_SEARCH;
+                    } else {
+                        log.error("OAuth2 login succeeded but username not found in NYPL attributes.");
+                        return ScsbConstants.REDIRECT_USER;
+                    }
                 }
             }
-            UsernamePasswordToken token = new UsernamePasswordToken(username + ScsbConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
-            Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
-            if(userHasRoles(resultMap)) {
-                if (!(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
-                    String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
-                    log.error("User: {}, {} {}", token.getUsername(), ScsbCommonConstants.LOG_ERROR, errorMessage);
-                    return ScsbConstants.REDIRECT_USER;
-                }
-            } else {
-                return ScsbConstants.REDIRECT_USER;
-            }
-            setSessionValues(session, resultMap, token);
+            return ScsbConstants.REDIRECT_USER;
 
         } catch (Exception exception) {
             log.error(ScsbCommonConstants.LOG_ERROR, exception);
-            log.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
+            log.error("Exception occurred in authentication : {}", exception.getLocalizedMessage());
             return ScsbConstants.REDIRECT_HOME;
         }
-        return ScsbConstants.REDIRECT_SEARCH;
     }
-
     private boolean userHasRoles(Map<String, Object> resultMap) {
         return (Boolean) resultMap.get(ScsbConstants.SEARCH_PRIVILEGE);
     }
@@ -200,5 +217,10 @@ public class LoginController extends AbstractController {
         session.setAttribute(ScsbConstants.USER_TOKEN, token);
         session.setAttribute(ScsbConstants.USER_AUTH, resultMap);
         setValuesInSession(session, resultMap);
+    }
+    private String asString(Object o) { return o == null ? null : String.valueOf(o); }
+    private String firstNonBlank(String... vals) {
+        for (String v : vals) if (StringUtils.isNotBlank(v)) return v;
+        return null;
     }
 }

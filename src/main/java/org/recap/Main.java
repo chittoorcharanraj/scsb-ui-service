@@ -8,9 +8,9 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.recap.filter.XSSFilter;
 import org.recap.security.SessionFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -24,6 +24,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +36,7 @@ import java.util.Set;
  */
 @PropertySource("classpath:application.properties")
 @SpringBootApplication(scanBasePackages = {"org.recap.controller", "org.recap.*"}, exclude = {SecurityFilterAutoConfiguration.class})
+
 public class Main {
 
     /**
@@ -45,7 +48,11 @@ public class Main {
     @Getter
     private AbstractApplicationContext applicationContext;
 
-    private OAuth2SsoProperties oAuth2SsoProperties;
+
+
+//    private OAuth2SsoProperties oAuth2SsoProperties;
+
+
 
     /**
      * The Tomcat secure.
@@ -151,23 +158,31 @@ public class Main {
     }
 
     @Bean
-    ClientRegistrationRepository getClientRegistrationRepository() {
-        return new ClientRegistrationRepository() {
-            @Override
-            public ClientRegistration findByRegistrationId(String registrationId) {
-                return null;
-            }
-        };
+    ClientRegistrationRepository clientRegistrationRepository() {
+        ClientRegistration nypl = ClientRegistration
+                .withRegistrationId("nypl")
+                .clientId("htc_scsb")
+                .clientSecret("m0Fg7xbm3ZPq5djD3gBHTu3mQYrBpf6U")
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .scope("openid", "offline_access", "login:staff", "role:client",
+                        "read:item", "read:patron", "write:hold_request",
+                        "write:checkin_request", "write:checkout_request",
+                        "write:recall_request", "write:refile_request")
+//                .issuerUri("https://isso.nypl.org")
+                .authorizationUri("https://isso.nypl.org/oauth/authorize")
+                .tokenUri("https://isso.nypl.org/oauth/token")
+                .jwkSetUri("https://isso.nypl.org/oauth/keys")
+                .userInfoUri("https://isso.nypl.org/userinfo")
+                .userNameAttributeName("sub")
+                .build();
+        return new InMemoryClientRegistrationRepository(nypl);
     }
 
     public void setApplicationContext(AbstractApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    @Bean
-    OAuth2SsoProperties getOAuth2SsoProperties() {
-        return new OAuth2SsoProperties();
-    }
 
 
 }

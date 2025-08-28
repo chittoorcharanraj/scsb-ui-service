@@ -10,7 +10,6 @@ import org.recap.service.CustomUserDetailsService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2SsoProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +18,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
@@ -43,6 +43,7 @@ import java.util.Arrays;
  */
 @Configuration
 @EnableMethodSecurity
+@EnableWebSecurity
 public class MultiCASAndOAuthSecurityConfiguration {
 
     @Value("${" + PropertyKeyConstants.CAS_DEFAULT_URL_PREFIX + "}")
@@ -75,34 +76,52 @@ public class MultiCASAndOAuthSecurityConfiguration {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        // @formatter:off
-     //   OAuth2SsoProperties sso = ApplicationContextProvider.getInstance().getApplicationContext().getBean(OAuth2SsoProperties.class);
-        OAuth2SsoProperties sso = applicationContext.getBean(OAuth2SsoProperties.class);
-
-        LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(sso.getLoginPath());
+        LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/nypl");
         SCSBExceptionTranslationFilter SCSBExceptionTranslationFilter = new SCSBExceptionTranslationFilter(casPropertyProvider, loginUrlAuthenticationEntryPoint);
 
         http.addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
                 .addFilterAfter(new SCSBInstitutionFilter(), CsrfCookieGeneratorFilter.class)
                 .addFilterAfter(SCSBExceptionTranslationFilter, ExceptionTranslationFilter.class)
-                .exceptionHandling()
-                .authenticationEntryPoint(loginUrlAuthenticationEntryPoint).and()
                 .addFilter(casAuthenticationFilter())
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
-        http.oauth2Login();
+        http
+                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/", "/public/**", "/css/**", "/js/**").permitAll()
+//                        .requestMatchers("/oauth2/authorization/**", "/login/oauth2/authorize/**").permitAll()
+                                .requestMatchers(
+                                        "/", "/public/**", "/css/**", "/js/**",
+                                        "/oauth2/authorization/**",
+                                        "/login/oauth2/**"                  // allow the OAuth2 callback under /login/oauth2/code/**
+                                ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(o -> o
+                        // ? this is the page Spring redirects to when authentication is required
+                        .loginPage("/oauth2/authorization/nypl")
+                        // keep Spring defaults here; do NOT point to the callback
+                        .authorizationEndpoint(a -> a.baseUri("/oauth2/authorization"))
+                )
+                .logout(Customizer.withDefaults());
+//                .oauth2Login(Customizer.withDefaults())
+//                .oauth2Login(o -> o.authorizationEndpoint(a -> a.baseUri("/login/oauth2/code/nypl")))
 
-        http.authorizeRequests().requestMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
-                .requestMatchers("*").authenticated().anyRequest().authenticated();
-
-        SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
-        httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
-        if (cspEnable) {
-            http.headers(headers -> headers.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives( "default-src "+ scsbUiUrl + " " + cspValue )));
+//                        . oauth2Login(Customizer.withDefaults())   // registers the /oauth2/authorization/{registrationId} entry point
+//                .logout(Customizer.withDefaults());
+        http.exceptionHandling(e -> e.authenticationEntryPoint(loginUrlAuthenticationEntryPoint));
+        http.sessionManagement(s -> s.invalidSessionUrl("/home"));
+        if (Boolean.TRUE.equals(cspEnable)) {
+            http.headers(headers -> headers.contentSecurityPolicy(csp ->
+                    csp.policyDirectives("default-src " + scsbUiUrl + " " + cspValue)));
         }
-        http.logout().logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+
+        http.logout(logout -> logout.logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL)
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID"));
+
         return http.build();
+
     }
 
 
