@@ -8,7 +8,6 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.recap.filter.XSSFilter;
 import org.recap.security.SessionFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
@@ -36,7 +35,6 @@ import java.util.Set;
  */
 @PropertySource("classpath:application.properties")
 @SpringBootApplication(scanBasePackages = {"org.recap.controller", "org.recap.*"}, exclude = {SecurityFilterAutoConfiguration.class})
-
 public class Main {
 
     /**
@@ -47,12 +45,6 @@ public class Main {
 
     @Getter
     private AbstractApplicationContext applicationContext;
-
-
-
-//    private OAuth2SsoProperties oAuth2SsoProperties;
-
-
 
     /**
      * The Tomcat secure.
@@ -157,31 +149,38 @@ public class Main {
         }
     }
 
+
+
     @Bean
-    ClientRegistrationRepository clientRegistrationRepository() {
+    ClientRegistrationRepository getClientRegistrationRepository(
+            @Value("${oauth2.client.clientid:htc_scsb}") String clientId,
+            @Value("${oauth2.client.clientsecret:m0Fg7xbm3ZPq5djD3gBHTu3mQYrBpf6U}") String clientSecret,
+            @Value("${security.oauth2.client.authorization-uri:https://isso.nypl.org/oauth/authorize/}") String authorizationUri,
+            @Value("${security.oauth2.client.token-uri:https://isso.nypl.org/oauth/token}") String tokenUri,
+            @Value("${security.oauth2.client.user-info-uri:https://isso.nypl.org/oauth/userinfo}") String userInfoUri
+    ) {
         ClientRegistration nypl = ClientRegistration
-                .withRegistrationId("nypl")
-                .clientId("htc_scsb")
-                .clientSecret("m0Fg7xbm3ZPq5djD3gBHTu3mQYrBpf6U")
+                .withRegistrationId("nypl")                         // hard-coded registrationId
+                .clientId(clientId)                                  // default: htc_scsb
+                .clientSecret(clientSecret)                          // can be overridden by property
+                .clientName("NYPL")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-                .scope("openid", "offline_access", "login:staff", "role:client",
-                        "read:item", "read:patron", "write:hold_request",
-                        "write:checkin_request", "write:checkout_request",
-                        "write:recall_request", "write:refile_request")
-//                .issuerUri("https://isso.nypl.org")
-                .authorizationUri("https://isso.nypl.org/oauth/authorize")
-                .tokenUri("https://isso.nypl.org/oauth/token")
-                .jwkSetUri("https://isso.nypl.org/oauth/keys")
-                .userInfoUri("https://isso.nypl.org/userinfo")
-                .userNameAttributeName("sub")
+                .scope("openid", "offline_access", "login:staff", "role:client", "read:item")
+                .authorizationUri(authorizationUri)
+                .tokenUri(tokenUri)
+                .userInfoUri(userInfoUri)
+                .userNameAttributeName("sub")                        // subject claim
                 .build();
+
         return new InMemoryClientRegistrationRepository(nypl);
     }
+
 
     public void setApplicationContext(AbstractApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+
 
 
 
