@@ -82,6 +82,7 @@ public class MultiCASAndOAuthSecurityConfiguration {
         http.addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
                 .addFilterAfter(new SCSBInstitutionFilter(), CsrfCookieGeneratorFilter.class)
                 .addFilterAfter(SCSBExceptionTranslationFilter, ExceptionTranslationFilter.class)
+                .exceptionHandling(e -> e.authenticationEntryPoint(loginUrlAuthenticationEntryPoint))
                 .addFilter(casAuthenticationFilter())
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
@@ -90,9 +91,7 @@ public class MultiCASAndOAuthSecurityConfiguration {
 //                        .requestMatchers("/", "/public/**", "/css/**", "/js/**").permitAll()
 //                        .requestMatchers("/oauth2/authorization/**", "/login/oauth2/authorize/**").permitAll()
                                 .requestMatchers(
-                                        "/", "/public/**", "/css/**", "/js/**",
-                                        "/oauth2/authorization/**",
-                                        "/login/oauth2/**"                  // allow the OAuth2 callback under /login/oauth2/code/**
+                                        "/", "/home", "/actuator", "/actuator/prometheus"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -108,11 +107,10 @@ public class MultiCASAndOAuthSecurityConfiguration {
 
 //                        . oauth2Login(Customizer.withDefaults())   // registers the /oauth2/authorization/{registrationId} entry point
 //                .logout(Customizer.withDefaults());
-        http.exceptionHandling(e -> e.authenticationEntryPoint(loginUrlAuthenticationEntryPoint));
+//        http.exceptionHandling(e -> e.authenticationEntryPoint(loginUrlAuthenticationEntryPoint));
         http.sessionManagement(s -> s.invalidSessionUrl("/home"));
-        if (Boolean.TRUE.equals(cspEnable)) {
-            http.headers(headers -> headers.contentSecurityPolicy(csp ->
-                    csp.policyDirectives("default-src " + scsbUiUrl + " " + cspValue)));
+        if (cspEnable) {
+            http.headers(headers -> headers.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives( "default-src "+ scsbUiUrl + " " + cspValue )));
         }
 
         http.logout(logout -> logout.logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL)
