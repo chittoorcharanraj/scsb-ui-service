@@ -52,6 +52,9 @@ public class Main {
     @Value("${" + PropertyKeyConstants.SERVER_SECURE + "}")
     boolean tomcatSecure;
 
+    @Value("${oauth2.client.clientid}")
+    String clientId;
+
     @Value("${security.oauth2.client.registration-id}")
     String registrationId;
 
@@ -60,6 +63,9 @@ public class Main {
 
     @Value("${security.oauth2.client.token-uri}")
     String tokenUri;
+
+    @Value("${oauth2.client.clientsecret}")
+    String clientSecret;
 
 
     /**
@@ -165,8 +171,8 @@ public class Main {
     ClientRegistrationRepository getClientRegistrationRepository() {
         ClientRegistration clientRegistration = ClientRegistration
                 .withRegistrationId(registrationId)
-                .clientId(PropertyKeyConstants.ILS.ILS_OAUTH2_CLIENT_CLIENT_ID)
-                .clientSecret(PropertyKeyConstants.ILS.ILS_OAUTH2_CLIENT_CLIENT_SECRET)
+                .clientId(clientId)
+                .clientSecret(clientSecret)
                 .clientName(registrationId.toUpperCase())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
