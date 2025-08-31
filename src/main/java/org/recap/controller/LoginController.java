@@ -11,6 +11,7 @@ import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -46,6 +47,9 @@ public class LoginController extends AbstractController {
     @Autowired
     private UserDetailsRepository userDetailsRepository;
 
+    @Value("${oauth2.client.registration-id}")
+    private String registrationId;
+
     /**
      * Return either login or search view. Returns search view if user authenticated. If not it will return login view.
      *
@@ -75,7 +79,7 @@ public class LoginController extends AbstractController {
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/nypl");
+        response.sendRedirect("/oauth2/authorization/" + registrationId);
     }
 
     /**
