@@ -75,7 +75,7 @@ public class LoginController extends AbstractController {
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/nypl"); // hard-coded registrationId
+        response.sendRedirect("/oauth2/authorization/nypl");
     }
 
     /**

@@ -160,9 +160,9 @@ public class Main {
             @Value("${security.oauth2.client.user-info-uri:https://isso.nypl.org/oauth/userinfo}") String userInfoUri
     ) {
         ClientRegistration nypl = ClientRegistration
-                .withRegistrationId("nypl")                         // hard-coded registrationId
-                .clientId(clientId)                                  // default: htc_scsb
-                .clientSecret(clientSecret)                          // can be overridden by property
+                .withRegistrationId("nypl")
+                .clientId(clientId)
+                .clientSecret(clientSecret)
                 .clientName("NYPL")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
@@ -170,7 +170,7 @@ public class Main {
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
                 .userInfoUri(userInfoUri)
-                .userNameAttributeName("sub")                        // subject claim
+                .userNameAttributeName("sub")
                 .build();
 
         return new InMemoryClientRegistrationRepository(nypl);
