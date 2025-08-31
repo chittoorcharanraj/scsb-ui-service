@@ -175,7 +175,7 @@ public class Main {
                 .clientSecret(clientSecret)
                 .clientName(registrationId.toUpperCase())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .redirectUri("{baseUrl}/login/oauth2/code/registrationId")
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
                 .userNameAttributeName("sub")
