@@ -156,6 +156,7 @@ public class Main {
             @Value("${oauth2.client.registration-id}") String registrationId,
             @Value("${oauth2.client.clientid}") String clientId,
             @Value("${oauth2.client.clientsecret}") String clientSecret,
+            @Value("${oauth2.client.scopes}") String scope,
             @Value("${security.oauth2.client.authorization-uri}") String authorizationUri,
             @Value("${security.oauth2.client.token-uri}") String tokenUri,
             @Value("${security.oauth2.client.user-info-uri}") String userInfoUri
@@ -167,7 +168,7 @@ public class Main {
                 .clientName(registrationId.toUpperCase())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-                .scope("openid", "offline_access", "login:staff", "role:client", "read:item")
+                .scope(scope.split(","))
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
                 .userInfoUri(userInfoUri)
