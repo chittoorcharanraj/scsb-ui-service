@@ -151,7 +151,7 @@ public class LoginController extends AbstractController {
     }
 
     private boolean userHasRoles(Map<String, Object> resultMap) {
-        return (Boolean) resultMap.get(ScsbConstants.SEARCH_PRIVILEGE);
+        return Boolean.TRUE.equals(resultMap !=null ? resultMap.get(ScsbConstants.SEARCH_PRIVILEGE) : null);
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
