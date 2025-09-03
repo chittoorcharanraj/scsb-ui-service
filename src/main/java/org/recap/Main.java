@@ -168,7 +168,7 @@ public class Main {
                 .clientName(registrationId.toUpperCase())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-                .scope(scope.split(","))
+                .scope(scope.split("\\s+"))
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
                 .userInfoUri(userInfoUri)
