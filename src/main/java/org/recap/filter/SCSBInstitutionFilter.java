@@ -34,8 +34,6 @@ public class SCSBInstitutionFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         if (StringUtils.equals(requestURI, "/home")) {
             Cookie[] cookies = request.getCookies();
-
-        if(cookies != null){
             cookiesOuter:
             for (Cookie cookie : cookies) {
                 if (StringUtils.equals(cookie.getName(), ScsbConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
@@ -55,7 +53,6 @@ public class SCSBInstitutionFilter extends OncePerRequestFilter {
                     }
                 }
             }
-        }
 
             if (StringUtils.isNotBlank(institutionCode)) {
                 userInstitutionCache.removeSessionId(requestedSessionId);
