@@ -159,7 +159,8 @@ public class Main {
             @Value("${oauth2.client.scopes}") String scope,
             @Value("${security.oauth2.client.authorization-uri}") String authorizationUri,
             @Value("${security.oauth2.client.token-uri}") String tokenUri,
-            @Value("${security.oauth2.client.user-info-uri}") String userInfoUri
+            @Value("${security.oauth2.client.user-info-uri}") String userInfoUri,
+            @Value("${oauth2.client.redirect-uri}") String redirectUri
     ) {
         ClientRegistration nypl = ClientRegistration
                 .withRegistrationId(registrationId)
@@ -167,7 +168,7 @@ public class Main {
                 .clientSecret(clientSecret)
                 .clientName(registrationId.toUpperCase())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .redirectUri(redirectUri)
                 .scope(scope.split("\\s+"))
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
