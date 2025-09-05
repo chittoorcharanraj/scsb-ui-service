@@ -97,30 +97,21 @@ public class LoginController extends AbstractController {
             String institutionFromRequest = request.getParameter("institution");
             String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest,  PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
             if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
-                // ?? Spring Security 6: use OAuth2AuthenticationToken + principal attributes/claims
                 if (auth instanceof OAuth2AuthenticationToken oauthToken) {
-                    Object principal = oauthToken.getPrincipal();
+                    OAuth2User oauth2User = oauthToken.getPrincipal();
 
-                    if (principal instanceof OidcUser oidcUser) {
-                        // OIDC: reliable "sub"
-                        username = oidcUser.getSubject();
-                    } else if (principal instanceof OAuth2User oauth2User) {
-                        // OAuth2 (non-OIDC): try common attributes, else fall back
-                        Object sub = oauth2User.getAttributes().get("sub");
-                        Object preferred = oauth2User.getAttributes().get("preferred_username");
-                        Object email = oauth2User.getAttributes().get("email");
-                        if (sub instanceof String s && !s.isBlank()) {
-                            username = s;
-                        } else if (preferred instanceof String s && !s.isBlank()) {
-                            username = s;
-                        } else if (email instanceof String s && !s.isBlank()) {
-                            username = s;
-                        } else {
-                            username = oauth2User.getName(); // final fallback
-                        }
+                    Object sub = oauth2User.getAttributes().get("sub");
+                    Object preferred = oauth2User.getAttributes().get("preferred_username");
+                    Object email = oauth2User.getAttributes().get("email");
+                    if (sub instanceof String s && !s.isBlank()) {
+                        username = s;
+                    } else if (preferred instanceof String s && !s.isBlank()) {
+                        username = s;
+                    } else if (email instanceof String s && !s.isBlank()) {
+                        username = s;
+                    } else {
+                        username = oauth2User.getName();
                     }
-
-                    // mirror the old behavior of setting a secure cookie with the resolved username
                     Cookie cookieUserName = new Cookie(ScsbConstants.USER_NAME, username);
                     cookieUserName.setHttpOnly(true);
                     cookieUserName.setSecure(true);
@@ -149,7 +140,6 @@ public class LoginController extends AbstractController {
         }
         return ScsbConstants.REDIRECT_SEARCH;
     }
-
     private boolean userHasRoles(Map<String, Object> resultMap) {
         return (Boolean) resultMap.get(ScsbConstants.SEARCH_PRIVILEGE);
     }
