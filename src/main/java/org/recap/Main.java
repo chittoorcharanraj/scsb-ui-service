@@ -162,7 +162,7 @@ public class Main {
             @Value("${security.oauth2.client.user-info-uri}") String userInfoUri,
             @Value("${oauth2.client.redirect-uri}") String redirectUri
     ) {
-        ClientRegistration nypl = ClientRegistration
+        ClientRegistration registration = ClientRegistration
                 .withRegistrationId(registrationId)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
@@ -176,7 +176,7 @@ public class Main {
                 .userNameAttributeName("sub")
                 .build();
 
-        return new InMemoryClientRegistrationRepository(nypl);
+        return new InMemoryClientRegistrationRepository(registration);
     }
 
 
