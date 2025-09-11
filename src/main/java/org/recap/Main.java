@@ -160,7 +160,8 @@ public class Main {
             @Value("${security.oauth2.client.authorization-uri}") String authorizationUri,
             @Value("${security.oauth2.client.token-uri}") String tokenUri,
             @Value("${security.oauth2.client.user-info-uri}") String userInfoUri,
-            @Value("${oauth2.client.redirect-uri}") String redirectUri
+            @Value("${oauth2.client.redirect-uri}") String redirectUri,
+            @Value("${security.oauth2.client.jwk-set-uri}") String jwtUri
     ) {
         ClientRegistration registration = ClientRegistration
                 .withRegistrationId(registrationId)
@@ -173,6 +174,7 @@ public class Main {
                 .authorizationUri(authorizationUri)
                 .tokenUri(tokenUri)
                 .userInfoUri(userInfoUri)
+                .jwkSetUri(jwtUri)
                 .userNameAttributeName("sub")
                 .build();
 
