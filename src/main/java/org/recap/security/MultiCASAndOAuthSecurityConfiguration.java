@@ -18,14 +18,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -35,6 +39,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 /**
@@ -62,6 +67,9 @@ public class MultiCASAndOAuthSecurityConfiguration {
     @Value("${" + ScsbConstants.CSP_VALUE + "}")
     private String cspValue;
 
+    @Value("${security.oauth2.resource.jwt.key-value}")
+    private RSAPublicKey rsaPublicKey;
+
     @Autowired
     private CASPropertyProvider casPropertyProvider;
 
@@ -70,6 +78,7 @@ public class MultiCASAndOAuthSecurityConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
+
 
 
     @Bean
@@ -95,6 +104,8 @@ public class MultiCASAndOAuthSecurityConfiguration {
                         .requestMatchers("*").authenticated()
                         .anyRequest().authenticated()
                 )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.decoder(jwtDecoder())))
 
                 .sessionManagement(sm -> sm.invalidSessionUrl("/home"))
 
@@ -111,6 +122,7 @@ public class MultiCASAndOAuthSecurityConfiguration {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 );
+
 
         return http.build();
     }
@@ -235,6 +247,11 @@ public class MultiCASAndOAuthSecurityConfiguration {
         return WebClient.builder()
                 .apply(oauth2.oauth2Configuration())
                 .build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder. withPublicKey(this.rsaPublicKey).build();
     }
 
 }
