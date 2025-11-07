@@ -232,6 +232,7 @@ public class ScsbConstants {
     public static final String CSP_VALUE = "csp.value";
     public static final String CSP_ENABLE = "csp.enable";
     public static final String CSP = "Content-Security-Policy";
+    public static final String FRAME_ANCESTOR_VALUE = "frame.ancestor.value";
 
     private ScsbConstants() {
         //Do nothing
