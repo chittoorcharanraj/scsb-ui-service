@@ -233,6 +233,24 @@ public class ScsbConstants {
     public static final String CSP_ENABLE = "csp.enable";
     public static final String CSP = "Content-Security-Policy";
     public static final String FRAME_ANCESTOR_VALUE = "frame.ancestor.value";
+    public static final String SAML_INSTITUTION_CODE = "samlInstitutionCode";
+    public static final String AUTH_TYPE_SAML = "SAML";
+    // Add alongside SAML_INSTITUTION_CODE
+    public static final String SAML_AUTHENTICATED = "samlAuthenticated";
+
+    // -------------------------------------------------------------------------
+    // SAML SP / IdP configuration property-key constants.
+    // Values are loaded from application.properties via @Value("${<constant>}").
+    // Pattern mirrors: public static final String SP_ENTITY_ID = "sp.entity.id"
+    // -------------------------------------------------------------------------
+    public static final String SP_ENTITY_ID        = "sp.entity.id";
+    public static final String IDP_SSO_URL         = "idp.sso.url";
+    public static final String ACS_URL             = "acs.url";
+    public static final String IDP_CERTIFICATE     = "idp.certificate";
+    public static final String SP_CERTIFICATE      = "sp.certificate";
+    public static final String SP_PRIVATE_KEY      = "sp.private.key";
+    public static final String SAML_INSTITUTION    = "saml.institution.code";
+    public static final String SAML_ACTIVE         = "saml.active";
 
     private ScsbConstants() {
         //Do nothing

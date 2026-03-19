@@ -83,7 +83,11 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
 
-        http.authorizeRequests().antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
+        http.csrf().ignoringAntMatchers("/callback/saml");
+
+        http.authorizeRequests()
+                .antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
+                .antMatchers("/auth/saml", "/callback/saml", "/saml/metadata/**").permitAll()
                 .antMatchers("*").authenticated().anyRequest().authenticated();
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();

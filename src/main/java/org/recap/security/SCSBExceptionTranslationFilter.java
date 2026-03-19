@@ -191,8 +191,6 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
     protected void sendStartAuthentication(HttpServletRequest request,
                                            HttpServletResponse response, FilterChain chain,
                                            AuthenticationException reason) throws ServletException, IOException {
-        // SEC-112: Clear the SecurityContextHolder's Authentication, as the
-        // existing Authentication is no longer considered valid
         SecurityContextHolder.getContext().setAuthentication(null);
         requestCache.saveRequest(request, response);
         logger.debug("Calling Authentication entry point.");
@@ -201,6 +199,9 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
             String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_TYPE);
             if(StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
+            } else if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_SAML)) {
+                // SAML redirect to the SAML initiation endpoint in SamlCallbackController
+                response.sendRedirect("/auth/saml?institution=" + institution);
             } else {
                 String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_LOGIN);
 

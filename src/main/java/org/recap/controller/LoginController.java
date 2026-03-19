@@ -156,7 +156,18 @@ public class LoginController extends AbstractController {
         HttpSession session = null;
         try {
             session = request.getSession(false);
-            getUserAuthUtil().authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN));
+            if (session != null) {
+                boolean isSamlSession = Boolean.TRUE.equals(
+                        session.getAttribute(ScsbConstants.SAML_AUTHENTICATED));
+
+                if (isSamlSession) {
+                    log.info("SAML session logout");
+                    SecurityContextHolder.clearContext();
+                } else {
+                    getUserAuthUtil().authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL,
+                            (UsernamePasswordToken) session.getAttribute(ScsbConstants.USER_TOKEN));
+                }
+            }
         } finally {
             if (session != null) {
                 session.invalidate();
