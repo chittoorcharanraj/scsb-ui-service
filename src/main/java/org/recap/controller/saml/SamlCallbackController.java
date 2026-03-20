@@ -74,7 +74,7 @@ public class SamlCallbackController extends AbstractController {
         return "redirect:" + redirectUrl;
     }
 
-    @PostMapping("/callback/saml")
+    @PostMapping("/home")
     public String samlAcs(@RequestParam("SAMLResponse") String samlResponse,
                           @RequestParam(value = "RelayState", required = false) String relayState,
                           HttpServletRequest request) {
@@ -253,6 +253,6 @@ public class SamlCallbackController extends AbstractController {
                 || ("https".equals(scheme) && port != 443)) {
             base.append(":").append(port);
         }
-        return base.append("/callback/saml").toString();
+        return base.append("/home").toString();
     }
 }
