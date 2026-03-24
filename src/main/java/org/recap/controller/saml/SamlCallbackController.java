@@ -134,32 +134,24 @@ public class SamlCallbackController extends AbstractController {
                 userInfo.userId + ScsbConstants.TOKEN_SPLITER + institutionCode,
                 "",
                 true);
+
+        java.util.Map<String, Object> resultMap;
+        try {
+            resultMap = getUserAuthUtil().doAuthentication(shiroToken);
+        } catch (Exception e) {
+            log.error("SAML ACS [{}]: Exception occurred in authentication: {}", institutionCode, e.getLocalizedMessage());
+            return "redirect:/?error=saml_auth_failed";
+        }
+
+        if (resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED) != null && !(Boolean) resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED)) {
+            String errorMessage = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
+            log.error("SAML ACS [{}]: User: {}, Error: {}", institutionCode, userInfo.userId, errorMessage);
+            return "redirect:/?error=saml_auth_failed";
+        }
+
         session.setAttribute(ScsbConstants.USER_TOKEN, shiroToken);
-
-        session.setAttribute(ScsbConstants.USER_NAME, usersEntity.getLoginId());
-        session.setAttribute(ScsbConstants.USER_DESC, usersEntity.getUserDescription());
-        session.setAttribute(ScsbConstants.USER_ID, usersEntity.getId());
-        session.setAttribute(ScsbConstants.USER_INSTITUTION, usersEntity.getInstitutionId());
-
-        session.setAttribute(ScsbConstants.SUPER_ADMIN_USER, false);
-        session.setAttribute(ScsbConstants.USER_ADMINISTRATOR, false);
-        session.setAttribute(ScsbConstants.REPOSITORY, false);
-        session.setAttribute(ScsbConstants.SEARCH_PRIVILEGE, true);
-        session.setAttribute(ScsbConstants.REQUEST_PRIVILEGE, true);
-        session.setAttribute(ScsbConstants.COLLECTION_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.REPORTS_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.USER_ROLE_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.REQUEST_ALL_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.REQUEST_ITEM_PRIVILEGE, true);
-        session.setAttribute(ScsbConstants.BARCODE_RESTRICTED_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.DEACCESSION_PRIVILEGE, false);
-        session.setAttribute(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE, false);
-        session.setAttribute(ScsbCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, false);
-        session.setAttribute(ScsbConstants.MONITORING, false);
-        session.setAttribute(ScsbConstants.LOGGING, false);
-        session.setAttribute(ScsbConstants.REQUESTLOG, false);
-        session.setAttribute(ScsbConstants.DATA_EXPORT, false);
-        session.setAttribute(ScsbConstants.ROLE_FOR_SUPER_ADMIN, false);
+        session.setAttribute(ScsbConstants.USER_AUTH, resultMap);
+        setValuesInSession(session, resultMap);
         session.setAttribute(ScsbConstants.IS_USER_AUTHENTICATED, true);
 
         log.info("SAML ACS [{}]: Session fully established for user '{}'. Redirecting to search.",
