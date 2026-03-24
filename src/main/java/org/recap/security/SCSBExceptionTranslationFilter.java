@@ -3,6 +3,7 @@ package org.recap.security;
 import org.apache.commons.lang3.StringUtils;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
+import org.recap.controller.saml.SamlCallbackController;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -20,6 +22,7 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,6 +31,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Created by sheiks on 25/01/17.
@@ -97,6 +101,14 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
         catch (Exception ex) {
             // Try to extract a SpringSecurityException from the stacktrace
             Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
+            UserRedirectRequiredException oauth2Redirect =
+                    (UserRedirectRequiredException) throwableAnalyzer
+                            .getFirstThrowableOfType(UserRedirectRequiredException.class, causeChain);
+            if (oauth2Redirect != null) {
+                handleOAuth2Redirect(request, response, oauth2Redirect);
+                return;
+            }
+
             RuntimeException ase = (AuthenticationException) throwableAnalyzer
                     .getFirstThrowableOfType(AuthenticationException.class, causeChain);
 
@@ -140,6 +152,25 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
      */
     protected AuthenticationTrustResolver getAuthenticationTrustResolver() {
         return authenticationTrustResolver;
+    }
+
+
+    private void handleOAuth2Redirect(HttpServletRequest request,
+                                      HttpServletResponse response,
+                                      UserRedirectRequiredException e) throws IOException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(e.getRedirectUri());
+        Map<String, String> requestParams = e.getRequestParams();
+        if (requestParams != null) {
+            for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+                builder.queryParam(entry.getKey(), entry.getValue());
+            }
+        }
+        if (e.getStateKey() != null) {
+            builder.queryParam("state", e.getStateToPreserve());
+        }
+        String redirectUrl = builder.build().encode().toUriString();
+        logger.debug("OAuth2 UserRedirectRequiredException: redirecting to " + redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 
     private void handleSpringSecurityException(HttpServletRequest request,
@@ -200,8 +231,18 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
             if(StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else if (StringUtils.equals(authType, ScsbConstants.AUTH_TYPE_SAML)) {
-                // SAML redirect to the SAML initiation endpoint in SamlCallbackController
-                response.sendRedirect("/auth/saml?institution=" + institution);
+                try {
+                    SamlCallbackController samlController = HelperUtil.getBean(org.recap.controller.saml.SamlCallbackController.class);
+                    String view = samlController.initiateSaml(institution, request);
+                    if (view != null && view.startsWith("redirect:")) {
+                        response.sendRedirect(view.substring("redirect:".length()));
+                    } else {
+                        response.sendRedirect(view);
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to initiate SAML via Controller", e);
+                    response.sendRedirect("/?error=saml_auth_failed");
+                }
             } else {
                 String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, PropertyKeyConstants.ILS.ILS_AUTH_SERVICE_LOGIN);
 
