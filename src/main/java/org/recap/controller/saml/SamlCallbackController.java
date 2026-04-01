@@ -3,7 +3,6 @@ package org.recap.controller.saml;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.controller.AbstractController;
 import org.recap.model.jpa.UsersEntity;
@@ -54,11 +53,10 @@ public class SamlCallbackController extends AbstractController {
         SamlConfig config = buildSamlConfig(institution);
 
         if (!config.isActive()) {
-            log.warn("SAML [{}]: SAML is disabled (saml.active=false)", institution);
             return "redirect:/?error=saml_disabled";
         }
         if (StringUtils.isBlank(config.getIdpSsoUrl())) {
-            log.error("SAML [{}]: IdP SSO URL not configured in scsb_properties_t (key: {})",
+            log.error("SAML [{}]: IdP SSO URL not configured for institution (key: {})",
                     institution, ScsbConstants.IDP_SSO_URL);
             return "redirect:/?error=saml_config_missing";
         }
@@ -97,7 +95,7 @@ public class SamlCallbackController extends AbstractController {
 
         SamlConfig config = buildSamlConfig(institutionCode);
         if (StringUtils.isBlank(config.getIdpSsoUrl())) {
-            log.error("SAML ACS [{}]: IdP SSO URL not configured in scsb_properties_t", institutionCode);
+            log.error("SAML ACS [{}]: IdP SSO URL not configured for institution", institutionCode);
             return "redirect:/?error=saml_config_missing";
         }
         log.info("SAML ACS [{}]: Config loaded from scsb_properties_t", institutionCode);
@@ -113,10 +111,10 @@ public class SamlCallbackController extends AbstractController {
 
         UsersEntity usersEntity = userDetailsRepository.findByLoginId(userInfo.userId);
         if (usersEntity == null) {
-            log.error("SAML ACS [{}]: User '{}' not found in USER_T", institutionCode, userInfo.userId);
+            log.error("SAML ACS [{}]: User '{}' not found in user", institutionCode, userInfo.userId);
             return "redirect:/?error=saml_user_not_found";
         }
-        log.info("SAML ACS [{}]: User '{}' found in USER_T", institutionCode, userInfo.userId);
+        log.info("SAML ACS [{}]: User '{}' found in user", institutionCode, userInfo.userId);
 
         HttpSession session = processSessionFixation(request, institutionCode);
         session.setAttribute(ScsbConstants.SAML_AUTHENTICATED, Boolean.TRUE);

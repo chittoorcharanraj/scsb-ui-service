@@ -101,14 +101,6 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
         catch (Exception ex) {
             // Try to extract a SpringSecurityException from the stacktrace
             Throwable[] causeChain = throwableAnalyzer.determineCauseChain(ex);
-            UserRedirectRequiredException oauth2Redirect =
-                    (UserRedirectRequiredException) throwableAnalyzer
-                            .getFirstThrowableOfType(UserRedirectRequiredException.class, causeChain);
-            if (oauth2Redirect != null) {
-                handleOAuth2Redirect(request, response, oauth2Redirect);
-                return;
-            }
-
             RuntimeException ase = (AuthenticationException) throwableAnalyzer
                     .getFirstThrowableOfType(AuthenticationException.class, causeChain);
 
@@ -152,25 +144,6 @@ public class SCSBExceptionTranslationFilter extends GenericFilterBean {
      */
     protected AuthenticationTrustResolver getAuthenticationTrustResolver() {
         return authenticationTrustResolver;
-    }
-
-
-    private void handleOAuth2Redirect(HttpServletRequest request,
-                                      HttpServletResponse response,
-                                      UserRedirectRequiredException e) throws IOException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(e.getRedirectUri());
-        Map<String, String> requestParams = e.getRequestParams();
-        if (requestParams != null) {
-            for (Map.Entry<String, String> entry : requestParams.entrySet()) {
-                builder.queryParam(entry.getKey(), entry.getValue());
-            }
-        }
-        if (e.getStateKey() != null) {
-            builder.queryParam("state", e.getStateToPreserve());
-        }
-        String redirectUrl = builder.build().encode().toUriString();
-        logger.debug("OAuth2 UserRedirectRequiredException: redirecting to " + redirectUrl);
-        response.sendRedirect(redirectUrl);
     }
 
     private void handleSpringSecurityException(HttpServletRequest request,

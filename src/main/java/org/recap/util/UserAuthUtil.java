@@ -125,7 +125,6 @@ public class UserAuthUtil {
         if (roleUrl.contains("monitoring"))  return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.MONITORING));
         if (roleUrl.contains("dataExport"))  return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.DATA_EXPORT));
         if (roleUrl.contains("roles"))       return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER));
-        // Default deny for unknown paths
         return false;
     }
 
