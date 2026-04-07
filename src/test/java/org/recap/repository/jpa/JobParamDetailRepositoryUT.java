@@ -19,6 +19,12 @@ public class JobParamDetailRepositoryUT extends BaseTestCase {
 
     @Test
     public void findByJobName() throws Exception {
+        // Create and save test data
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        jobParamEntity.setJobName(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB);
+        jobParamDetailRepository.save(jobParamEntity);
+
+        // Query the test data
         JobParamEntity byJobName = jobParamDetailRepository.findByJobName(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB);
         assertNotNull(byJobName);
         assertNotNull(byJobName.getJobName());
