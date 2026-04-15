@@ -180,9 +180,9 @@ public class SamlAuthHandler {
 
             // Okta often sends email as NameID ? normalize to bare username
             if (userId.contains("@")) {
-                log.info("SAML [{}]: NameID is email '{}', extracting local-part", config.getInstitutionCode(), userId);
+                log.info("SAML [{}]: NameID is email '{}', using full email as userId", config.getInstitutionCode(), userId);
                 if (email == null) email = userId;          // preserve full email for record
-                userId = userId.split("@")[0];              // strip domain ? matches USER_T.LOGIN_ID
+//                userId = userId.split("@")[0];              // strip domain ? matches USER_T.LOGIN_ID
             }
 
             SamlUserInfo userInfo = new SamlUserInfo(userId, displayName, email, uid, config.getInstitutionCode());
