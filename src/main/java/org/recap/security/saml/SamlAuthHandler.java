@@ -8,6 +8,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -51,12 +54,18 @@ public class SamlAuthHandler {
         }
     }
 
+    //  Build AuthnRequest (HTTP-Redirect binding)
+
     public String buildAuthnRequestUrl(SamlConfig config, String callbackUrl) {
+        return buildAuthnRequestUrl(config, callbackUrl, null);
+    }
+
+    public String buildAuthnRequestUrl(SamlConfig config, String callbackUrl, String relayState) {
         try {
-            String requestId       = "_" + java.util.UUID.randomUUID();
-            String issueInstant    = java.time.Instant.now().toString();
-            String spEntityId      = resolveSpEntityId(config, callbackUrl);
-            String effectiveAcsUrl = (config.getAcsUrl() != null && !config.getAcsUrl().isBlank())
+            String requestId    = "_" + java.util.UUID.randomUUID();
+            String issueInstant = java.time.Instant.now().toString();
+            String spEntityId   = resolveSpEntityId(config, callbackUrl);
+            String effectiveAcs = (config.getAcsUrl() != null && !config.getAcsUrl().isBlank())
                     ? config.getAcsUrl() : callbackUrl;
             String ssoUrl = config.getIdpSsoUrl();
 
@@ -69,7 +78,7 @@ public class SamlAuthHandler {
                             + " Version=\"2.0\""
                             + " IssueInstant=\"" + issueInstant + "\""
                             + " Destination=\"" + ssoUrl + "\""
-                            + " AssertionConsumerServiceURL=\"" + effectiveAcsUrl + "\""
+                            + " AssertionConsumerServiceURL=\"" + effectiveAcs + "\""
                             + " ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\">"
                             + "<saml:Issuer>" + spEntityId + "</saml:Issuer>"
                             + "<samlp:NameIDPolicy"
@@ -92,11 +101,20 @@ public class SamlAuthHandler {
             }
             deflater.end();
 
-            String encoded     = Base64.getEncoder().encodeToString(baos.toByteArray());
-            String redirectUrl = ssoUrl + "?SAMLRequest=" + URLEncoder.encode(encoded, StandardCharsets.UTF_8);
+            String encoded = Base64.getEncoder().encodeToString(baos.toByteArray());
+            StringBuilder redirectUrl = new StringBuilder(ssoUrl)
+                    .append("?SAMLRequest=")
+                    .append(URLEncoder.encode(encoded, StandardCharsets.UTF_8));
+
+            //  carry institutionCode in RelayState so ACS works even
+            //         when the POST lands on a different node (no sticky sessions)
+            if (relayState != null && !relayState.isBlank()) {
+                redirectUrl.append("&RelayState=")
+                        .append(URLEncoder.encode(relayState, StandardCharsets.UTF_8));
+            }
 
             log.info("SAML [{}]: Redirecting to IdP SSO: {}", config.getInstitutionCode(), ssoUrl);
-            return redirectUrl;
+            return redirectUrl.toString();
 
         } catch (Exception e) {
             log.error("SAML [{}]: Failed to build AuthnRequest", config.getInstitutionCode(), e);
@@ -104,7 +122,7 @@ public class SamlAuthHandler {
         }
     }
 
-
+    // Process and validate the IdP's SAMLResponse POST
     public SamlUserInfo processSamlResponse(String samlResponseBase64, SamlConfig config) {
         try {
             byte[] responseBytes = Base64.getDecoder().decode(samlResponseBase64);
@@ -114,13 +132,15 @@ public class SamlAuthHandler {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
+            // XXE hardening
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setExpandEntityReferences(false);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new InputSource(new StringReader(responseXml)));
 
-            // Verify SAML status
+            // Verify SAML StatusCode == Success
             NodeList statusCodes = doc.getElementsByTagNameNS(SAMLP_NS, "StatusCode");
             if (statusCodes.getLength() > 0) {
                 String statusValue = ((Element) statusCodes.item(0)).getAttribute("Value");
@@ -130,15 +150,18 @@ public class SamlAuthHandler {
                 }
             }
 
-            // Validate XML signature
+            //  Register all ID attributes so enveloped-signature refs resolve
+            registerIdAttributes(doc);
+
+            // Cryptographic signature verification
             X509Certificate idpCert = loadCertificateFromPem(config.getIdpCertificate());
             if (!validateSignature(doc, idpCert, config.getInstitutionCode())) {
-                log.error("SAML [{}]: XML signature validation failed", config.getInstitutionCode());
+                log.error("SAML [{}]: XML signature validation FAILED", config.getInstitutionCode());
                 return null;
             }
-            log.info("SAML [{}]: XML signature validated", config.getInstitutionCode());
+            log.info("SAML [{}]: XML signature validated OK", config.getInstitutionCode());
 
-            // Extract NameID
+            //  Extract NameID
             NodeList nameIdNodes = doc.getElementsByTagNameNS(SAML_NS, "NameID");
             if (nameIdNodes.getLength() == 0) {
                 log.error("SAML [{}]: No NameID in assertion", config.getInstitutionCode());
@@ -150,9 +173,17 @@ public class SamlAuthHandler {
                 return null;
             }
 
+            //  Extract optional attributes
             String displayName = extractAttribute(doc, "displayName");
             String email       = extractAttribute(doc, "email");
             String uid         = extractAttribute(doc, "uid");
+
+            // Okta often sends email as NameID ? normalize to bare username
+            if (userId.contains("@")) {
+                log.info("SAML [{}]: NameID is email '{}', extracting local-part", config.getInstitutionCode(), userId);
+                if (email == null) email = userId;          // preserve full email for record
+                userId = userId.split("@")[0];              // strip domain ? matches USER_T.LOGIN_ID
+            }
 
             SamlUserInfo userInfo = new SamlUserInfo(userId, displayName, email, uid, config.getInstitutionCode());
             log.info("SAML [{}]: Authenticated user: {}", config.getInstitutionCode(), userInfo);
@@ -164,7 +195,7 @@ public class SamlAuthHandler {
         }
     }
 
-
+    //  Generate SP metadata XML
     public String generateSpMetadata(SamlConfig config) {
         String spEntityId = config.getSpEntityId();
         String acsUrl     = config.getAcsUrl();
@@ -177,7 +208,7 @@ public class SamlAuthHandler {
         sb.append("                     entityID=\"").append(spEntityId).append("\"\n");
         sb.append("                     validUntil=\"2036-01-01T00:00:00Z\"\n");
         sb.append("                     cacheDuration=\"PT48H\">\n");
-        sb.append("    <md:SPSSODescriptor AuthnRequestsSigned=\"true\"\n");
+        sb.append("    <md:SPSSODescriptor AuthnRequestsSigned=\"false\"\n");  // we use redirect, not signed req
         sb.append("                        WantAssertionsSigned=\"true\"\n");
         sb.append("                        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         if (spCertBody != null && !spCertBody.isEmpty()) {
@@ -196,56 +227,79 @@ public class SamlAuthHandler {
         return sb.toString();
     }
 
+    // ??? FIXED: Real cryptographic signature validation ???????????????????????
+
     private boolean validateSignature(Document doc, X509Certificate trustedIdpCert,
                                       String institutionCode) {
         try {
             NodeList signatures = doc.getElementsByTagNameNS(DSIG_NS, "Signature");
             if (signatures.getLength() == 0) {
-                log.warn("SAML [{}]: No XML Signature found", institutionCode);
+                log.warn("SAML [{}]: No XML Signature element found ? rejecting", institutionCode);
                 return false;
             }
 
-            Element  signatureElement = (Element) signatures.item(0);
-            NodeList sigValues        = signatureElement.getElementsByTagNameNS(DSIG_NS, "SignatureValue");
-            if (sigValues.getLength() == 0) {
-                log.error("SAML [{}]: SignatureValue missing", institutionCode);
-                return false;
-            }
+            // Use the trusted IdP public key directly ? do NOT rely on embedded cert alone.
+            // javax.xml.crypto.dsig verifies both the digest over the signed elements
+            // AND the RSA/DSA signature over the SignedInfo, using trustedIdpCert.getPublicKey().
+            DOMValidateContext valCtx = new DOMValidateContext(
+                    trustedIdpCert.getPublicKey(),
+                    signatures.item(0)
+            );
 
-            NodeList certNodes = signatureElement.getElementsByTagNameNS(DSIG_NS, "X509Certificate");
-            if (certNodes.getLength() > 0) {
-                String embeddedBase64 = certNodes.item(0).getTextContent().replaceAll("\\s+", "");
-                byte[] certBytes      = Base64.getDecoder().decode(embeddedBase64);
+            XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+            XMLSignature sig = fac.unmarshalXMLSignature(valCtx);
+            boolean valid = sig.validate(valCtx);
 
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                X509Certificate embeddedCert = (X509Certificate) cf.generateCertificate(
-                        new ByteArrayInputStream(certBytes));
-
-                if (!embeddedCert.equals(trustedIdpCert)) {
-                    log.error("SAML [{}]: Embedded cert does not match trusted IdP cert", institutionCode);
-                    return false;
+            if (!valid) {
+                // Emit detailed diagnostic
+                boolean sv = sig.getSignatureValue().validate(valCtx);
+                log.error("SAML [{}]: Signature invalid ? signatureValue={}", institutionCode, sv);
+                for (Object ref : sig.getSignedInfo().getReferences()) {
+                    javax.xml.crypto.dsig.Reference r = (javax.xml.crypto.dsig.Reference) ref;
+                    log.error("SAML [{}]:   Reference URI='{}' valid={}", institutionCode, r.getURI(), r.validate(valCtx));
                 }
-                log.debug("SAML [{}]: Embedded cert matches trusted IdP cert", institutionCode);
             } else {
-                log.warn("SAML [{}]: No X509Certificate in KeyInfo", institutionCode);
-                return false;
+                log.info("SAML [{}]: Signature cryptographically verified OK", institutionCode);
             }
-
-            log.info("SAML [{}]: Signature validation passed", institutionCode);
-            return true;
+            return valid;
 
         } catch (Exception e) {
-            log.error("SAML [{}]: Signature validation error", institutionCode, e);
+            log.error("SAML [{}]: Signature validation threw exception", institutionCode, e);
             return false;
         }
     }
 
+    /**
+     * Register ID attributes on all elements that carry them.
+     * Required so that enveloped-signature URI references (URI="#id123") resolve correctly.
+     */
+    private void registerIdAttributes(Document doc) {
+        String[] idAttrNames = {"ID", "Id", "id"};
+        registerIdOnElements(doc.getElementsByTagNameNS(SAMLP_NS, "Response"),    idAttrNames);
+        registerIdOnElements(doc.getElementsByTagNameNS(SAML_NS,  "Assertion"),   idAttrNames);
+        registerIdOnElements(doc.getElementsByTagNameNS(SAML_NS,  "EncryptedAssertion"), idAttrNames);
+    }
+
+    private void registerIdOnElements(NodeList nodes, String[] idAttrNames) {
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element el = (Element) nodes.item(i);
+            for (String attr : idAttrNames) {
+                if (el.hasAttribute(attr)) {
+                    el.setIdAttribute(attr, true);
+                }
+            }
+        }
+    }
+
+    // ??? Certificate loading ??????????????????????????????????????????????????
+
     private X509Certificate loadCertificateFromPem(String pem) throws Exception {
         if (pem == null || pem.isBlank()) {
-            throw new IllegalArgumentException("PEM certificate is null or blank");
+            throw new IllegalArgumentException("IdP certificate is null or blank ? check idp.certificate in scsb_properties_t");
         }
 
-        String normalised = pem.replace("\\n", "\n");
+        // Handle escaped newlines stored in DB (common when inserted via SQL string literals)
+        String normalised = pem.replace("\\n", "\n").trim();
 
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
@@ -254,6 +308,7 @@ public class SamlAuthHandler {
                 return (X509Certificate) cf.generateCertificate(is);
             }
         } else {
+            // Raw base64 (no PEM headers) ? stored directly in DB
             byte[] certBytes = Base64.getDecoder().decode(normalised.replaceAll("\\s+", ""));
             try (InputStream is = new ByteArrayInputStream(certBytes)) {
                 return (X509Certificate) cf.generateCertificate(is);
@@ -262,9 +317,7 @@ public class SamlAuthHandler {
     }
 
     private String extractCertBody(String pemCert) {
-        if (pemCert == null || pemCert.isBlank()) {
-            return null;
-        }
+        if (pemCert == null || pemCert.isBlank()) return null;
         return pemCert
                 .replace("-----BEGIN CERTIFICATE-----", "")
                 .replace("-----END CERTIFICATE-----", "")
@@ -275,7 +328,8 @@ public class SamlAuthHandler {
         NodeList attributes = doc.getElementsByTagNameNS(SAML_NS, "Attribute");
         for (int i = 0; i < attributes.getLength(); i++) {
             Element attr = (Element) attributes.item(i);
-            if (attributeName.equals(attr.getAttribute("Name"))) {
+            if (attributeName.equals(attr.getAttribute("Name"))
+                    || attributeName.equals(attr.getAttribute("FriendlyName"))) {
                 NodeList values = attr.getElementsByTagNameNS(SAML_NS, "AttributeValue");
                 if (values.getLength() > 0) {
                     return values.item(0).getTextContent().trim();
