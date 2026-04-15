@@ -18,5 +18,5 @@ public class SamlConfig {
     private String idpCertificate;
     private String spCertificate;
     private String spPrivateKey;
-    private boolean active = true;
+//    private boolean active = true;
 }

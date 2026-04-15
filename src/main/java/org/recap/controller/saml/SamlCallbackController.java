@@ -52,10 +52,10 @@ public class SamlCallbackController extends AbstractController {
 
         SamlConfig config = buildSamlConfig(institution);
 
-        if (!config.isActive()) {
+     /*   if (!config.isActive()) {
             log.warn("SAML [{}]: SAML is disabled (saml.active=false)", institution);
             return "redirect:/?error=saml_disabled";
-        }
+        }*/
         if (StringUtils.isBlank(config.getIdpSsoUrl())) {
             log.error("SAML [{}]: idp.sso.url not configured", institution);
             return "redirect:/?error=saml_config_missing";
@@ -245,7 +245,7 @@ public class SamlCallbackController extends AbstractController {
                 .idpCertificate(getProperty(institutionCode, ScsbConstants.IDP_CERTIFICATE))
                 .spCertificate(getProperty(institutionCode, ScsbConstants.SP_CERTIFICATE))
                 .spPrivateKey(getProperty(institutionCode, ScsbConstants.SP_PRIVATE_KEY))
-                .active(!"false".equalsIgnoreCase(getProperty(institutionCode, ScsbConstants.SAML_ACTIVE)))
+//                .active(!"false".equalsIgnoreCase(getProperty(institutionCode, ScsbConstants.SAML_ACTIVE)))
                 .build();
     }
 
