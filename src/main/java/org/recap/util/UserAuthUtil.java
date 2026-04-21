@@ -3,6 +3,7 @@ package org.recap.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.PropertyKeyConstants;
+import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.service.RestHeaderService;
@@ -93,6 +94,9 @@ public class UserAuthUtil {
      * <code>false</code> if not
      */
     public boolean isAuthenticated(HttpSession httpSession, String roleUrl) {
+        if (Boolean.TRUE.equals(httpSession.getAttribute(ScsbConstants.SAML_AUTHENTICATED))) {
+            return isSamlSessionAuthorized(httpSession, roleUrl);
+        }
         return this.authorizedUser(roleUrl, (UsernamePasswordToken) httpSession.getAttribute(ScsbConstants.USER_TOKEN));
     }
 
@@ -109,5 +113,19 @@ public class UserAuthUtil {
         return this.isAuthenticated(httpSession, roleUrl);
     }
 
+
+    private boolean isSamlSessionAuthorized(HttpSession session, String roleUrl) {
+        if (roleUrl == null) return false;
+        if (roleUrl.contains("search"))      return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.SEARCH_PRIVILEGE));
+        if (roleUrl.contains("request"))     return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.REQUEST_PRIVILEGE));
+        if (roleUrl.contains("collection"))  return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.COLLECTION_PRIVILEGE));
+        if (roleUrl.contains("reports"))     return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.REPORTS_PRIVILEGE));
+        if (roleUrl.contains("userRoles"))   return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.USER_ROLE_PRIVILEGE));
+        if (roleUrl.contains("bulkRequest")) return Boolean.TRUE.equals(session.getAttribute(ScsbCommonConstants.BULK_REQUEST_PRIVILEGE));
+        if (roleUrl.contains("monitoring"))  return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.MONITORING));
+        if (roleUrl.contains("dataExport"))  return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.DATA_EXPORT));
+        if (roleUrl.contains("roles"))       return Boolean.TRUE.equals(session.getAttribute(ScsbConstants.SUPER_ADMIN_USER));
+        return false;
+    }
 
 }
