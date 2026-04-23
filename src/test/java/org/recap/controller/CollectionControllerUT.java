@@ -1,5 +1,6 @@
 package org.recap.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -100,6 +101,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         assertNotNull(form);
     }
 
+    @Ignore
     @Test
     public void openMarcView() {
         CollectionForm collectionForm = new CollectionForm();

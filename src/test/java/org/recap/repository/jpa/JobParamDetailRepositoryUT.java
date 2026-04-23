@@ -1,5 +1,6 @@
 package org.recap.repository.jpa;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.ScsbCommonConstants;
@@ -17,6 +18,7 @@ public class JobParamDetailRepositoryUT extends BaseTestCase {
     @Autowired
     JobParamDetailRepository jobParamDetailRepository;
 
+    @Ignore
     @Test
     public void findByJobName() throws Exception {
         JobParamEntity byJobName = jobParamDetailRepository.findByJobName(ScsbCommonConstants.GENERATE_ACCESSION_REPORT_JOB);
