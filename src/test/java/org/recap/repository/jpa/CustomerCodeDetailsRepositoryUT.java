@@ -1,6 +1,6 @@
 package org.recap.repository.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.OwnerCodeEntity;
 
@@ -9,8 +9,8 @@ import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by rajeshbabuk on 18/10/16.

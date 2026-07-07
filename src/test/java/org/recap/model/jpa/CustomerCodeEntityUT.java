@@ -1,6 +1,6 @@
 package org.recap.model.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 
 public class CustomerCodeEntityUT extends BaseTestCaseUT {

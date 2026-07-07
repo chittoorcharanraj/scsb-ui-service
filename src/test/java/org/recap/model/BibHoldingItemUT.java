@@ -1,25 +1,13 @@
 package org.recap.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
-import org.recap.model.jaxb.Bib;
-import org.recap.model.jaxb.BibRecord;
-import org.recap.model.jaxb.Holding;
-import org.recap.model.jaxb.Holdings;
-import org.recap.model.jaxb.Items;
-import org.recap.model.jaxb.marc.BibRecords;
-import org.recap.model.jaxb.marc.CollectionType;
-import org.recap.model.jaxb.marc.ContentType;
-import org.recap.model.jaxb.marc.ControlFieldType;
-import org.recap.model.jaxb.marc.DataFieldType;
-import org.recap.model.jaxb.marc.LeaderFieldType;
-import org.recap.model.jaxb.marc.RecordType;
-import org.recap.model.jaxb.marc.RecordTypeType;
-import org.recap.model.jaxb.marc.SubfieldatafieldType;
+import org.recap.model.jaxb.*;
+import org.recap.model.jaxb.marc.*;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 22/3/17.

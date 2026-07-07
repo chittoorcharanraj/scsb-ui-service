@@ -1,21 +1,16 @@
 package org.recap.filter;
 
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
 import org.recap.ScsbConstants;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,11 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class SCSBValidationFilterTest {
 
     @InjectMocks
@@ -55,7 +50,7 @@ public class SCSBValidationFilterTest {
     private static final String CSP_CONTENT = "self 'unsafe-inline'";
     private static final String FRAME_ANCESTOR = "self";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         helperUtilMock = Mockito.mockStatic(HelperUtil.class);
@@ -68,7 +63,7 @@ public class SCSBValidationFilterTest {
         doReturn(userAuthUtil).when(scsbValidationFilter).getUserAuthUtil();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (helperUtilMock != null) helperUtilMock.close();
     }

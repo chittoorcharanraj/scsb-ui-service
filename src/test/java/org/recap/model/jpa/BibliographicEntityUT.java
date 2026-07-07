@@ -2,7 +2,7 @@ package org.recap.model.jpa;
 
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by pvsubrah on 6/20/16.

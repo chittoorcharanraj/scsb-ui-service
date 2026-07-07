@@ -1,11 +1,11 @@
 package org.recap.model.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 
 import java.util.Date;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class BulkRequestItemEntityUT extends BaseTestCase {
 
     @Test

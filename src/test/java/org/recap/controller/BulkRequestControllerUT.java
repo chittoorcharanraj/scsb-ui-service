@@ -1,8 +1,8 @@
 package org.recap.controller;
 
-import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,8 +27,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 
@@ -91,7 +91,7 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
         Mockito.when(requestService.getRefreshedStatus(reqJson, ScsbConstants.TRUE)).thenReturn(ScsbCommonConstants.COMPLETE_STATUS);
         String result = bulkRequestController.refreshStatus(reqJson);
-        TestCase.assertNotNull(result);
+        Assertions.assertNotNull(result);
         assertEquals("Complete", result);
     }
     @Test

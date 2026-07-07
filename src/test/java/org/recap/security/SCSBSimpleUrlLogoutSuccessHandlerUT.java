@@ -1,24 +1,26 @@
 package org.recap.security;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.recap.Main;
 import org.recap.util.UserAuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = Main.class)
 public class SCSBSimpleUrlLogoutSuccessHandlerUT {
 
 
-    @Autowired
+    @Mock
     UserAuthUtil userAuthUtil;
 
     @Mock

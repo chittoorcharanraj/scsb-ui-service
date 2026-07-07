@@ -1,6 +1,6 @@
 package org.recap.helper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -12,7 +12,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpInterceptorUT extends BaseTestCaseUT {
 

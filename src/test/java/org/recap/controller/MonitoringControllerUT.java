@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MonitoringControllerUT extends BaseTestCaseUT {
 
@@ -43,7 +43,7 @@ public class MonitoringControllerUT extends BaseTestCaseUT {
 
     private final String embedLogURL = "embedLogURL";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ReflectionTestUtils.setField(monitoringController, "scsbURL", scsbURL);
         ReflectionTestUtils.setField(monitoringController, "dockerURL", dockerURL);

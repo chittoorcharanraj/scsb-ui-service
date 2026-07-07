@@ -2,45 +2,32 @@ package org.recap.controller;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.recap.Main;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.CancelRequestResponse;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.HoldingsEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.service.RestHeaderService;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +38,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.client.RestClientException;
@@ -59,28 +45,18 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
  * Created by rajeshbabuk on 21/10/16.
  */
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@SpringBootTest(classes = Main.class)
 public class RequestControllerTestUT  {
 
     @InjectMocks
@@ -125,8 +101,8 @@ public class RequestControllerTestUT  {
     @Mock
     ItemDetailsRepository itemDetailsRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Mock
+    EntityManager entityManager;
 
     @Mock
     RestTemplate restTemplate;
@@ -156,11 +132,11 @@ public class RequestControllerTestUT  {
     UserManagementService userManagementService;
 
 
-//    @Before
-//    public void setUp() {
-//        MockitoAnnotations.initMocks(this);
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
 //        this.mockMvc = MockMvcBuilders.standaloneSetup(requestController).build();
-//    }
+    }
 
     public BindingAwareModelMap getModel() {
         return model;

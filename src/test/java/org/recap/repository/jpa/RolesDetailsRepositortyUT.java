@@ -1,6 +1,7 @@
 package org.recap.repository.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.PermissionEntity;
 import org.recap.model.jpa.RoleEntity;
@@ -16,9 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 22/12/16.
@@ -154,7 +154,7 @@ public class RolesDetailsRepositortyUT extends BaseTestCase {
         Page<RoleEntity> rolesWithoutSuperAdmin = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
         List<RoleEntity> roleContent = rolesWithoutSuperAdmin.getContent();
         for (RoleEntity entity : roleContent) {
-            assertNotEquals("SuperAdmin",entity.getRoleName());
+            Assertions.assertNotEquals("SuperAdmin", entity.getRoleName());
         }
     }
 

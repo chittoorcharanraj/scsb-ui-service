@@ -1,14 +1,10 @@
 package org.recap.util;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.recap.BaseTestCase;
+import org.recap.Main;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.jpa.BibliographicEntity;
 import org.recap.model.jpa.HoldingsEntity;
@@ -16,21 +12,25 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = Main.class)
 public class MarcRecordViewUtilIT {
 
     @PersistenceContext
@@ -84,8 +84,8 @@ public class MarcRecordViewUtilIT {
         Random random = new Random();
         File bibContentFile = getBibContentFile();
         File holdingsContentFile = getHoldingsContentFile();
-        String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
-        String sourceHoldingsContent = FileUtils.readFileToString(holdingsContentFile, "UTF-8");
+        String sourceBibContent = Files.readString(Paths.get(bibContentFile.toURI()));
+        String sourceHoldingsContent = Files.readString(Paths.get(holdingsContentFile.toURI()));
 
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent(sourceBibContent.getBytes());

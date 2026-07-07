@@ -1,12 +1,8 @@
 package org.recap.util;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.model.deaccession.DeAccessionRequest;
@@ -23,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -47,7 +43,7 @@ public class CollectionServiceUtilUT extends BaseTestCaseUT {
 
     private String scsbUrl = "http://localhost:8080/testurl";
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(collectionServiceUtil,"scsbUrl",scsbUrl);
     }

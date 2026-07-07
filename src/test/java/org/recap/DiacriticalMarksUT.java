@@ -1,7 +1,7 @@
 package org.recap;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.recap.model.jpa.BibliographicEntity;
@@ -125,7 +125,7 @@ public class DiacriticalMarksUT extends BaseTestCase {
         text = getText(xmlRecords);
         System.out.println("from xml --->" + text);
         System.out.println("from database --->" + diacriticalText);
-        Assert.assertEquals(text,diacriticalText);
+        Assertions.assertEquals(text, diacriticalText);
         bibliographicDetailsRepository.delete(bibliographicEntity);
    }
 

@@ -1,7 +1,7 @@
 package org.recap.repository.jpa;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
@@ -42,7 +42,7 @@ public class BaseSpecificationUT extends BaseTestCaseUT {
 
     List<SearchCriteria> list = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ReflectionTestUtils.setField(baseSpecification, "list", list);
     }

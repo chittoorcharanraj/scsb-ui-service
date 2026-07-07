@@ -1,34 +1,22 @@
 package org.recap;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.recap.repository.jpa.BibliographicDetailsRepository;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.HoldingsDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.ItemStatusDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
-import org.recap.repository.jpa.PermissionsDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
-import org.recap.repository.jpa.RolesDetailsRepositorty;
-import org.recap.repository.jpa.UserDetailsRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.recap.repository.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSessionEvent;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = Main.class)
-@WebAppConfiguration
 @Transactional
 @Rollback()
+@TestPropertySource("classpath:application.properties")
 public class BaseTestCase {
 
     @Autowired
@@ -80,13 +68,13 @@ public class BaseTestCase {
 
     @Test
     public void loadContexts() {
-        System.out.println();
+//        System.out.println();
     }
 
     protected void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
     }
 /*
-    @Before
+    @BeforeEach
     public void loadApplicationContexts() {
         this.mockMvc = webAppContextSetup(applicationContext).build();
         assertNotNull(applicationContext);

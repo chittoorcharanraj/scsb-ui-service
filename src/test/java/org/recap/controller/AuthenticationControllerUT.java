@@ -1,21 +1,20 @@
 package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.recap.BaseTestCase;
 import org.recap.ScsbConstants;
 import org.recap.model.usermanagement.UserForm;
 import org.recap.util.UserAuthUtil;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class AuthenticationControllerUT  {
     @Mock
     HttpSession session;

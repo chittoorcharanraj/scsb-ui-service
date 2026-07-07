@@ -1,13 +1,9 @@
 package org.recap.util;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.model.reports.ReportsRequest;
 import org.recap.model.reports.ReportsResponse;
@@ -27,8 +23,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -50,7 +46,7 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     @Mock
     HttpHeaders httpHeaders;
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(reportsServiceUtil,"titleReportExportLimit",10);
     }

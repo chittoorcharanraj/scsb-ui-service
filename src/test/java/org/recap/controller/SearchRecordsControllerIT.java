@@ -1,27 +1,27 @@
 package org.recap.controller;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
 import org.recap.model.search.SearchResultRow;
 import org.recap.util.CsvUtil;
 import org.recap.util.UserAuthUtil;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by premkb on 2/8/16.
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class SearchRecordsControllerIT  {
 
     @InjectMocks

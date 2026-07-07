@@ -1,7 +1,7 @@
 package org.recap.security;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
 
@@ -51,7 +51,7 @@ public class MultiCASAndOAuthSecurityConfigurationUT extends BaseTestCaseUT {
     @Mock
     AuthenticationConfiguration authenticationConfiguration;
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"casServiceLogout","https://test");
         ReflectionTestUtils.setField(multiCASAndOAuthSecurityConfiguration,"casUrlPrefix","test");

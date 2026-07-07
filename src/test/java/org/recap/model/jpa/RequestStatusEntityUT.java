@@ -1,11 +1,11 @@
 package org.recap.model.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.repository.jpa.RequestStatusDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 20/2/17.

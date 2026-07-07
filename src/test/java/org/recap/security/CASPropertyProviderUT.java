@@ -1,13 +1,13 @@
 package org.recap.security;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.recap.BaseTestCaseUT;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by hemalathas on 30/3/17.
@@ -22,7 +22,7 @@ public class CASPropertyProviderUT extends BaseTestCaseUT {
 
     private String home = "test";
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(casPropertyProvider,"security",security);
         ReflectionTestUtils.setField(casPropertyProvider,"home",home);

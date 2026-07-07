@@ -1,13 +1,12 @@
 package org.recap.security;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.recap.BaseTestCase;
 
 import java.net.URL;
 
-@Ignore
+@Disabled
 public class SCSBAbstractCasProtocolUrlBasedTicketValidatorUT {
 
     @Mock

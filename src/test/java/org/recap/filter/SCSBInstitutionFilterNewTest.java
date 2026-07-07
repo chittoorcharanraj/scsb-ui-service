@@ -1,18 +1,14 @@
 package org.recap.filter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
 import org.recap.ScsbConstants;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,11 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class SCSBInstitutionFilterNewTest {
 
     @InjectMocks
@@ -48,7 +44,7 @@ public class SCSBInstitutionFilterNewTest {
     private static final String INSTITUTION = "PUL";
     private static final String LOGOUT_URL = "https://cas.example.com/logout";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         helperUtilMock = Mockito.mockStatic(HelperUtil.class);
@@ -60,7 +56,7 @@ public class SCSBInstitutionFilterNewTest {
         when(session.getId()).thenReturn(SESSION_ID);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (helperUtilMock != null) {
             helperUtilMock.close();

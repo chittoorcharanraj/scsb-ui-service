@@ -3,17 +3,13 @@ package org.recap.util;
 
 import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCaseUT;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by premkb on 1/8/16.
@@ -224,6 +220,7 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
         BibJSONUtil bibJSONUtil = new BibJSONUtil();
         Record marcRecord = new RecordImpl();
         String titleSort = bibJSONUtil.getTitleSort(marcRecord, bibJSONUtil.getTitleDisplay(marcRecord));
+
         assertNotNull(titleSort);
         assertEquals(titleSort,"");
     }

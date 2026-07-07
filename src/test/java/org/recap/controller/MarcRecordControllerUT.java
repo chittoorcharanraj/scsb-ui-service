@@ -1,6 +1,6 @@
 package org.recap.controller;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -8,7 +8,7 @@ import org.recap.BaseTestCaseUT;
 import org.recap.model.search.BibliographicMarcForm;
 import org.recap.util.MarcRecordViewUtil;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MarcRecordControllerUT extends BaseTestCaseUT {
 

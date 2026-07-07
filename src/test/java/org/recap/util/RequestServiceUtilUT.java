@@ -1,29 +1,16 @@
 package org.recap.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.ImsLocationEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.reports.TransactionReport;
 import org.recap.model.reports.TransactionReports;
 import org.recap.model.search.RequestForm;
-import org.recap.repository.jpa.CollectionGroupDetailsRepository;
-import org.recap.repository.jpa.ImsLocationDetailRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.SCSBService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +21,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 /**

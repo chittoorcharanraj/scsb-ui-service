@@ -1,6 +1,6 @@
 package org.recap.model.request;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -9,7 +9,7 @@ import org.recap.model.search.RequestForm;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ReplaceRequestUT extends BaseTestCaseUT {
 

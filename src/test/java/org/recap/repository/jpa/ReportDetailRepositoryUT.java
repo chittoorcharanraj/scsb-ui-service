@@ -1,6 +1,6 @@
 package org.recap.repository.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -9,13 +9,9 @@ import org.recap.model.jpa.ReportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by SheikS on 8/8/2016.

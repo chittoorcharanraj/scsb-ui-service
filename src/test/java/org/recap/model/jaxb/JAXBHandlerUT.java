@@ -1,8 +1,8 @@
 package org.recap.model.jaxb;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
 
@@ -25,7 +25,7 @@ public class JAXBHandlerUT extends BaseTestCaseUT {
         String res = jaxBHandler.marshal("test");
         try {
             Object objectValue = jaxBHandler.unmarshal("Test Data", object.getClass());
-            Assert.assertNotNull(objectValue);
+            Assertions.assertNotNull(objectValue);
         } catch (JAXBException e) {
         }
         Map<String, Unmarshaller> data = new HashMap<>();

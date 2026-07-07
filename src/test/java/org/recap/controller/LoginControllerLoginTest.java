@@ -1,17 +1,11 @@
 package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.UsersEntity;
 import org.recap.repository.jpa.UserDetailsRepository;
@@ -28,6 +22,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.Cookie;
@@ -38,12 +33,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class LoginControllerLoginTest {
 
     @InjectMocks
@@ -80,7 +75,7 @@ public class LoginControllerLoginTest {
     private static final String USERNAME = "jdoe";
     private static final String SUB_USERNAME = "jdoe@example.com";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
@@ -115,7 +110,7 @@ public class LoginControllerLoginTest {
         SecurityContextHolder.clearContext();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (helperUtilMock != null) helperUtilMock.close();
         SecurityContextHolder.clearContext();

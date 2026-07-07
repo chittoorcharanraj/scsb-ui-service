@@ -1,6 +1,6 @@
 package org.recap.repository.jpa;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 import org.recap.repository.SearchCriteria;
 import org.recap.repository.SearchOperation;

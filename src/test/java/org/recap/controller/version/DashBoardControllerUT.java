@@ -1,7 +1,7 @@
 package org.recap.controller.version;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -24,7 +24,7 @@ public class DashBoardControllerUT extends BaseTestCaseUT {
     @Mock
     PropertyUtil propertyUtil;
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(dashBoardController,"versionNumberService","1.0");
         ReflectionTestUtils.setField(dashBoardController,"recapAssistanceEmailTo","test@gmail.com");

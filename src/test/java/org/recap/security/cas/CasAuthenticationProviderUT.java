@@ -2,7 +2,7 @@ package org.recap.security.cas;
 
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.Key;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 

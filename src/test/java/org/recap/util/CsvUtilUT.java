@@ -1,8 +1,7 @@
 package org.recap.util;
 
 import com.csvreader.CsvReader;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.search.SearchItemResultRow;
 import org.recap.model.search.SearchRecordsRequest;
@@ -18,9 +17,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Created by premkb on 29/7/16.

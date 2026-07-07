@@ -1,7 +1,7 @@
 package org.recap.service;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +21,6 @@ public class RestHeaderServiceUT extends BaseTestCase{
     public void testRestHeaderService(){
         Map<String,String> apiKey;
         HttpHeaders httpHeaders = restHeaderService.getHttpHeaders();
-        Assert.assertEquals(httpHeaders.getContentType(),MediaType.APPLICATION_JSON);
+        Assertions.assertEquals(httpHeaders.getContentType(), MediaType.APPLICATION_JSON);
     }
 }

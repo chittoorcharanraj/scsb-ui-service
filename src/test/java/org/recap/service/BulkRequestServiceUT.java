@@ -1,22 +1,11 @@
 package org.recap.service;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.powermock.api.mockito.PowerMockito;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.BulkCustomerCodeEntity;
-import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.model.jpa.ImsLocationEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.UsersEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
@@ -40,17 +29,13 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 
 public class BulkRequestServiceUT extends BaseTestCaseUT {
@@ -244,7 +229,7 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
 
     @Test
     public void testProcessOnPageSizeChange() {
-        Page<BulkRequestItemEntity> bulkRequestItemEntities = PowerMockito.mock(Page.class);
+        Page<BulkRequestItemEntity> bulkRequestItemEntities = Mockito.mock(Page.class);
         Mockito.when(bulkSearchRequestService.processSearchRequest(any())).thenReturn(bulkRequestItemEntities);
         Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(2l);
         List<BulkRequestItemEntity> bulkRequestItemEntityList = new ArrayList<>();
@@ -259,7 +244,7 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
 
     @Test
     public void testProcessOnPageSizeChangeResultsNotFound() {
-        Page<BulkRequestItemEntity> bulkRequestItemEntities = PowerMockito.mock(Page.class);
+        Page<BulkRequestItemEntity> bulkRequestItemEntities = Mockito.mock(Page.class);
         Mockito.when(bulkSearchRequestService.processSearchRequest(any())).thenReturn(bulkRequestItemEntities);
         Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(0l);
         List<BulkRequestItemEntity> bulkRequestItemEntityList = new ArrayList<>();
@@ -274,7 +259,7 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
 
     @Test
     public void testProcessOnPageSizeChangeException() {
-        Page<BulkRequestItemEntity> bulkRequestItemEntities = PowerMockito.mock(Page.class);
+        Page<BulkRequestItemEntity> bulkRequestItemEntities = Mockito.mock(Page.class);
         Mockito.when(bulkSearchRequestService.processSearchRequest(any())).thenReturn(bulkRequestItemEntities);
         Mockito.when(bulkRequestItemEntities.getTotalElements()).thenReturn(2l);
         List<BulkRequestItemEntity> bulkRequestItemEntityList = new ArrayList<>();

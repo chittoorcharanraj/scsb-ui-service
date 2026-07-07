@@ -1,22 +1,17 @@
 package org.recap.controller;
 
 import org.apache.commons.compress.utils.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.recap.BaseTestCaseUT;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
-import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.LocationDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
-import org.recap.repository.jpa.SCSBPropertiesDetailRepository;
+import org.recap.repository.jpa.*;
 import org.recap.service.FileUploadService;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Element;
@@ -31,12 +26,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.*;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class AdminControllerUT {
 
     @InjectMocks

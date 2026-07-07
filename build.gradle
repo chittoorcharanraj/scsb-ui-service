@@ -82,19 +82,25 @@ dependencies {
 	testAnnotationProcessor('org.projectlombok:lombok:1.18.32')
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.32'
 
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
-	testImplementation 'org.mockito:mockito-inline:5.2.0'
-	testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.9'
-	testImplementation group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.9'
-	testImplementation 'junit:junit:4.13.2'
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	//testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core:5.23.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.0'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.1.0'
+	testImplementation 'net.bytebuddy:byte-buddy:1.17.7'
+	testImplementation 'net.bytebuddy:byte-buddy-agent:1.17.7'
+
 }
 
 configurations.all {
 	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
 		if (details.requested.group == 'org.apache.logging.log4j') {
 			details.useVersion '3.0.0-alpha1'
+		}
+		if (details.requested.group == 'org.junit.platform') {
+			details.useVersion '6.1.0'
+		}
+		if (details.requested.group == 'org.junit.jupiter') {
+			details.useVersion '6.1.0'
 		}
 	}
 }
@@ -117,6 +123,7 @@ test {
 }
 
 test{
+	useJUnitPlatform()
 	jvmArgs "-Dnet.bytebuddy.experimental=true"
 }
 

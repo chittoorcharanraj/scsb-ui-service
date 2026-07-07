@@ -1,14 +1,13 @@
 package org.recap.security;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.recap.ScsbConstants;
 import org.recap.util.HelperUtil;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -17,7 +16,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class SCSBHttpSessionEventPublisherUT  {
 
     @Mock

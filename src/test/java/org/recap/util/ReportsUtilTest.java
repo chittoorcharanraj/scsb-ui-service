@@ -1,7 +1,7 @@
 package org.recap.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class ReportsUtilTest extends BaseTestCaseUT {
@@ -45,7 +45,7 @@ public class ReportsUtilTest extends BaseTestCaseUT {
     @Mock
     RequestItemDetailsRepository requestItemDetailsRepository;
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(reportsUtil,"supportInstitution","PUL");
     }

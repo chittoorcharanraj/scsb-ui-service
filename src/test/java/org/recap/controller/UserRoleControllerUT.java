@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 
@@ -212,7 +212,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         assertNotNull(userRoleForm1);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void editUser() {
         usersSessionAttributes();
@@ -228,7 +228,7 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         assertNotNull(userRoleForm1);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void editUserGetUE() {
         usersSessionAttributes();

@@ -1,11 +1,12 @@
 package org.recap.model.search;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCaseUT;
 
 import java.util.Date;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 public class BulkSearchResultRowUT extends BaseTestCaseUT {
 

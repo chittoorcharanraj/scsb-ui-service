@@ -1,7 +1,7 @@
 package org.recap.filter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class XSSRequestWrapperUT extends BaseTestCaseUT {
@@ -38,7 +38,7 @@ public class XSSRequestWrapperUT extends BaseTestCaseUT {
     @Mock
     Enumeration<String> enumeration;
 
-    @Before
+    @BeforeEach
     public void setup(){
         ReflectionTestUtils.setField(xssRequestWrapper,"request",request);
     }

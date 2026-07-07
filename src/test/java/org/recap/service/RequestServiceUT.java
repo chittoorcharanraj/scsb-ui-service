@@ -3,40 +3,27 @@ package org.recap.service;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.BulkRequestItemEntity;
-import org.recap.model.jpa.DeliveryCodeEntity;
-import org.recap.model.jpa.ImsLocationEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
+import org.recap.model.jpa.*;
 import org.recap.model.request.RequestLogReportRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.BulkRequestDetailsRepository;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.ItemDetailsRepository;
-import org.recap.repository.jpa.OwnerCodeDetailsRepository;
-import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.repository.jpa.RequestStatusDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
+import org.recap.repository.jpa.*;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.client.RestTemplate;
@@ -47,25 +34,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 
 /**
  * Created by akulak on 24/4/17.
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class RequestServiceUT{
 
 
@@ -163,7 +140,7 @@ public class RequestServiceUT{
     @Mock
     HttpHeaders headers;
 
-    @Before
+    @BeforeEach
     public void setup() {
         Mockito.when(requestService.getUserAuthUtil()).thenReturn(userAuthUtil);
     }

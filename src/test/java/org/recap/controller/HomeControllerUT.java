@@ -1,8 +1,8 @@
 package org.recap.controller;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -45,7 +45,7 @@ public class HomeControllerUT extends BaseTestCaseUT {
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
 
-    @Before
+    @BeforeEach
     public void setup(){
         UserForm userForm = new UserForm();
         userForm.setUsername("SuperAdmin");

@@ -2,7 +2,7 @@ package org.recap.util;
 
 import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
@@ -20,7 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Created by pvsubrah on 6/15/16.
@@ -253,7 +254,7 @@ public class MarcUtilUT {
         List<Record> records = marcUtil.convertMarcXmlToRecord(marcXML);
         assertNotNull(records.get(0));
         Integer secondIndicatorForDataField = marcUtil.getSecondIndicatorForDataField(records.get(0), "245");
-        assertEquals(secondIndicatorForDataField, new Integer(3));
+        assertEquals(secondIndicatorForDataField, 3);
     }
 
     private List<Record> getRecords() throws Exception{

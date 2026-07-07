@@ -1,10 +1,12 @@
 package org.recap.controller.saml;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.UsersEntity;
 import org.recap.model.saml.SamlConfig;
@@ -14,6 +16,7 @@ import org.recap.security.saml.SamlAuthHandler;
 import org.recap.util.PropertyUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +24,8 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +37,7 @@ import static org.mockito.Mockito.*;
  * 3. spMetadataWithCode    ? GET /saml/metadata/{institutionCode}
  * 4. spMetadataFromSession ? GET /saml/metadata
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
 public class SamlCallbackControllerTest {
 
     @InjectMocks
@@ -61,7 +65,7 @@ public class SamlCallbackControllerTest {
     private static final String SP_CERT = "MIIC...dummySpCert";
     private static final String SAML_RESP_B64 = "PHNhbWxwOlJlc3BvbnNlLz4="; // placeholder
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
@@ -145,8 +149,8 @@ public class SamlCallbackControllerTest {
 
         String result = controller.initiateSaml(INST, request);
 
-        assertTrue("Should redirect", result.startsWith("redirect:"));
-        assertTrue("Should redirect to IdP", result.contains(IDP_SSO_URL));
+        assertTrue(result.startsWith("redirect:"), "Should redirect");
+        assertTrue(result.contains(IDP_SSO_URL), "Should redirect to IdP");
     }
 
     @Test
@@ -477,8 +481,8 @@ public class SamlCallbackControllerTest {
 
         String result = controller.spMetadataWithCode(INST);
 
-        assertTrue("Expected an XML comment indicating no configuration",
-                result.startsWith("<!-- No SAML configuration found"));
+        assertTrue(result.startsWith("<!-- No SAML configuration found"),
+                "Expected an XML comment indicating no configuration");
         assertTrue(result.contains(INST));
     }
 
@@ -514,8 +518,8 @@ public class SamlCallbackControllerTest {
 
         String result = controller.spMetadataFromSession(request);
 
-        assertTrue("Expected an error comment when no session exists",
-                result.contains("ERROR"));
+        assertTrue(result.contains("ERROR"),
+                "Expected an error comment when no session exists");
         assertTrue(result.contains("institutionCode"));
     }
 
@@ -526,8 +530,8 @@ public class SamlCallbackControllerTest {
 
         String result = controller.spMetadataFromSession(request);
 
-        assertTrue("Expected error comment when institution code is absent",
-                result.contains("ERROR"));
+        assertTrue(result.contains("ERROR"),
+                "Expected error comment when institution code is absent");
     }
 
     @Test
@@ -537,7 +541,7 @@ public class SamlCallbackControllerTest {
 
         String result = controller.spMetadataFromSession(request);
 
-        assertTrue("Expected error comment for blank institution code",
-                result.contains("ERROR"));
+        assertTrue(result.contains("ERROR"),
+                "Expected error comment for blank institution code");
     }
 }

@@ -1,8 +1,8 @@
 package org.recap.util;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.recap.BaseTestCaseUT;
@@ -31,7 +31,7 @@ public class SearchUtilUT extends BaseTestCaseUT {
     @Mock
     ApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ReflectionTestUtils.setField(searchUtil, "scsbGatewayUrl", "http://localhost:9090");
         ApplicationContextProvider.getInstance().setApplicationContext(applicationContext);
@@ -58,7 +58,7 @@ public class SearchUtilUT extends BaseTestCaseUT {
         SearchRecordsResponse searchRecordsResponses = new SearchRecordsResponse();
         searchRecordsResponses.setSearchResultRows(buildSearchResultRow(5));
         SearchRecordsResponse response = searchUtil.searchRecord(searchRecordsRequest);
-        Assert.assertNotNull(response);
+        Assertions.assertNotNull(response);
     }
 
     public List<SearchResultRow> buildSearchResultRow(int count) {

@@ -1,7 +1,7 @@
 package org.recap.controller;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -9,22 +9,8 @@ import org.mockito.Spy;
 import org.recap.BaseTestCaseUT;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.CollectionGroupEntity;
-import org.recap.model.jpa.DeliveryCodeEntity;
-import org.recap.model.jpa.InstitutionEntity;
-import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemStatusEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.RequestStatusEntity;
-import org.recap.model.jpa.RequestTypeEntity;
-import org.recap.model.search.BibDataField;
-import org.recap.model.search.BibliographicMarcForm;
-import org.recap.model.search.CollectionForm;
-import org.recap.model.search.SearchItemResultRow;
-import org.recap.model.search.SearchRecordsRequest;
-import org.recap.model.search.SearchRecordsResponse;
-import org.recap.model.search.SearchResultRow;
+import org.recap.model.jpa.*;
+import org.recap.model.search.*;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
@@ -43,8 +29,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -101,7 +87,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         assertNotNull(form);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void openMarcView() {
         CollectionForm collectionForm = new CollectionForm();

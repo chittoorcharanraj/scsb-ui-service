@@ -1,15 +1,14 @@
 package org.recap.controller;
 
-import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.recap.BaseTestCaseUT;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
-import org.recap.model.jpa.*;
+import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.jpa.JobEntity;
+import org.recap.model.jpa.JobParamDataEntity;
+import org.recap.model.jpa.JobParamEntity;
 import org.recap.model.schedule.ScheduleJobRequest;
 import org.recap.model.schedule.ScheduleJobResponse;
 import org.recap.model.search.ScheduleJobsForm;
@@ -29,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

@@ -1,11 +1,10 @@
 package org.recap.util;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.recap.Main;
 import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
@@ -23,11 +22,9 @@ import org.recap.repository.jpa.OwnerCodeDetailsRepository;
 import org.recap.service.RestHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.*;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
@@ -39,23 +36,18 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Created by rajeshbabuk on 19/10/16.
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = Main.class)
 public class CollectionServiceUtilIT {
 
     private MockMvc mockMvc;
@@ -267,8 +259,8 @@ public class CollectionServiceUtilIT {
         Random random = new Random();
         File bibContentFile = getBibContentFile();
         File holdingsContentFile = getHoldingsContentFile();
-        String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
-        String sourceHoldingsContent = FileUtils.readFileToString(holdingsContentFile, "UTF-8");
+        String sourceBibContent = Files.readString(Paths.get(bibContentFile.toURI()));
+        String sourceHoldingsContent = Files.readString(Paths.get(holdingsContentFile.toURI()));
 
         BibliographicEntity bibliographicEntity = new BibliographicEntity();
         bibliographicEntity.setContent(sourceBibContent.getBytes());

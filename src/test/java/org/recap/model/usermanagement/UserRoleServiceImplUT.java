@@ -1,6 +1,6 @@
 package org.recap.model.usermanagement;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.UsersEntity;
 import org.recap.repository.jpa.UserDetailsRepository;
@@ -10,8 +10,8 @@ import org.springframework.data.domain.Page;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by akulak on 24/1/17.
