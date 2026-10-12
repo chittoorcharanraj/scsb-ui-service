@@ -63,7 +63,9 @@ public class SamlAuthHandler {
     public String buildAuthnRequestUrl(SamlConfig config, String callbackUrl, String relayState) {
         try {
             String requestId    = "_" + java.util.UUID.randomUUID();
-            String issueInstant = java.time.Instant.now().toString();
+            String issueInstant = java.time.Instant.now()
+                    .truncatedTo(java.time.temporal.ChronoUnit.SECONDS)
+                    .toString();
             String spEntityId   = resolveSpEntityId(config, callbackUrl);
             String effectiveAcs = (config.getAcsUrl() != null && !config.getAcsUrl().isBlank())
                     ? config.getAcsUrl() : callbackUrl;
@@ -102,8 +104,10 @@ public class SamlAuthHandler {
             deflater.end();
 
             String encoded = Base64.getEncoder().encodeToString(baos.toByteArray());
+            String separator = ssoUrl.contains("?") ? "&" : "?";
             StringBuilder redirectUrl = new StringBuilder(ssoUrl)
-                    .append("?SAMLRequest=")
+                    .append(separator)
+                    .append("SAMLRequest=")
                     .append(URLEncoder.encode(encoded, StandardCharsets.UTF_8));
 
             //  carry institutionCode in RelayState so ACS works even

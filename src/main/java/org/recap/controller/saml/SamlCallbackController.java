@@ -78,15 +78,16 @@ public class SamlCallbackController extends AbstractController {
 
     //  IdP POSTs SAMLResponse to /saml/acs
 
-    @PostMapping("/saml/acs")
-    public String samlAcs(@RequestParam("SAMLResponse") String samlResponse,
-                          @RequestParam(value = "RelayState", required = false) String relayState,
-                          HttpServletRequest request) {
-
+        @PostMapping({"/saml/acs", "/saml/acs/{institutionCode}"})
+        public String samlAcs(@PathVariable(value = "institutionCode", required = false) String institutionCodeFromPath,
+                @RequestParam("SAMLResponse") String samlResponse,
+                @RequestParam(value = "RelayState", required = false) String relayState,
+                HttpServletRequest request) {
         log.info("SAML ACS: Received SAMLResponse POST (relayState='{}')", relayState);
-
-        //  Resolve institution: session first, then RelayState fallback
-        String institutionCode = resolveInstitution(request, relayState);
+            // Resolve institution: path variable first (if present), then session, then RelayState
+            String institutionCode = StringUtils.isNotBlank(institutionCodeFromPath)
+                    ? institutionCodeFromPath.toUpperCase()
+                    : resolveInstitution(request, relayState);
 
         if (StringUtils.isBlank(institutionCode)) {
             log.error("SAML ACS: Cannot determine institution ? session expired and no RelayState");
