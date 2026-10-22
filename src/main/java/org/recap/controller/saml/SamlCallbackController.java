@@ -78,15 +78,16 @@ public class SamlCallbackController extends AbstractController {
 
     //  IdP POSTs SAMLResponse to /saml/acs
 
-    @PostMapping("/saml/acs")
-    public String samlAcs(@RequestParam("SAMLResponse") String samlResponse,
-                          @RequestParam(value = "RelayState", required = false) String relayState,
-                          HttpServletRequest request) {
-
+        @PostMapping({"/saml/acs", "/saml/acs/{institutionCode}"})
+        public String samlAcs(@PathVariable(value = "institutionCode", required = false) String institutionCodeFromPath,
+                @RequestParam("SAMLResponse") String samlResponse,
+                @RequestParam(value = "RelayState", required = false) String relayState,
+                HttpServletRequest request) {
         log.info("SAML ACS: Received SAMLResponse POST (relayState='{}')", relayState);
-
-        //  Resolve institution: session first, then RelayState fallback
-        String institutionCode = resolveInstitution(request, relayState);
+            // Resolve institution: path variable first (if present), then session, then RelayState
+            String institutionCode = StringUtils.isNotBlank(institutionCodeFromPath)
+                    ? institutionCodeFromPath.toUpperCase()
+                    : resolveInstitution(request, relayState);
 
         if (StringUtils.isBlank(institutionCode)) {
             log.error("SAML ACS: Cannot determine institution ? session expired and no RelayState");
@@ -116,14 +117,23 @@ public class SamlCallbackController extends AbstractController {
         }
         log.info("SAML ACS [{}]: SAMLResponse valid, userId='{}'", institutionCode, userInfo.userId);
 
-        //  Look up user in USER_T
+        // Look up user in USER_T: try full NameID first, then the short ID (strip domain)
         UsersEntity usersEntity = userDetailsRepository.findByLoginId(userInfo.userId);
+        if (usersEntity == null && userInfo.userId != null && userInfo.userId.contains("@")) {
+            String shortId = userInfo.userId.substring(0, userInfo.userId.indexOf('@'));
+            usersEntity = userDetailsRepository.findByLoginId(shortId);
+            if (usersEntity != null) {
+                log.info("SAML ACS [{}]: Matched '{}' to USER_T.LOGIN_ID '{}'",
+                        institutionCode, userInfo.userId, shortId);
+            }
+        }
         if (usersEntity == null) {
-            log.error("SAML ACS [{}]: User '{}' not found in USER_T ? provision the account first",
+            log.error("SAML ACS [{}]: User '{}' not found in USER_T - provision the account first",
                     institutionCode, userInfo.userId);
             return "redirect:/home?error=saml_user_not_found";
         }
-        log.info("SAML ACS [{}]: User '{}' found in USER_T", institutionCode, userInfo.userId);
+        final String loginId = usersEntity.getLoginId();   // ID exactly as stored in USER_T
+        log.info("SAML ACS [{}]: User '{}' found in USER_T", institutionCode, loginId);
 
         // Session fixation protection
         HttpSession session = processSessionFixation(request, institutionCode);
@@ -132,7 +142,7 @@ public class SamlCallbackController extends AbstractController {
         // Set Spring Security context
         UsernamePasswordAuthenticationToken springAuth =
                 new UsernamePasswordAuthenticationToken(
-                        userInfo.userId,
+                        loginId,
                         null,
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(springAuth);
@@ -140,7 +150,7 @@ public class SamlCallbackController extends AbstractController {
 
         //  Shiro authentication for privilege loading
         UsernamePasswordToken shiroToken = new UsernamePasswordToken(
-                userInfo.userId + ScsbConstants.TOKEN_SPLITER + institutionCode,
+                loginId + ScsbConstants.TOKEN_SPLITER + institutionCode,
                 "",
                 true);
 
@@ -149,19 +159,19 @@ public class SamlCallbackController extends AbstractController {
             resultMap = getUserAuthUtil().doAuthentication(shiroToken);
         } catch (Exception e) {
             log.error("SAML ACS [{}]: Shiro doAuthentication threw exception for user '{}': {}",
-                    institutionCode, userInfo.userId, e.getMessage(), e);
+                    institutionCode, loginId, e.getMessage(), e);
             return "redirect:/home?error=saml_auth_failed";
         }
 
         if (resultMap == null) {
-            log.error("SAML ACS [{}]: Shiro returned null resultMap for user '{}'", institutionCode, userInfo.userId);
+            log.error("SAML ACS [{}]: Shiro returned null resultMap for user '{}'", institutionCode, loginId);
             return "redirect:/home?error=saml_auth_failed";
         }
 
         Object isAuthenticated = resultMap.get(ScsbConstants.IS_USER_AUTHENTICATED);
         if (Boolean.FALSE.equals(isAuthenticated)) {
             String errMsg = (String) resultMap.get(ScsbConstants.USER_AUTH_ERRORMSG);
-            log.error("SAML ACS [{}]: Shiro auth denied for user '{}': {}", institutionCode, userInfo.userId, errMsg);
+            log.error("SAML ACS [{}]: Shiro auth denied for user '{}': {}", institutionCode, loginId, errMsg);
             return "redirect:/home?error=saml_auth_failed";
         }
 
@@ -173,7 +183,7 @@ public class SamlCallbackController extends AbstractController {
         session.setAttribute(ScsbConstants.LOGGED_IN_INSTITUTION, institutionCode);
 
         log.info("SAML ACS [{}]: Login complete for user '{}'. Redirecting to /search.",
-                institutionCode, userInfo.userId);
+                institutionCode, loginId);
         return "redirect:/search";
     }
 
