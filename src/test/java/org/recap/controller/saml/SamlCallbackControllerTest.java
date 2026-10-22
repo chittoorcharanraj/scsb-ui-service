@@ -201,6 +201,59 @@ public class SamlCallbackControllerTest {
     }
 
     @Test
+    public void initiateSaml_withoutAcsUrl_httpDefaultPort_shouldOmitPort() {
+        assertEquals("http://sp.example.com/saml/acs", initiateSamlAndCaptureAcsUrl("http", 80));
+    }
+
+    @Test
+    public void initiateSaml_withoutAcsUrl_httpCustomPort_shouldIncludePort() {
+        assertEquals("http://sp.example.com:8080/saml/acs", initiateSamlAndCaptureAcsUrl("http", 8080));
+    }
+
+    @Test
+    public void initiateSaml_withoutAcsUrl_httpsDefaultPort_shouldOmitPort() {
+        assertEquals("https://sp.example.com/saml/acs", initiateSamlAndCaptureAcsUrl("https", 443));
+    }
+
+    @Test
+    public void initiateSaml_withoutAcsUrl_httpsCustomPort_shouldIncludePort() {
+        assertEquals("https://sp.example.com:8443/saml/acs", initiateSamlAndCaptureAcsUrl("https", 8443));
+    }
+
+    @Test
+    public void initiateSaml_withoutAcsUrl_otherScheme_shouldUseSchemeAndHost() {
+        assertEquals("ftp://sp.example.com/saml/acs", initiateSamlAndCaptureAcsUrl("ftp", 2121));
+    }
+
+    @Test
+    public void initiateSaml_withBlankAcsUrl_shouldBuildAcsUrlFromRequest() {
+        assertEquals("http://sp.example.com/saml/acs",
+                initiateSamlAndCaptureAcsUrl("http", 80, "   "));
+    }
+
+    private String initiateSamlAndCaptureAcsUrl(String scheme, int port) {
+        return initiateSamlAndCaptureAcsUrl(scheme, port, null);
+    }
+
+    private String initiateSamlAndCaptureAcsUrl(String scheme, int port, String configuredAcsUrl) {
+        stubProperties(false);
+        if (configuredAcsUrl != null) {
+            when(propertyUtil.getPropertyByInstitutionAndKey(INST, ScsbConstants.ACS_URL))
+                    .thenReturn(configuredAcsUrl);
+        }
+        when(request.getScheme()).thenReturn(scheme);
+        when(request.getServerName()).thenReturn("sp.example.com");
+        when(request.getServerPort()).thenReturn(port);
+        ArgumentCaptor<String> acsUrlCaptor = ArgumentCaptor.forClass(String.class);
+        when(samlAuthHandler.buildAuthnRequestUrl(any(SamlConfig.class), acsUrlCaptor.capture(), anyString()))
+                .thenReturn(IDP_SSO_URL + "?SAMLRequest=x");
+
+        controller.initiateSaml(INST, request);
+
+        return acsUrlCaptor.getValue();
+    }
+
+    @Test
     public void initiateSaml_whenPropertyUtilThrows_shouldRedirectToErrorPage() {
         when(propertyUtil.getPropertyByInstitutionAndKey(INST, ScsbConstants.IDP_SSO_URL))
                 .thenThrow(new RuntimeException("DB error"));
@@ -225,9 +278,73 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
 
-        String result = controller.samlAcs(SAML_RESP_B64, "inst%3DTEST_INST", request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, "inst%3DTEST_INST", request);
 
         assertEquals("redirect:/search", result);
+    }
+
+    @Test
+    public void samlAcs_whenInstitutionFromPath_shouldUseUppercasePathValue() throws Exception {
+        stubProperties(true);
+        String userId = "pathuser";
+        UsersEntity usersEntity = new UsersEntity();
+        usersEntity.setLoginId(userId);
+        when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
+                .thenReturn(buildUserInfo(userId));
+        when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
+        when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
+
+        String result = controller.samlAcs("test_inst", SAML_RESP_B64, null, request);
+
+        assertEquals("redirect:/search", result);
+        verify(propertyUtil).getPropertyByInstitutionAndKey(INST, ScsbConstants.IDP_SSO_URL);
+    }
+
+    @Test
+    public void samlAcs_whenFullNameIdNotFound_shouldFindShortLoginId() throws Exception {
+        stubProperties(true);
+        String fullNameId = "shortuser@example.com";
+        UsersEntity usersEntity = new UsersEntity();
+        usersEntity.setLoginId("shortuser");
+        when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
+        when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
+                .thenReturn(buildUserInfo(fullNameId));
+        when(userDetailsRepository.findByLoginId(fullNameId)).thenReturn(null);
+        when(userDetailsRepository.findByLoginId("shortuser")).thenReturn(usersEntity);
+        when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap("shortuser"));
+
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
+
+        assertEquals("redirect:/search", result);
+        verify(userDetailsRepository, atLeastOnce()).findByLoginId("shortuser");
+    }
+
+    @Test
+    public void samlAcs_whenFullAndShortNameIdsAreNotFound_shouldRedirectToUserNotFound() throws Exception {
+        stubProperties(true);
+        String fullNameId = "unknown@example.com";
+        when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
+        when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
+                .thenReturn(buildUserInfo(fullNameId));
+
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
+
+        assertEquals("redirect:/home?error=saml_user_not_found", result);
+        verify(userDetailsRepository).findByLoginId(fullNameId);
+        verify(userDetailsRepository).findByLoginId("unknown");
+    }
+
+    @Test
+    public void samlAcs_whenUserNameIdIsNull_shouldRedirectToUserNotFound() throws Exception {
+        stubProperties(true);
+        when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
+        when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
+                .thenReturn(new SamlAuthHandler.SamlUserInfo(null, null, null, null, INST));
+
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
+
+        assertEquals("redirect:/home?error=saml_user_not_found", result);
+        verify(userDetailsRepository).findByLoginId(null);
     }
 
     @Test
@@ -236,7 +353,25 @@ public class SamlCallbackControllerTest {
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(null);
 
         // relayState is null and session has no institution
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
+
+        assertEquals("redirect:/?error=saml_session_expired", result);
+    }
+
+    @Test
+    public void samlAcs_whenRelayStateDoesNotContainInstitution_shouldRedirectToSessionExpired() {
+        when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(null);
+
+        String result = controller.samlAcs(null, SAML_RESP_B64, "state=unrelated", request);
+
+        assertEquals("redirect:/?error=saml_session_expired", result);
+    }
+
+    @Test
+    public void samlAcs_whenRelayStateIsMalformed_shouldRedirectToSessionExpired() {
+        when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(null);
+
+        String result = controller.samlAcs(null, SAML_RESP_B64, "inst=%ZZ", request);
 
         assertEquals("redirect:/?error=saml_session_expired", result);
     }
@@ -261,7 +396,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
 
-        String result = controller.samlAcs(SAML_RESP_B64, "inst%3DTEST_INST", request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, "inst%3DTEST_INST", request);
 
         assertEquals("redirect:/search", result);
     }
@@ -272,7 +407,7 @@ public class SamlCallbackControllerTest {
         // All properties return null ? config has no idpSsoUrl
         lenient().when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(null);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/?error=saml_config_missing", result);
     }
@@ -280,11 +415,11 @@ public class SamlCallbackControllerTest {
     @Test
     public void samlAcs_whenIdpCertificateMissing_shouldRedirectToConfigMissing() throws Exception {
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
+        lenient().when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(null);
         when(propertyUtil.getPropertyByInstitutionAndKey(INST, ScsbConstants.IDP_SSO_URL)).thenReturn(IDP_SSO_URL);
         when(propertyUtil.getPropertyByInstitutionAndKey(INST, ScsbConstants.IDP_CERTIFICATE)).thenReturn(null);
-        lenient().when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(null);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/?error=saml_config_missing", result);
     }
@@ -295,7 +430,7 @@ public class SamlCallbackControllerTest {
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
         when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class))).thenReturn(null);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/home?error=saml_auth_failed", result);
     }
@@ -309,7 +444,7 @@ public class SamlCallbackControllerTest {
                 .thenReturn(buildUserInfo(userId));
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(null);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/home?error=saml_user_not_found", result);
     }
@@ -327,7 +462,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenThrow(new RuntimeException("Shiro boom"));
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/home?error=saml_auth_failed", result);
     }
@@ -345,7 +480,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(null);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/home?error=saml_auth_failed", result);
     }
@@ -367,7 +502,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(failMap);
 
-        String result = controller.samlAcs(SAML_RESP_B64, null, request);
+        String result = controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         assertEquals("redirect:/home?error=saml_auth_failed", result);
     }
@@ -386,7 +521,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
 
-        controller.samlAcs(SAML_RESP_B64, null, request);
+        controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         verify(session, atLeastOnce()).setAttribute(eq(ScsbConstants.SAML_AUTHENTICATED), eq(Boolean.TRUE));
     }
@@ -405,7 +540,7 @@ public class SamlCallbackControllerTest {
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
 
-        controller.samlAcs(SAML_RESP_B64, null, request);
+        controller.samlAcs(null, SAML_RESP_B64, null, request);
 
         verify(session, atLeastOnce()).setAttribute(eq(ScsbConstants.LOGGED_IN_INSTITUTION), eq(INST));
     }
@@ -425,14 +560,11 @@ public class SamlCallbackControllerTest {
         UsersEntity usersEntity = new UsersEntity();
         usersEntity.setLoginId(userId);
         usersEntity.setUserDescription("Fix User");
-
         when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
                 .thenReturn(buildUserInfo(userId));
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
-
-        controller.samlAcs(SAML_RESP_B64, null, request);
-
+        controller.samlAcs(null, SAML_RESP_B64, null, request);
         verify(session).invalidate();
     }
 
@@ -442,24 +574,19 @@ public class SamlCallbackControllerTest {
         String userId = "nosessionuser";
         HttpSession newSession = mock(HttpSession.class);
         when(newSession.getId()).thenReturn("new-session-id");
-
         // First call (getSession(false) in resolveInstitution) returns null
         when(request.getSession(false)).thenReturn(null);
         // RelayState provides institution
         when(request.getSession(true)).thenReturn(newSession);
         when(newSession.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(null);
-
         UsersEntity usersEntity = new UsersEntity();
         usersEntity.setLoginId(userId);
         usersEntity.setUserDescription("No Session User");
-
         when(samlAuthHandler.processSamlResponse(anyString(), any(SamlConfig.class)))
                 .thenReturn(buildUserInfo(userId));
         when(userDetailsRepository.findByLoginId(userId)).thenReturn(usersEntity);
         when(userAuthUtil.doAuthentication(any())).thenReturn(successAuthMap(userId));
-
-        String result = controller.samlAcs(SAML_RESP_B64, "inst%3DTEST_INST", request);
-
+        String result = controller.samlAcs(null, SAML_RESP_B64, "inst%3DTEST_INST", request);
         assertEquals("redirect:/search", result);
         verify(userInstitutionCache, atLeastOnce()).addRequestSessionId(anyString(), eq(INST));
     }
@@ -469,18 +596,14 @@ public class SamlCallbackControllerTest {
         stubProperties(true);
         String expectedXml = "<md:EntityDescriptor entityID=\"" + SP_ENTITY_ID + "\"/>";
         when(samlAuthHandler.generateSpMetadata(any(SamlConfig.class))).thenReturn(expectedXml);
-
         String result = controller.spMetadataWithCode(INST);
-
         assertEquals(expectedXml, result);
     }
 
     @Test
     public void spMetadataWithCode_whenIdpSsoUrlMissing_shouldReturnCommentXml() {
         lenient().when(propertyUtil.getPropertyByInstitutionAndKey(anyString(), anyString())).thenReturn(null);
-
         String result = controller.spMetadataWithCode(INST);
-
         assertTrue(result.startsWith("<!-- No SAML configuration found"),
                 "Expected an XML comment indicating no configuration");
         assertTrue(result.contains(INST));
@@ -492,9 +615,7 @@ public class SamlCallbackControllerTest {
         ArgumentCaptor<SamlConfig> configCaptor = ArgumentCaptor.forClass(SamlConfig.class);
         when(samlAuthHandler.generateSpMetadata(configCaptor.capture()))
                 .thenReturn("<md:EntityDescriptor/>");
-
         controller.spMetadataWithCode(INST);
-
         assertEquals(INST, configCaptor.getValue().getInstitutionCode());
     }
 
@@ -506,18 +627,14 @@ public class SamlCallbackControllerTest {
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(INST);
         String expectedXml = "<md:EntityDescriptor/>";
         when(samlAuthHandler.generateSpMetadata(any(SamlConfig.class))).thenReturn(expectedXml);
-
         String result = controller.spMetadataFromSession(request);
-
         assertEquals(expectedXml, result);
     }
 
     @Test
     public void spMetadataFromSession_whenNoSession_shouldReturnErrorComment() {
         when(request.getSession(false)).thenReturn(null);
-
         String result = controller.spMetadataFromSession(request);
-
         assertTrue(result.contains("ERROR"),
                 "Expected an error comment when no session exists");
         assertTrue(result.contains("institutionCode"));
@@ -527,9 +644,7 @@ public class SamlCallbackControllerTest {
     public void spMetadataFromSession_whenSessionHasNoInstitutionCode_shouldReturnErrorComment() {
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn(null);
-
         String result = controller.spMetadataFromSession(request);
-
         assertTrue(result.contains("ERROR"),
                 "Expected error comment when institution code is absent");
     }
@@ -538,9 +653,7 @@ public class SamlCallbackControllerTest {
     public void spMetadataFromSession_whenSessionHasBlankInstitutionCode_shouldReturnErrorComment() {
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute(ScsbConstants.SAML_INSTITUTION_CODE)).thenReturn("   ");
-
         String result = controller.spMetadataFromSession(request);
-
         assertTrue(result.contains("ERROR"),
                 "Expected error comment for blank institution code");
     }
